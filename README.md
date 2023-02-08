@@ -8,6 +8,8 @@ This repository contains various Jupyter notebooks that analyze prices in superm
 - Price forecasting: This notebook explores the use of deep learning methods to forecast prices for a given product.
 - Price imputation and interpolation: This notebook uses deep learning methods to impute and interpolate missing prices in the dataset.
 - Multi-class classification of promotion description: This notebook uses various machine learning algorithms to classify different types of promotions based on their description.
+- Estimating the determinants of food prices: This notebook analyzes the factors impacting food prices using regression analysis.
+- Assessing promotion impact on competitors: This notebook evaluates the effect of promotions on competitor price reductions using A/B testing and one-Way ANOVA.
 
 ### Data Sources
 

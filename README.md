@@ -10,6 +10,7 @@ This repository contains various Jupyter notebooks that analyze prices in superm
 - Multi-class classification of promotion description: This notebook uses various machine learning algorithms to classify different types of promotions based on their description.
 - Estimating the determinants of food prices: This notebook analyzes the factors impacting food prices using regression analysis.
 - Assessing promotion impact on competitors: This notebook evaluates the effect of promotions on competitor price reductions using A/B testing and one-Way ANOVA.
+- Competitor's promotion prediction: This notebook uses various ensemble methods to predict promotion strategies of competitors.
 
 ### Data Sources
 

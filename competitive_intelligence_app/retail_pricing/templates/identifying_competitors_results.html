@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title>Analysis</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+                padding: 20px;
+            }
+
+            .container {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #ffffff;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                height: 470vh;
+            }
+
+            h1 {
+            color: #333333;
+            text-align: center;
+            }
+
+            h2 {
+                color: #333333;
+                margin-bottom: 20px;
+            }
+
+            .figure-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 40px;
+            }
+
+            .figure {
+                width: 800px;
+                height: 600px;
+                border: none;
+                margin-bottom: 20px;
+            }
+            
+            @media (max-width: 768px) {
+                .figure {
+                    width: 100%;
+                    height: auto;
+                    max-width: 600px;
+                }
+            }
+
+            iframe {
+                display: block;
+                margin: 0 auto;
+                width: 800px;
+                height: 600px;
+            }
+
+            .select-container {
+                margin-top: 10px;
+            }
+
+            select {
+                padding: 5px;
+                font-size: 16px;
+            }
+
+            #plot-container {
+                margin-top: 20px;
+            }
+
+            #plot-container h3 {
+                font-size: 18px;
+                color: #888;
+                text-align: center;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div class="container">
+            <h1>Analysis</h1>
+    
+            <div class="figure-container">
+                <div class="figure">
+                    <h2>Market Structure Analysis</h2>
+                    <iframe src="{{ url_for('static', filename='market_structure_analysis.html') }}?v={{ timestamp }}" frameborder="0"></iframe>
+                </div>
+    
+                <div class="figure">
+                    <h2>Store Clustering</h2>
+                    <iframe src="{{ url_for('static', filename='store_clustering.html') }}?v={{ timestamp }}" frameborder="0"></iframe>
+                </div>
+    
+                <div class="figure">
+                    <h2>Top Competitors</h2>
+                    <iframe src="{{ url_for('static', filename='top_competitors.html') }}?v={{ timestamp }}" frameborder="0"></iframe>
+                </div>
+                <div class="figure">
+                   <h2>Competitor Price Forecasting</h2>
+                    <div class="select-container">
+                        <select id="store-selector" onchange="updatePlot()">
+                            <option value="" disabled selected>Select a Store</option>
+                            {% for _, row in top_competitors_df.iterrows() %}
+                            <option value="{{ row['StoreID'] }}">{{ row['StoreName'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="plot-container">
+                        <h3>Select a store to view the plot</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function updatePlot() {
+                var storeID = document.getElementById("store-selector").value;
+                var plotContainer = document.getElementById("plot-container");
+                
+                if (storeID === "") {
+                    plotContainer.innerHTML = "<h3>Select a store to view the plot</h3>";
+                } else {
+                    var iframeSrc = "{{ url_for('static', filename='imputation_forecast_plot_store_') }}" + storeID + ".html?v={{ timestamp }}";
+                    plotContainer.innerHTML = "<iframe src='" + iframeSrc + "' frameborder='0'></iframe>";
+                }
+            }
+        </script>
+    </body>
+</html>

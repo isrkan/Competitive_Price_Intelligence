@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <title>Input Form</title>
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          padding: 20px;
+      }
+      
+      h1 {
+          color: #333333;
+          text-align: center;
+      }
+      
+      form {
+          max-width: 400px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      
+      label {
+          display: block;
+          margin-bottom: 10px;
+          color: #333333;
+      }
+      
+      input[type="text"] {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #cccccc;
+          border-radius: 5px;
+      }
+
+      input[type="text"],
+      select {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #cccccc;
+          border-radius: 5px;
+      }
+      
+      input[type="submit"] {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          background-color: #4caf50;
+          color: #ffffff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      
+      input[type="submit"]:hover {
+          background-color: #45a049;
+      }
+  </style>
+  </head>
+  <body>
+    <h1>Retail Price Analysis</h1>
+    
+    <form method="POST">
+      <label for="category">Category:</label>
+      <input type="text" id="category" name="category" required><br><br>
+
+      <label for="product_description">Product Description:</label>
+      <input type="text" id="product_description" name="product_description" required><br><br>
+
+      <label for="SubChainName">Sub-Chain Name:</label>
+      <input type="text" id="SubChainName" name="SubChainName" required><br><br>
+
+      <label for="StoreName">Store Name:</label>
+      <input type="text" id="StoreName" name="StoreName" required><br><br>
+
+      <label for="Geographic">Region Focus:</label>
+      <select id="Geographic" name="Geographic">
+          <option value="National">National</option>
+          <option value="District">District</option>
+          <option value="County">County</option>
+          <option value="City">City</option>
+      </select><br><br>
+      
+      <input type="submit" value="Submit">
+    </form>
+
+  </body>
+</html>

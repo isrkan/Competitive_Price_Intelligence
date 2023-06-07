@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: competitive-intelligence-app
+  name: competitive-intelligence-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: competitive-intelligence-app
+  template:
+    metadata:
+      labels:
+        app: competitive-intelligence-app
+    spec:
+      containers:
+        - name: retail-pricing-app-1
+          image: retail_pricing-app-1:1.0
+          ports:
+            - containerPort: 5000

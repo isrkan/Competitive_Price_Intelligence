@@ -40,7 +40,7 @@ def imputation(input_data,category):
     return input_data[:, 42:773]
 
 
-def forecasting(competitor_product_imputed_df,category):
+def forecasting(competitor_product_imputed_df,category,competitor_product_external_values):
     
     input_forecasting_data = competitor_product_imputed_df.values
     # Define the window size
@@ -55,8 +55,9 @@ def forecasting(competitor_product_imputed_df,category):
 
     # Make predictions for each store
     all_predictions = []
-    for row in input_data:
+    for i, row in enumerate(input_data):
         # Get the values to make predictions
+        input_sequence = np.concatenate((competitor_product_external_values[i:i+1, 0:42][0], row), axis=None)
         input_sequence = row
         # Reshape the input sequence
         input_sequence = np.reshape(input_sequence, (1, input_sequence.shape[0], 1))
@@ -115,11 +116,12 @@ def imputation_forecasting(category, top5competitors, product_description):
     category_df = category_df.reset_index()
     product_df = category_df[category_df['ProductDescription']==product_description]
     competitor_product_df = product_df[product_df['StoreID'].isin(top5competitors['StoreID'])]
+    competitor_product_external_values = competitor_product_df.drop(columns=['category','ProductDescription','StoreID'], axis=1).copy().values[:, 0:42]
     # Filter the specific imputed data of the product and the competitors
     imputed_data_df = pd.DataFrame(imputed_data)
     competitor_product_imputed_df = imputed_data_df.loc[competitor_product_df.index].reset_index(drop=True)
     # Forecast the data
-    forecasting_data = forecasting(competitor_product_imputed_df, category)
+    forecasting_data = forecasting(competitor_product_imputed_df, category, competitor_product_external_values)
     competitor_product_forecast_df = pd.DataFrame(forecasting_data)
     competitor_product_imputed_forecast_df = pd.concat([competitor_product_imputed_df, competitor_product_forecast_df], axis=1)
     

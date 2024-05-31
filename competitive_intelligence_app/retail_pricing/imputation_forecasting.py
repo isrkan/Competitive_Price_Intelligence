@@ -8,14 +8,15 @@ def imputation(input_data,category):
     
     # Handle nan values
     nan_locations = np.isnan(input_data)
-    input_data[nan_locations] = 0
+    input_data[nan_locations] = -1
 
     # Load the scaler
     with open('trained_models/time_series_imputation/'+str(category)+'/scaler.pkl', 'rb') as f:
         scaler = pickle.load(f)
 
     # Scale the input data using the loaded scaler
-    input_data_scaled = scaler.transform(input_data)
+    input_data_scaled = input_data.copy()
+    input_data_scaled[:, 42:773] = scaler.transform(input_data[:, 42:773])
 
     # Load the trained model
     loaded_model = tf.saved_model.load('trained_models/time_series_imputation/'+str(category))
@@ -23,7 +24,7 @@ def imputation(input_data,category):
 
     # Convert the input data to tensors
     input_tensor = tf.convert_to_tensor(input_data_scaled, dtype=tf.float32)
-
+    
     # Extract the key based on the pattern 'dense' + number
     output_dict = inference(input_tensor)
     output_key = next(key for key in output_dict.keys() if key.startswith('dense'))
@@ -32,11 +33,11 @@ def imputation(input_data,category):
     # Inverse scale the predictions
     predictions = scaler.inverse_transform(predictions_scaled)
     # Integrate the imputations to the data and round the values
-    zero_indices = np.where(input_data == 0)
-    input_data[zero_indices] = predictions[zero_indices]
+    zero_indices = nan_locations
+    input_data[zero_indices] = predictions[zero_indices[:, 42:773]]
     input_data = np.round(input_data, decimals=1)
 
-    return input_data
+    return input_data[:, 42:773]
 
 
 def forecasting(competitor_product_imputed_df,category):
@@ -97,6 +98,14 @@ def imputation_forecasting(category, top5competitors, product_description):
     category_df = pd.read_parquet('competitor_recognition_data/'+str(category+'.parquet'))
     category_df = category_df.set_index(['category','ProductDescription','StoreID'])
 
+    # Import the store data
+    store_data = pd.read_csv('competitor_recognition_data/Store_data_git.csv')
+    store_data = store_data[['StoreID','ChainID','DistrictName','StoreType','LocationType']]
+    store_data_with_dummies = pd.get_dummies(store_data, columns=['ChainID','DistrictName','StoreType','LocationType'], drop_first=True)
+    store_data_with_dummies = store_data_with_dummies.set_index('StoreID')
+
+    category_df = store_data_with_dummies.merge(category_df, how='right', left_index=True, right_on='StoreID')
+
     # Convert the data frames to numpy arrays
     input_imputation_data = category_df.copy().values
     # Impute the data
@@ -117,10 +126,10 @@ def imputation_forecasting(category, top5competitors, product_description):
     # Reindex and rename columns
     competitor_product_df= competitor_product_df.reset_index(drop=True)
     competitor_product_imputed_df = pd.concat([competitor_product_df[['category', 'ProductDescription', 'StoreID']], competitor_product_imputed_df], axis=1).set_index(['category','ProductDescription','StoreID'])
-    competitor_product_imputed_df.columns = competitor_product_df.columns[3:]
+    competitor_product_imputed_df.columns = competitor_product_df.columns[-731:]
     
     competitor_product_imputed_forecast_df = pd.concat([competitor_product_df[['category', 'ProductDescription', 'StoreID']], competitor_product_imputed_forecast_df], axis=1).set_index(['category','ProductDescription','StoreID'])
-    existing_dates = pd.to_datetime(competitor_product_df.columns[3:])
+    existing_dates = pd.to_datetime(competitor_product_df.columns[-731:])
     additional_dates = pd.date_range(existing_dates[-1], periods=11, freq='D')[-10:]
     all_dates = existing_dates.union(additional_dates).strftime('%Y-%m-%d')
     competitor_product_imputed_forecast_df.columns = all_dates

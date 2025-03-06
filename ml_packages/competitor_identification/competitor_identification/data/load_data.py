@@ -27,3 +27,26 @@ def load_store_data(store_file_path, subchain_file_path):
     store_data = store_data.drop(columns=['EnglishName'])
 
     return store_data
+
+
+def load_price_data(category, price_data_dir):
+    """
+    Loads price data for a specific category from a Parquet file.
+
+    Parameters:
+    - category (str): The category name (used to find the correct Parquet file).
+    - price_data_dir (str): The directory where the Parquet files are stored.
+
+    Returns:
+    - DataFrame: The price data with the index set to ['category', 'ProductDescription', 'StoreID'].
+    """
+    # Build the path for the Parquet file
+    price_data_path = f'{price_data_dir}/{category}.parquet'
+
+    # Load the price data from the Parquet file
+    category_df = pd.read_parquet(price_data_path)
+
+    # Set the index as ['category', 'ProductDescription', 'StoreID']
+    category_df = category_df.set_index(['category', 'ProductDescription', 'StoreID'])
+
+    return category_df

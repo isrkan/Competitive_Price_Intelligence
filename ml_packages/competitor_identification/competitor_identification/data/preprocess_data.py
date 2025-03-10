@@ -97,3 +97,41 @@ def filter_by_geographic_region(product_df, chosen_store_info, Geographic):
     product_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName', 'category', 'ProductDescription'], inplace=True)
 
     return product_df
+
+
+def data_preparation_clustering(price_movement_principal, price_level_principal, chosen_store_info, product_df):
+    """
+    Prepare the data for clustering by combining dimensionality reduction components for price movement and price level, and filtering based on the chosen store and chain.
+
+    Parameters:
+    - price_movement_principal_dr: DataFrame containing the principal components for price movement.
+    - price_level_principal_dr: DataFrame containing the principal components for price level.
+    - chosen_store_info: DataFrame containing the metadata of the store to be used for filtering.
+    - product_df: DataFrame containing the product metadata, including ChainID, StoreID, etc.
+
+    Returns:
+    - dr_components_df: DataFrame containing combined dimensionality reduction components for price movement and price level with metadata.
+    - store_dr_components_df: DataFrame with dimensionality reduction components for the input store.
+    - same_chain_dr_components_df: DataFrame with dimensionality reduction components for stores in the same chain as the input store.
+    """
+    # Combine dimensionality reduction components for price movement and price level
+    dr_components_df = pd.concat([price_movement_principal.iloc[:, 0:2], price_level_principal.iloc[:, 0:2]], axis=1)
+    dr_components_df.columns = ['P_M_1', 'P_M_2', 'P_L_1', 'P_L_2']
+
+    # Add relevant columns from store metadata
+    dr_components_df = dr_components_df.reset_index()
+    dr_components_df[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']] = product_df.reset_index()[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']]
+
+    # Filter for the input store based on StoreID and ChainID
+    store_dr_components_df = dr_components_df[dr_components_df['StoreID'] == chosen_store_info['StoreID'].iloc[0]]
+    # Filter for stores from the same chain, excluding the input store
+    same_chain_dr_components_df = dr_components_df[(dr_components_df['ChainID'] == chosen_store_info['ChainID'].iloc[0]) & (dr_components_df['StoreID'] != chosen_store_info['StoreID'].iloc[0])]
+    # Filter for stores from other chains
+    other_chains_dr_components_df = dr_components_df[dr_components_df['ChainID'] != chosen_store_info['ChainID'].iloc[0]]
+
+    # Combine the data: input store and stores from other chains
+    dr_components_df = pd.concat([store_dr_components_df, other_chains_dr_components_df])
+    # Set index again for the final output
+    dr_components_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName'], inplace=True)
+
+    return dr_components_df, store_dr_components_df, same_chain_dr_components_df

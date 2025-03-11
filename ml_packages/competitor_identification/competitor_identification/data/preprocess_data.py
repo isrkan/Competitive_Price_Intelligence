@@ -132,6 +132,6 @@ def data_preparation_clustering(price_movement_principal, price_level_principal,
     # Combine the data: input store and stores from other chains
     dr_components_df = pd.concat([store_dr_components_df, other_chains_dr_components_df])
     # Set index again for the final output
-    dr_components_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName'], inplace=True)
+    dr_components_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName', 'category', 'ProductDescription'], inplace=True)
 
     return dr_components_df, store_dr_components_df, same_chain_dr_components_df

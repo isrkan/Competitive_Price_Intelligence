@@ -53,6 +53,6 @@ def dbscan_clustering(dr_components_df, min_samples=5, eps=None):
 
     # Get the cluster labels
     dbscan_labels = dbscan.labels_
-    dr_components_df['dr_labels'] = dbscan_labels  # Assign the labels to the DataFrame
+    dr_components_df['dr_cluster_labels'] = dbscan_labels  # Assign the labels to the DataFrame
 
     return dr_components_df, dbscan_labels

@@ -19,6 +19,6 @@ def birch_clustering(dr_components_df, threshold=9, n_clusters=None):
 
     # Get the cluster labels
     dr_birch_labels = birch.labels_
-    dr_components_df['dr_labels'] = dr_birch_labels  # Assign the labels to the DataFrame
+    dr_components_df['dr_cluster_labels'] = dr_birch_labels  # Assign the labels to the DataFrame
 
     return dr_components_df, dr_birch_labels

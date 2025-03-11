@@ -39,17 +39,17 @@ def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_compon
     clustered_store_dr_components_df = clustered_dr_components_df[clustered_dr_components_df['StoreID'] == chosen_store_info['StoreID'].iloc[0]]
 
     # Filter competitors: same cluster label but different SubChainID
-    clustered_competitors_dr_components_df = clustered_dr_components_df[(clustered_dr_components_df['dr_labels'] == clustered_store_dr_components_df['dr_labels'].iloc[0]) & (clustered_dr_components_df['SubChainID'] != clustered_store_dr_components_df['SubChainID'].iloc[0])]
+    clustered_competitors_dr_components_df = clustered_dr_components_df[(clustered_dr_components_df['dr_cluster_labels'] == clustered_store_dr_components_df['dr_cluster_labels'].iloc[0]) & (clustered_dr_components_df['SubChainID'] != clustered_store_dr_components_df['SubChainID'].iloc[0])]
 
     # If no competitors are found, select stores in other chains
     if len(clustered_competitors_dr_components_df) == 0:
         clustered_competitors_dr_components_df = clustered_dr_components_df[
             clustered_dr_components_df['SubChainID'] != clustered_store_dr_components_df['SubChainID'].iloc[0]]
 
-    same_chain_dr_components_df['cluster_labels'] = max(np.unique(cluster_labels)) + 1
+    same_chain_dr_components_df['dr_cluster_labels'] = max(np.unique(cluster_labels)) + 1
 
     clustered_dr_components_df = pd.concat([clustered_dr_components_df, same_chain_dr_components_df])
-    cluster_labels = np.concatenate((cluster_labels, same_chain_dr_components_df['cluster_labels'].to_numpy()))
+    cluster_labels = np.concatenate((cluster_labels, same_chain_dr_components_df['dr_cluster_labels'].to_numpy()))
 
     # Return the results: clustered dr_components_df, cluster labels, and filtered data
     return clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df

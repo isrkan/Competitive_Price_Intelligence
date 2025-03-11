@@ -20,6 +20,6 @@ def optics_clustering(dr_components_df, min_samples=5, min_cluster_size=0.02, me
 
     # Get the cluster labels
     optics_labels = optics.labels_
-    dr_components_df['dr_labels'] = optics_labels  # Assign the labels to the DataFrame
+    dr_components_df['dr_cluster_labels'] = optics_labels  # Assign the labels to the DataFrame
 
     return dr_components_df, optics_labels

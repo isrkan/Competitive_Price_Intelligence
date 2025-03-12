@@ -53,3 +53,41 @@ def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_compon
 
     # Return the results: clustered dr_components_df, cluster labels, and filtered data
     return clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df
+
+
+import numpy as np
+
+
+def find_top_competitors(clustered_store_dr_components_df, clustered_competitors_dr_components_df, top_n=5):
+    """
+    Find the top N competitors based on Euclidean distance in dimensionality reduction space.
+
+    Parameters:
+    - clustered_store_dr_components_df: DataFrame containing the clustered dimensionality reduction components of the store.
+    - clustered_competitors_dr_components_df: DataFrame containing the clustered dimensionality reduction components of the competitors.
+    - top_n: The number of top competitors to return (default is 5).
+
+    Returns:
+    - top_competitors: DataFrame with the top N competitors based on Euclidean distance.
+    """
+
+    # Calculate Euclidean distance between the store and each competitor
+    def euclidean_distance(row1, row2):
+        return np.sqrt(np.sum((row1 - row2) ** 2))
+
+    # Store dimensionality reduction components (assuming the store is the first row)
+    store_row = clustered_store_dr_components_df.iloc[0][['P_M_1', 'P_M_2', 'P_L_1', 'P_L_2']]
+
+    # Calculate Euclidean distance for each row in competitors data
+    euclidean_distances = clustered_competitors_dr_components_df[['P_M_1', 'P_M_2', 'P_L_1', 'P_L_2']].apply(lambda row: euclidean_distance(store_row, row), axis=1)
+
+    # Add Euclidean distance column to the competitors DataFrame
+    clustered_competitors_dr_components_df['EuclideanDistance'] = euclidean_distances
+
+    # Sort competitors by the Euclidean distance (ascending order)
+    competitors_pca_components_df = clustered_competitors_dr_components_df.sort_values(by=['EuclideanDistance'])
+
+    # Select the top N competitors
+    top_competitors = competitors_pca_components_df[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName']].head(top_n).reset_index(drop=True)
+
+    return top_competitors

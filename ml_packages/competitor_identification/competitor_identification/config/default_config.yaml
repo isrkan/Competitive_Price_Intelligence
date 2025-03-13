@@ -1,0 +1,16 @@
+# Default configurations
+
+# Data directories (can be customized if needed)
+price_data_dir: '<USER_DIRECTORY_TOKEN>/retail_pricing/competitor_recognition_data'
+store_file_path: '%price_data_dir%/Store_data_git.csv'
+subchain_file_path: '%price_data_dir%/SubChainNameEnglish.xlsx'
+
+# NaN threshold for data preprocessing (default to 25%)
+nan_threshold: 0.25
+
+# Default methods for dimensionality reduction and clustering
+dimensionality_reduction_method: 'pca'
+clustering_method: 'birch'
+
+# Top N competitors to display
+top_n_competitors: 5

@@ -25,7 +25,9 @@ def run_pipeline(category, SubChainName, StoreName, product_description, Geograp
     subchain_file_path = config.get('subchain_file_path').replace('%price_data_dir%', price_data_dir)
     nan_threshold = config.get('nan_threshold')
     dimensionality_reduction_method = config.get('dimensionality_reduction_method')
+    dimensionality_reduction_method_params = config.get('dimensionality_reduction_method_params')
     clustering_method = config.get('clustering_method')
+    clustering_method_params = config.get('clustering_method_params')
     top_n_competitors = config.get('top_n_competitors')
 
     # Load store data
@@ -52,7 +54,7 @@ def run_pipeline(category, SubChainName, StoreName, product_description, Geograp
     scaled_price_movement_df, scaled_price_level_df = scale_data(product_regional_df)
 
     # Perform dimensionality reduction on both price movement and price level data
-    combined_components_df, price_movement_principal_dr, price_level_principal_dr = perform_dimensionality_reduction_on_price_movement_and_level(scaled_price_movement_df, scaled_price_level_df, product_regional_df,dimensionality_reduction_method)
+    combined_components_df, price_movement_principal_dr, price_level_principal_dr = perform_dimensionality_reduction_on_price_movement_and_level(scaled_price_movement_df, scaled_price_level_df, product_regional_df,dimensionality_reduction_method, dimensionality_reduction_method_params)
 
     # Plot the dimensionality reduction results for price movement and price level
     fig1 = plot_dimensionality_reduction(combined_components_df, chosen_store_info)
@@ -61,10 +63,10 @@ def run_pipeline(category, SubChainName, StoreName, product_description, Geograp
     dr_components_df, store_dr_components_df, same_chain_dr_components_df = data_preparation_clustering(price_movement_principal_dr, price_level_principal_dr, chosen_store_info, product_regional_df)
 
     # Perform the clustering
-    clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df = perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_components_df, clustering_method)
+    clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df = perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_components_df, clustering_method, clustering_method_params)
 
     # Plot the clusters
-    fig2 = plot_clusters(clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df)
+    fig2 = plot_clusters(clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustering_method.upper())
 
     # Find the top N competitors based on Euclidean distance
     top_competitors = find_top_competitors(clustered_store_dr_components_df, clustered_competitors_dr_components_df, top_n=top_n_competitors)

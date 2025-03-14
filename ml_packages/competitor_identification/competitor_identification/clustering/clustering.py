@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_components_df, method, **kwargs):
+def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_components_df, method, method_params):
     """
     Perform clustering on the data based on the specified method.
 
@@ -14,7 +14,7 @@ def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_compon
     - chosen_store_info: DataFrame with store metadata for filtering.
     - same_chain_dr_components_df: DataFrame containing dimensionality reduction components for stores in the same chain.
     - method: The clustering method to apply ('birch', 'dbscan', 'optics').
-    - kwargs: Additional parameters for the clustering algorithms.
+    - method_params: Parameters specific to the clustering method.
 
     Returns:
     - clustered_dr_components_df: DataFrame with updated clustering labels.
@@ -25,11 +25,11 @@ def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_compon
 
     # Perform clustering based on the method
     if method == 'birch':
-        clustered_dr_components_df, cluster_labels = birch_clustering(dr_components_df, **kwargs)
+        clustered_dr_components_df, cluster_labels = birch_clustering(dr_components_df, method_params)
     elif method == 'dbscan':
-        clustered_dr_components_df, cluster_labels = dbscan_clustering(dr_components_df, **kwargs)
+        clustered_dr_components_df, cluster_labels = dbscan_clustering(dr_components_df, method_params)
     elif method == 'optics':
-        clustered_dr_components_df, cluster_labels = optics_clustering(dr_components_df, **kwargs)
+        clustered_dr_components_df, cluster_labels = optics_clustering(dr_components_df, method_params)
     else:
         raise ValueError(f"Clustering method '{method}' not supported. Choose from ['birch', 'dbscan', 'optics']")
 
@@ -54,8 +54,6 @@ def perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_compon
     # Return the results: clustered dr_components_df, cluster labels, and filtered data
     return clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df
 
-
-import numpy as np
 
 
 def find_top_competitors(clustered_store_dr_components_df, clustered_competitors_dr_components_df, top_n=5):

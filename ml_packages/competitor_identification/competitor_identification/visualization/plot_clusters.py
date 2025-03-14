@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import numpy as np
 
-def plot_clusters(dr_components_df, dr_cluster_labels, store_dr_components_df):
+def plot_clusters(dr_components_df, dr_cluster_labels, store_dr_components_df, clustering_method):
     """
     Plots the clustering result based on the dimensionality reduction components.
 
@@ -88,7 +88,7 @@ def plot_clusters(dr_components_df, dr_cluster_labels, store_dr_components_df):
     fig2.update_layout(
         xaxis_title='Principal Price Movement',
         yaxis_title='Principal Price Level',
-        title='Store Clustering: Pricing Similarity using BIRCH Algorithm'
+        title=f'Store Clustering: Pricing Similarity using {clustering_method} Algorithm'
     )
 
     return fig2

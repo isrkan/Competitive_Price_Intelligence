@@ -10,7 +10,14 @@ nan_threshold: 0.25
 
 # Default methods for dimensionality reduction and clustering
 dimensionality_reduction_method: 'pca'
+dimensionality_reduction_method_params:
+  n_oversamples: 10
+
+
 clustering_method: 'birch'
+clustering_method_params:
+  threshold: 9
+  n_clusters: null
 
 # Top N competitors to display
 top_n_competitors: 5

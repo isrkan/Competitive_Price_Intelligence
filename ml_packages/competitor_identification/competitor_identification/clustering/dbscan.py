@@ -4,13 +4,13 @@ from sklearn.neighbors import NearestNeighbors
 from kneed import KneeLocator
 
 
-def find_optimal_eps(data, n_neighbors=2):
+def find_optimal_eps(data, n_neighbors):
     """
     Find the optimal epsilon (eps) using the elbow method.
 
     Parameters:
     - data: DataFrame with the features for DBSCAN clustering.
-    - n_neighbors: Number of neighbors for the distance calculation (default 2).
+    - n_neighbors: Number of neighbors for the distance calculation.
 
     Returns:
     - distances: Array of distances to nearest neighbors.
@@ -29,26 +29,43 @@ def find_optimal_eps(data, n_neighbors=2):
     return distances, knee_point
 
 
-def dbscan_clustering(dr_components_df, min_samples=5, eps=None):
+def dbscan_clustering(dr_components_df, method_params):
     """
     Perform DBSCAN clustering on the data.
 
     Parameters:
     - dr_components_df: DataFrame with dimensionality reduction components.
-    - min_samples: Minimum number of samples required to form a cluster (default 5).
-    - eps: The maximum distance between two samples for them to be considered as in the same neighborhood (default None).
+    - method_params: Dictionary containing the parameters for DBSCAN.
 
     Returns:
     - dr_components_df: DataFrame with updated DBSCAN clustering labels.
     - dbscan_labels: Array with the resulting cluster labels.
     """
-    if eps is None:
-        # Find the optimal epsilon using the elbow method
-        distances, knee_point = find_optimal_eps(dr_components_df)
-        eps = distances[knee_point]
+    try:
+        # Attempt to extract and process 'eps' from method_params
+        eps = method_params.get('eps')
+        n_neighbors = method_params.get('n_neighbors', 2) # Default to 2 if not provided
 
-    # Define and fit the DBSCAN model with external parameters
-    dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+        if eps is None:
+            # If eps is not provided, calculate it using the elbow method
+            print("Warning: 'eps' not found in method_params. Calculating optimal eps...")
+            distances, knee_point = find_optimal_eps(dr_components_df, n_neighbors)
+            eps = distances[knee_point]  # Use the optimal eps based on elbow method
+
+        # Remove 'eps' and 'n_neighbors' from method_params to avoid passing it again
+        method_params.pop('eps', None)
+        method_params.pop('n_neighbors', None)
+
+        # Now initialize DBSCAN with the updated method_params including eps
+        dbscan = DBSCAN(eps=eps, **method_params)
+    except Exception as e:
+        # If there's any issue in the above try block, fallback to initializing DBSCAN without eps
+        print(f"Error while processing 'eps': {e}")
+        print("Falling back to DBSCAN with only the method_params.")
+        # Initialize DBSCAN without eps, just using the other parameters
+        dbscan = DBSCAN(**method_params)
+
+    # Fit the DBSCAN model
     dbscan.fit(dr_components_df)
 
     # Get the cluster labels

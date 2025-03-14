@@ -1,21 +1,19 @@
 from sklearn.cluster import OPTICS
 
-def optics_clustering(dr_components_df, min_samples=5, min_cluster_size=0.02, metric='minkowski'):
+def optics_clustering(dr_components_df, method_params):
     """
     Perform OPTICS clustering on the data.
 
     Parameters:
     - dr_components_df: DataFrame with PCA components.
-    - min_samples: Minimum number of samples in a neighborhood for a point to be considered a core point (default 5).
-    - min_cluster_size: The minimum size of a cluster (default 0.02).
-    - metric: The distance metric to use for the OPTICS algorithm (default 'minkowski').
+    - method_params: Dictionary containing the parameters for OPTICS.
 
     Returns:
     - dr_components_df: DataFrame with updated OPTICS clustering labels.
     - optics_labels: Array with the resulting cluster labels.
     """
     # Define and fit the OPTICS model with external parameters
-    optics = OPTICS(min_samples=min_samples, metric=metric, min_cluster_size=min_cluster_size)
+    optics = OPTICS(**method_params)
     optics.fit(dr_components_df)
 
     # Get the cluster labels

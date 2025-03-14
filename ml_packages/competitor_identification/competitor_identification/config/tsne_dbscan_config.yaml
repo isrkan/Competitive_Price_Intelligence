@@ -1,0 +1,15 @@
+# Custom methods for dimensionality reduction and clustering
+dimensionality_reduction_method: 't-sne'
+dimensionality_reduction_method_params:
+  n_components: 2
+  perplexity: 40
+  max_iter: 300
+  method: 'exact'
+  init: 'random'
+  learning_rate: 200
+
+clustering_method: 'dbscan'
+clustering_method_params:
+  min_samples: 5
+  eps: null
+  n_neighbors: 2

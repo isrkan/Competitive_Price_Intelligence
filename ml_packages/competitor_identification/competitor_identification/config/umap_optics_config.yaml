@@ -1,0 +1,11 @@
+# Custom methods for dimensionality reduction and clustering
+dimensionality_reduction_method: 'umap'
+dimensionality_reduction_method_params:
+  n_neighbors: 5
+  n_components: 2
+
+clustering_method: 'optics'
+clustering_method_params:
+  min_samples: 5
+  min_cluster_size: 0.02
+  metric: 'minkowski'

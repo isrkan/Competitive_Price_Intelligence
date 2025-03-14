@@ -11,11 +11,22 @@ from .visualization.present_competitors_table import present_competitors_table
 import os
 
 
-def run_pipeline(category, SubChainName, StoreName, product_description, Geographic):
+def run_pipeline(config, category, SubChainName, StoreName, product_description, Geographic):
+    """
+    Run the complete pipeline for competitor identification with the provided config.
 
-    # Load configuration
-    config = Config()
+    Parameters:
+    - config (Config): Configuration object with pipeline settings.
+    - category (str): Category of the product.
+    - SubChainName (str): SubChain name.
+    - StoreName (str): Store name.
+    - product_description (str): Description of the product.
+    - Geographic (str): Geographic region for filtering.
 
+    Returns:
+    - top_competitors (list): The top competitors identified.
+    - fig1, fig2, fig3 (figures): Figures for visualization.
+    """
     # Fetch the user directory token
     user_directory_token = os.getenv('USER_DIRECTORY_TOKEN')
 

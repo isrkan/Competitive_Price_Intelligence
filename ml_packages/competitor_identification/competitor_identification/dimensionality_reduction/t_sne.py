@@ -14,12 +14,31 @@ def perform_tsne_on_price_data(df, product_df, method_params):
     Returns:
     - principal_df: DataFrame with the embedded components from the t-SNE transformation.
     """
-    # Perform t-SNE transformation
-    tsne = TSNE(**method_params)
-    embedded_components = tsne.fit_transform(df)
-    principal_df = pd.DataFrame(data=embedded_components)
+    try:
+        # Validate input types
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError("df must be a pandas DataFrame.")
+        if not isinstance(product_df, pd.DataFrame):
+            raise TypeError("product_df must be a pandas DataFrame.")
+        if not isinstance(method_params, dict):
+            raise TypeError("method_params must be a dictionary.")
 
-    # Merge with product details (metadata)
-    principal_df[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']] = product_df.reset_index()[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']]
+        # Ensure DataFrames are not empty
+        if df.empty:
+            raise ValueError("df is empty. Cannot perform t-SNE.")
+        if product_df.empty:
+            raise ValueError("product_df is empty. Cannot merge metadata.")
 
-    return principal_df
+        # Perform t-SNE transformation
+        tsne = TSNE(**method_params)
+        embedded_components = tsne.fit_transform(df)
+        principal_df = pd.DataFrame(data=embedded_components)
+
+        # Merge with product details (metadata)
+        principal_df[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']] = product_df.reset_index()[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']]
+
+        return principal_df
+
+    except Exception as e:
+        print(f"Error in t-SNE transformation: {e}")
+        raise

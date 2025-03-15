@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
 from kneed import KneeLocator
@@ -16,18 +17,21 @@ def find_optimal_eps(data, n_neighbors):
     - distances: Array of distances to nearest neighbors.
     - knee_point: The optimal eps (knee point).
     """
-    neighbors = NearestNeighbors(n_neighbors=n_neighbors)
-    neighbors_fit = neighbors.fit(data)
+    try:
+        neighbors = NearestNeighbors(n_neighbors=n_neighbors)
+        neighbors_fit = neighbors.fit(data)
 
-    distances, indices = neighbors_fit.kneighbors(data)
-    distances = np.sort(distances, axis=0)
-    distances = distances[:, 1]  # Get the distance to the second nearest neighbor
+        distances, indices = neighbors_fit.kneighbors(data)
+        distances = np.sort(distances, axis=0)
+        distances = distances[:, 1]  # Get the distance to the second nearest neighbor
 
-    knee_locator = KneeLocator(range(len(distances)), distances, curve='convex', direction='increasing')
-    knee_point = knee_locator.knee
+        knee_locator = KneeLocator(range(len(distances)), distances, curve='convex', direction='increasing')
+        knee_point = knee_locator.knee
+        return distances, knee_point
 
-    return distances, knee_point
-
+    except Exception as e:
+        print(f"Error in find_optimal_eps: {e}")
+        return None
 
 def dbscan_clustering(dr_components_df, method_params):
     """
@@ -42,6 +46,12 @@ def dbscan_clustering(dr_components_df, method_params):
     - dbscan_labels: Array with the resulting cluster labels.
     """
     try:
+        # Validate input types
+        if not isinstance(dr_components_df, pd.DataFrame):
+            raise TypeError("dr_components_df must be a pandas DataFrame.")
+        if not isinstance(method_params, dict):
+            raise TypeError("method_params must be a dictionary.")
+
         # Attempt to extract and process 'eps' from method_params
         eps = method_params.get('eps')
         n_neighbors = method_params.get('n_neighbors', 2) # Default to 2 if not provided
@@ -65,11 +75,16 @@ def dbscan_clustering(dr_components_df, method_params):
         # Initialize DBSCAN without eps, just using the other parameters
         dbscan = DBSCAN(**method_params)
 
-    # Fit the DBSCAN model
-    dbscan.fit(dr_components_df)
+    try:
+        # Fit the DBSCAN model
+        dbscan.fit(dr_components_df)
 
-    # Get the cluster labels
-    dbscan_labels = dbscan.labels_
-    dr_components_df['dr_cluster_labels'] = dbscan_labels  # Assign the labels to the DataFrame
+        # Get the cluster labels
+        dbscan_labels = dbscan.labels_
+        dr_components_df['dr_cluster_labels'] = dbscan_labels  # Assign the labels to the DataFrame
 
-    return dr_components_df, dbscan_labels
+        return dr_components_df, dbscan_labels
+
+    except Exception as e:
+        print(f"Error during DBSCAN fitting: {e}")
+        raise

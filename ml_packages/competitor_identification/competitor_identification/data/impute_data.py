@@ -12,11 +12,27 @@ def impute_missing_data(filtered_df):
     Returns:
     - A DataFrame with the missing data imputed.
     """
-    # Interpolation - linear
-    linear_fill_df = filtered_df.T.interpolate(method='linear').T
+    try:
+        # Check if the input is a pandas DataFrame
+        if not isinstance(filtered_df, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+        # Check if the DataFrame is empty
+        if filtered_df.empty:
+            raise ValueError("Input DataFrame is empty.")
 
-    # Imputation - first NOCB (Backward fill), then LOCB (Forward fill)
-    no_cb_fill_df = linear_fill_df.T.bfill().T  # Backward fill (NOCB)
-    linear_no_cb_fill_df = no_cb_fill_df.T.ffill().T  # Forward fill (LOCB)
+        # Check for numeric columns (since interpolation requires numeric data)
+        if not all(pd.api.types.is_numeric_dtype(filtered_df[col]) for col in filtered_df.columns):
+            raise ValueError("DataFrame contains non-numeric data, which cannot be interpolated.")
 
-    return linear_no_cb_fill_df
+        # Interpolation - linear
+        linear_fill_df = filtered_df.T.interpolate(method='linear').T
+
+        # Imputation - first NOCB (Backward fill), then LOCB (Forward fill)
+        no_cb_fill_df = linear_fill_df.T.bfill().T  # Backward fill (NOCB)
+        linear_no_cb_fill_df = no_cb_fill_df.T.ffill().T  # Forward fill (LOCB)
+
+        return linear_no_cb_fill_df
+
+    except Exception as e:
+        print(f"Unexpected error during data imputation: {e}")
+        raise

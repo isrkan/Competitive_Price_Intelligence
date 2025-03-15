@@ -1,4 +1,5 @@
 from sklearn.cluster import OPTICS
+import pandas as pd
 
 def optics_clustering(dr_components_df, method_params):
     """
@@ -12,12 +13,23 @@ def optics_clustering(dr_components_df, method_params):
     - dr_components_df: DataFrame with updated OPTICS clustering labels.
     - optics_labels: Array with the resulting cluster labels.
     """
-    # Define and fit the OPTICS model with external parameters
-    optics = OPTICS(**method_params)
-    optics.fit(dr_components_df)
+    try:
+        # Validate input types
+        if not isinstance(dr_components_df, pd.DataFrame):
+            raise TypeError("dr_components_df must be a pandas DataFrame.")
+        if not isinstance(method_params, dict):
+            raise TypeError("method_params must be a dictionary.")
 
-    # Get the cluster labels
-    optics_labels = optics.labels_
-    dr_components_df['dr_cluster_labels'] = optics_labels  # Assign the labels to the DataFrame
+        # Define and fit the OPTICS model with external parameters
+        optics = OPTICS(**method_params)
+        optics.fit(dr_components_df)
 
-    return dr_components_df, optics_labels
+        # Get the cluster labels
+        optics_labels = optics.labels_
+        dr_components_df['dr_cluster_labels'] = optics_labels  # Assign the labels to the DataFrame
+
+        return dr_components_df, optics_labels
+
+    except Exception as e:
+        print(f"Error in optics clustering: {e}")
+        raise

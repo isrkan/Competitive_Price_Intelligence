@@ -13,8 +13,18 @@ def get_store_and_chain_ids(Store_data, SubChainName, StoreName):
     Returns:
     - The filtered DataFrame with the rows that match the given SubChainName and StoreName.
     """
-    chosen_store_info = Store_data[(Store_data['SubChainName'] == SubChainName) & (Store_data['StoreName'] == StoreName)]
-    return chosen_store_info
+    try:
+        if not isinstance(Store_data, pd.DataFrame):
+            raise TypeError("Store_data must be a pandas DataFrame.")
+        if not isinstance(SubChainName, str) or not isinstance(StoreName, str):
+            raise TypeError("SubChainName and StoreName must be strings.")
+
+        chosen_store_info = Store_data[(Store_data['SubChainName'] == SubChainName) & (Store_data['StoreName'] == StoreName)]
+        return chosen_store_info
+
+    except Exception as e:
+        print(f"Error extracting store and chain IDs: {e}")
+        raise
 
 
 def filter_nans(category_df, nan_threshold):
@@ -28,13 +38,24 @@ def filter_nans(category_df, nan_threshold):
     Returns:
     - The filtered DataFrame with rows containing fewer NaN values than the threshold.
     """
-    # Calculate the threshold for non-NaN values
-    threshold_value = int((1 - nan_threshold) * category_df.shape[1])
+    try:
+        if not isinstance(category_df, pd.DataFrame):
+            raise TypeError("category_df must be a pandas DataFrame.")
+        if not isinstance(nan_threshold, (float, int)) or not (0 <= nan_threshold <= 1):
+            raise ValueError("nan_threshold must be a float between 0 and 1.")
+        if category_df.empty:
+            raise ValueError("category_df DataFrame is empty.")
 
-    # Filter out rows where NaN values exceed the threshold
-    filtered_df = category_df.dropna(thresh=threshold_value, axis=0)
+        # Calculate the threshold for non-NaN values
+        threshold_value = int((1 - nan_threshold) * category_df.shape[1])
 
-    return filtered_df
+        # Filter out rows where NaN values exceed the threshold
+        filtered_df = category_df.dropna(thresh=threshold_value, axis=0)
+        return filtered_df
+
+    except Exception as e:
+        print(f"Error filtering NaN values: {e}")
+        raise
 
 
 def filter_by_specific_product_and_add_store_details(linear_no_cb_fill_df, product_description, Store_data):
@@ -49,20 +70,37 @@ def filter_by_specific_product_and_add_store_details(linear_no_cb_fill_df, produ
     Returns:
     - A DataFrame with filtered product data merged with store data.
     """
-    # Reset the index to filter data correctly
-    linear_no_cb_fill_df.reset_index(inplace=True)
+    try:
+        if not isinstance(linear_no_cb_fill_df, pd.DataFrame):
+            raise TypeError("linear_no_cb_fill_df must be a pandas DataFrame.")
+        if not isinstance(product_description, str):
+            raise TypeError("product_description must be a string.")
+        if not isinstance(Store_data, pd.DataFrame):
+            raise TypeError("Store_data must be a pandas DataFrame.")
+        if linear_no_cb_fill_df.empty:
+            raise ValueError("linear_no_cb_fill_df DataFrame is empty.")
+        if Store_data.empty:
+            raise ValueError("Store_data DataFrame is empty.")
 
-    # Filter the data by product description
-    product_df = linear_no_cb_fill_df[linear_no_cb_fill_df['ProductDescription'] == product_description].copy()
+        # Reset the index to filter data correctly
+        linear_no_cb_fill_df.reset_index(inplace=True)
 
-    # Ensure StoreID is in the correct type for merging
-    product_df['StoreID'] = product_df['StoreID'].astype('int64')
+        # Filter the data by product description
+        product_df = linear_no_cb_fill_df[linear_no_cb_fill_df['ProductDescription'] == product_description].copy()
 
-    # Merge with the store data
-    product_df = pd.merge(product_df, Store_data, how="left", on="StoreID")
+        if product_df.empty:
+            raise ValueError("No matching product found in linear_no_cb_fill_df.")
 
-    return product_df
+        # Ensure StoreID is in the correct type for merging
+        product_df['StoreID'] = product_df['StoreID'].astype('int64')
+        # Merge with the store data
+        product_df = pd.merge(product_df, Store_data, how="left", on="StoreID")
 
+        return product_df
+
+    except Exception as e:
+        print(f"Error filtering product data and merging store details: {e}")
+        raise
 
 def filter_by_geographic_region(product_df, chosen_store_info, Geographic):
     """
@@ -77,26 +115,41 @@ def filter_by_geographic_region(product_df, chosen_store_info, Geographic):
     - A DataFrame with further filtered data based on the geographic region.
     """
     # Filter by region (City, County, District)
-    if Geographic == 'City':
-        if len(product_df[product_df['CityName'] == chosen_store_info['CityName'].iloc[0]]) > 10:
-            product_df = product_df[product_df['CityName'] == chosen_store_info['CityName'].iloc[0]]
-        else:
-            Geographic = 'County'
+    try:
+        if not isinstance(product_df, pd.DataFrame):
+            raise TypeError("product_df must be a pandas DataFrame.")
+        if not isinstance(chosen_store_info, pd.DataFrame):
+            raise TypeError("chosen_store_info must be a pandas DataFrame.")
+        if not isinstance(Geographic, str):
+            raise TypeError("Geographic must be a string.")
+        if product_df.empty:
+            raise ValueError("product_df is empty.")
+        if chosen_store_info.empty:
+            raise ValueError("chosen_store_info is empty.")
 
-    if Geographic == 'County':
-        if len(product_df[product_df['SubDistrictName'] == chosen_store_info['SubDistrictName'].iloc[0]]) > 10:
-            product_df = product_df[product_df['SubDistrictName'] == chosen_store_info['SubDistrictName'].iloc[0]]
-        else:
-            Geographic = 'District'
+        if Geographic == 'City':
+            if len(product_df[product_df['CityName'] == chosen_store_info['CityName'].iloc[0]]) > 10:
+                product_df = product_df[product_df['CityName'] == chosen_store_info['CityName'].iloc[0]]
+            else:
+                Geographic = 'County'
 
-    if Geographic == 'District':
-        if len(product_df[product_df['DistrictName'] == chosen_store_info['DistrictName'].iloc[0]]) > 10:
-            product_df = product_df[product_df['DistrictName'] == chosen_store_info['DistrictName'].iloc[0]]
+        if Geographic == 'County':
+            if len(product_df[product_df['SubDistrictName'] == chosen_store_info['SubDistrictName'].iloc[0]]) > 10:
+                product_df = product_df[product_df['SubDistrictName'] == chosen_store_info['SubDistrictName'].iloc[0]]
+            else:
+                Geographic = 'District'
 
-    # Set the index as required
-    product_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName', 'category', 'ProductDescription'], inplace=True)
+        if Geographic == 'District':
+            if len(product_df[product_df['DistrictName'] == chosen_store_info['DistrictName'].iloc[0]]) > 10:
+                product_df = product_df[product_df['DistrictName'] == chosen_store_info['DistrictName'].iloc[0]]
 
-    return product_df
+        # Set the index as required
+        product_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName', 'category', 'ProductDescription'], inplace=True)
+        return product_df
+
+    except Exception as e:
+        print(f"Error filtering by geographic region: {e}")
+        raise
 
 
 def data_preparation_clustering(price_movement_principal, price_level_principal, chosen_store_info, product_df):
@@ -114,24 +167,38 @@ def data_preparation_clustering(price_movement_principal, price_level_principal,
     - store_dr_components_df: DataFrame with dimensionality reduction components for the input store.
     - same_chain_dr_components_df: DataFrame with dimensionality reduction components for stores in the same chain as the input store.
     """
-    # Combine dimensionality reduction components for price movement and price level
-    dr_components_df = pd.concat([price_movement_principal.iloc[:, 0:2], price_level_principal.iloc[:, 0:2]], axis=1)
-    dr_components_df.columns = ['P_M_1', 'P_M_2', 'P_L_1', 'P_L_2']
+    try:
+        if not all(isinstance(df, pd.DataFrame) for df in [price_movement_principal, price_level_principal, chosen_store_info, product_df]):
+            raise TypeError("All inputs must be pandas DataFrames.")
+        if any(df.empty for df in [price_movement_principal, price_level_principal, chosen_store_info, product_df]):
+            raise ValueError("None of the input DataFrames can be empty.")
 
-    # Add relevant columns from store metadata
-    dr_components_df = dr_components_df.reset_index()
-    dr_components_df[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']] = product_df.reset_index()[['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']]
+        # Combine dimensionality reduction components for price movement and price level
+        dr_components_df = pd.concat([price_movement_principal.iloc[:, 0:2], price_level_principal.iloc[:, 0:2]], axis=1)
+        dr_components_df.columns = ['P_M_1', 'P_M_2', 'P_L_1', 'P_L_2']
 
-    # Filter for the input store based on StoreID and ChainID
-    store_dr_components_df = dr_components_df[dr_components_df['StoreID'] == chosen_store_info['StoreID'].iloc[0]]
-    # Filter for stores from the same chain, excluding the input store
-    same_chain_dr_components_df = dr_components_df[(dr_components_df['ChainID'] == chosen_store_info['ChainID'].iloc[0]) & (dr_components_df['StoreID'] != chosen_store_info['StoreID'].iloc[0])]
-    # Filter for stores from other chains
-    other_chains_dr_components_df = dr_components_df[dr_components_df['ChainID'] != chosen_store_info['ChainID'].iloc[0]]
+        # Add relevant columns from store metadata
+        dr_components_df = dr_components_df.reset_index()
+        required_columns = ['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName']
+        for col in required_columns:
+            if col not in product_df.reset_index().columns:
+                raise KeyError(f"Missing required column in product_df: {col}")
+        dr_components_df[required_columns] = product_df.reset_index()[required_columns]
 
-    # Combine the data: input store and stores from other chains
-    dr_components_df = pd.concat([store_dr_components_df, other_chains_dr_components_df])
-    # Set index again for the final output
-    dr_components_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName'], inplace=True)
+        # Filter for the input store based on StoreID and ChainID
+        store_dr_components_df = dr_components_df[dr_components_df['StoreID'] == chosen_store_info['StoreID'].iloc[0]]
+        # Filter for stores from the same chain, excluding the input store
+        same_chain_dr_components_df = dr_components_df[(dr_components_df['ChainID'] == chosen_store_info['ChainID'].iloc[0]) & (dr_components_df['StoreID'] != chosen_store_info['StoreID'].iloc[0])]
+        # Filter for stores from other chains
+        other_chains_dr_components_df = dr_components_df[dr_components_df['ChainID'] != chosen_store_info['ChainID'].iloc[0]]
 
-    return dr_components_df, store_dr_components_df, same_chain_dr_components_df
+        # Combine the data: input store and stores from other chains
+        dr_components_df = pd.concat([store_dr_components_df, other_chains_dr_components_df])
+        # Set index again for the final output
+        dr_components_df.set_index(['ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName'], inplace=True)
+
+        return dr_components_df, store_dr_components_df, same_chain_dr_components_df
+
+    except Exception as e:
+        print(f"Error in data preparation for clustering: {e}")
+        raise

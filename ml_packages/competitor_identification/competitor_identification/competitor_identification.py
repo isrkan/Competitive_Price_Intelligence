@@ -9,8 +9,11 @@ class CompetitorIdentification:
         Args:
         - custom_config_path (str): Path to the custom configuration file (optional).
         """
-        # Initialize the Config class with the custom configuration (if provided)
-        self.config = Config(custom_config_path=custom_config_path)
+        try:
+            # Initialize the Config class with the custom configuration (if provided)
+            self.config = Config(custom_config_path=custom_config_path)
+        except Exception as e:
+            raise RuntimeError(f"Error initializing CompetitorIdentification: {e}")
 
     def get_config(self):
         """

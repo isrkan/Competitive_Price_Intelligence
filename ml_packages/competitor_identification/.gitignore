@@ -1,0 +1,32 @@
+# Python
+*.pyc
+__pycache__/
+
+# Environments
+.env
+
+# Distribution files
+dist/
+build/
+*.egg-info/
+
+# MLflow runs
+mlruns/
+
+# IDE files
+.vscode/
+.idea/
+
+# Compiled Python files
+*.pyc
+*.pyo
+__pycache__/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Other
+*.swp
+.DS_Store
+*csv

@@ -11,12 +11,13 @@ from .visualization.present_competitors_table import present_competitors_table
 import os
 
 
-def run_pipeline(config, category, SubChainName, StoreName, product_description, Geographic):
+def run_pipeline(config, data_directory_path, category, SubChainName, StoreName, product_description, Geographic):
     """
     Run the complete pipeline for competitor identification with the provided config.
 
     Parameters:
     - config (Config): Configuration object with pipeline settings.
+    - data_directory_path (str): The directory path containing data files.
     - category (str): Category of the product.
     - SubChainName (str): SubChain name.
     - StoreName (str): Store name.
@@ -35,14 +36,13 @@ def run_pipeline(config, category, SubChainName, StoreName, product_description,
         if not all(isinstance(arg, str) and arg.strip() for arg in [category, SubChainName, StoreName, product_description, Geographic]):
             raise ValueError("Error: All input parameters (category, SubChainName, StoreName, product_description, Geographic) must be non-empty strings.")
 
-        # Fetch the user directory token
-        user_directory_token = os.getenv('USER_DIRECTORY_TOKEN')
-        if not user_directory_token:
-            raise RuntimeError("Error: Environment variable 'USER_DIRECTORY_TOKEN' is not set.")
+        # Check if the provided data directory exists
+        if not os.path.exists(data_directory_path):
+            raise RuntimeError(f"Error: The provided data directory path '{data_directory_path}' does not exist.")
 
         # Load data from config
         try:
-            price_data_dir = config.get('price_data_dir').replace('<USER_DIRECTORY_TOKEN>', user_directory_token)
+            price_data_dir = config.get('price_data_dir').replace('<USER_DIRECTORY_TOKEN>', data_directory_path)
             store_file_path = config.get('store_file_path').replace('%price_data_dir%', price_data_dir)
             subchain_file_path = config.get('subchain_file_path').replace('%price_data_dir%', price_data_dir)
             nan_threshold = config.get('nan_threshold')

@@ -14,8 +14,6 @@ def evaluate_clustering(cluster_labels, clustered_dr_components_df):
     - davies_bouldin: The Davies-Bouldin score of the clustering.
     """
     try:
-        print(len(cluster_labels))
-        print(len(clustered_dr_components_df))
         if len(cluster_labels) != len(clustered_dr_components_df):
             raise ValueError("The number of cluster labels must match the number of rows in dr_components_df.")
 

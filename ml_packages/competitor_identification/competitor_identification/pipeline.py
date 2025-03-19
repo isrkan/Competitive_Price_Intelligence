@@ -8,10 +8,11 @@ from .clustering.clustering import perform_clustering, find_top_competitors
 from .visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
 from .visualization.plot_clusters import plot_clusters
 from .visualization.present_competitors_table import present_competitors_table
+from .evaluation.clustering_evaluation import evaluate_clustering
 import os
 
 
-def run_pipeline(config, data_directory_path, category, SubChainName, StoreName, product_description, Geographic):
+def run_pipeline(config, data_directory_path, category, SubChainName, StoreName, product_description, Geographic, include_clustering_evaluation=False):
     """
     Run the complete pipeline for competitor identification with the provided config.
 
@@ -23,6 +24,7 @@ def run_pipeline(config, data_directory_path, category, SubChainName, StoreName,
     - StoreName (str): Store name.
     - product_description (str): Description of the product.
     - Geographic (str): Geographic region for filtering.
+    - include_clustering_evaluation (bool): Flag to decide whether to evaluate clustering results.
 
     Returns:
     - top_competitors (list): The top competitors identified.
@@ -39,7 +41,6 @@ def run_pipeline(config, data_directory_path, category, SubChainName, StoreName,
         # Check if the provided data directory exists
         if not os.path.exists(data_directory_path):
             raise RuntimeError(f"Error: The provided data directory path '{data_directory_path}' does not exist.")
-
         # Load data from config
         try:
             price_data_dir = config.get('price_data_dir').replace('<USER_DIRECTORY_TOKEN>', data_directory_path)
@@ -100,6 +101,10 @@ def run_pipeline(config, data_directory_path, category, SubChainName, StoreName,
         # Perform the clustering
         clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustered_competitors_dr_components_df = perform_clustering(dr_components_df, chosen_store_info, same_chain_dr_components_df, clustering_method, clustering_method_params)
 
+        # Evaluate clustering results if the evaluate flag is set to True
+        if include_clustering_evaluation:
+            silhouette_score, davies_bouldin_score = evaluate_clustering(cluster_labels, clustered_dr_components_df)
+
         # Plot the clusters
         fig2 = plot_clusters(clustered_dr_components_df, cluster_labels, clustered_store_dr_components_df, clustering_method.upper())
 
@@ -109,7 +114,11 @@ def run_pipeline(config, data_directory_path, category, SubChainName, StoreName,
         # Present a table displaying the top competitors
         fig3 = present_competitors_table(top_competitors)
 
-        return top_competitors, fig1, fig2, fig3
+        # Return top competitors and figures
+        if include_clustering_evaluation:
+            return top_competitors, fig1, fig2, fig3, silhouette_score, davies_bouldin_score
+        else:
+            return top_competitors, fig1, fig2, fig3
     except Exception as e:
         print(f"Error in run_pipeline: {e}")
         raise

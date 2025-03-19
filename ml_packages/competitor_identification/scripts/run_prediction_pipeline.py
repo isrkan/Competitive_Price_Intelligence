@@ -37,6 +37,12 @@ def main():
         print("Error: Missing required values in configuration file.")
         return
 
+    # Check if 'include_clustering_evaluation' exists in input_params and convert it to boolean if found
+    if 'include_clustering_evaluation' in input_params:
+        include_clustering_evaluation = input_params['include_clustering_evaluation'].lower() in ['true', '1', 't', 'y', 'yes']
+    else:
+        include_clustering_evaluation = None  # If it doesn't exist, don't pass it
+
     # Initialize the churn predictor with optional custom config path
     if config_path:
         competitor_identifier = competitor_identification.CompetitorIdentification(config_path=args.config_path)
@@ -44,18 +50,35 @@ def main():
         competitor_identifier = competitor_identification.CompetitorIdentification()
 
     try:
-        # Run the prediction pipeline
-        top_competitors, fig1, fig2, fig3 = pipeline.run_pipeline(config=competitor_identifier.config,
-                                                                  data_directory_path=data_directory_path,
-                                                                  category=category,
-                                                                  SubChainName=subchain_name,
-                                                                  StoreName=store_name,
-                                                                  product_description=product_description,
-                                                                  Geographic=geographic)
+        # Run the pipeline
+        if include_clustering_evaluation is not None:
+            # Run the prediction pipeline
+            top_competitors, fig1, fig2, fig3, silhouette_score, davies_bouldin_score = pipeline.run_pipeline(config=competitor_identifier.config,
+                                                                                                              data_directory_path=data_directory_path,
+                                                                                                              category=category,
+                                                                                                              SubChainName=subchain_name,
+                                                                                                              StoreName=store_name,
+                                                                                                              product_description=product_description,
+                                                                                                              Geographic=geographic,
+                                                                                                              include_clustering_evaluation=include_clustering_evaluation)
+        else:  # If the include_clustering_evaluation flag is not provided, skip evaluation
+            top_competitors, fig1, fig2, fig3 = pipeline.run_pipeline(config=competitor_identifier.config,
+                                                                      data_directory_path=data_directory_path,
+                                                                      category=category,
+                                                                      SubChainName=subchain_name,
+                                                                      StoreName=store_name,
+                                                                      product_description=product_description,
+                                                                      Geographic=geographic)
+
 
         # Output the results
         print("Top Competitors Identified:")
         print(top_competitors)
+
+        # Optionally print silhouette score and Davies-Bouldin score if evaluation was done
+        if include_clustering_evaluation is not None:
+            print(f"Silhouette Score: {silhouette_score}")
+            print(f"Davies-Bouldin Score: {davies_bouldin_score}")
 
     except Exception as e:
         print(f"Error running pipeline: {e}")

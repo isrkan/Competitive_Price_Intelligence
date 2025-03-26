@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 import pandas as pd
-from competitor_identification.data.preprocess_data import get_store_and_chain_ids, filter_nans, filter_by_specific_product_and_add_store_details, filter_by_geographic_region
+from competitor_identification.data.preprocess_data import get_store_and_chain_ids, filter_nans, filter_by_specific_product_and_add_store_details, filter_by_geographic_region, data_preparation_clustering
 
 
 class TestPreprocessData(unittest.TestCase):
@@ -158,6 +158,32 @@ class TestPreprocessData(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             filter_by_specific_product_and_add_store_details(self.category_data, 'ProductA', invalid_store_data)
+
+    def test_filter_by_geographic_region_invalid_data(self):
+        """
+        Test that filter_by_geographic_region raises errors for invalid input types.
+        """
+        with self.assertRaises(TypeError):
+            filter_by_geographic_region(None, self.store_data, 'City')
+
+        with self.assertRaises(TypeError):
+            filter_by_geographic_region(self.category_data, None, 'City')
+
+        with self.assertRaises(TypeError):
+            filter_by_geographic_region(self.category_data, self.store_data, 123)
+
+    def test_data_preparation_clustering_invalid_inputs(self):
+        """
+        Test that data_preparation_clustering raises errors for invalid input types.
+        """
+        with self.assertRaises(TypeError):
+            data_preparation_clustering(None, self.category_data, self.store_data, self.category_data)
+
+        with self.assertRaises(TypeError):
+            data_preparation_clustering(self.category_data, None, self.store_data, self.category_data)
+
+        with self.assertRaises(ValueError):
+            data_preparation_clustering(pd.DataFrame(), self.category_data, self.store_data, self.category_data)
 
 
 if __name__ == "__main__":

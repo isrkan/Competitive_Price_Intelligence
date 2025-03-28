@@ -37,5 +37,4 @@ def present_competitors_table(top_competitors):
         return fig3
 
     except Exception as e:
-        print(f"Error in present competitors table: {e}")
-        return None
+        raise TypeError(f"Error in present competitors table: {e}")

@@ -104,5 +104,4 @@ def plot_clusters(dr_components_df, dr_cluster_labels, store_dr_components_df, c
         return fig2
 
     except Exception as e:
-        print(f"Error in plot clusters: {e}")
-        return None
+        raise TypeError(f"Error in plot clusters: {e}")

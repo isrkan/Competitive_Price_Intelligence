@@ -52,5 +52,4 @@ def plot_dimensionality_reduction(combined_components_df, chosen_store_info):
         return fig1
 
     except Exception as e:
-        print(f"Error in plot dimensionality reduction: {e}")
-        return None
+        raise TypeError(f"Error in plot dimensionality reduction: {e}")

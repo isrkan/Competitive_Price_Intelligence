@@ -119,8 +119,9 @@ class TestLoadData(unittest.TestCase):
         """
         Test that `load_store_data` raises a ValueError when required columns are missing from the store data.
         """
-        # Mock data with missing required columns in the store data
+        # Simulate missing 'SubChainName' column in the store data
         mock_exists.side_effect = lambda path: path in [self.store_file_path, self.subchain_file_path]
+        # Mock data with missing required columns in the store data (e.g., missing 'SubChainName')
         store_data_mock = pd.DataFrame({
             'ChainID': [1],
             'ChainName': ['ChainA'],

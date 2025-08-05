@@ -13,9 +13,9 @@ class Config:
         - custom_config_path (str or Path, optional): Path to the custom configuration file.
         """
         try:
-            # Determine the path to the default_config.yaml relative to this module's location
+            # Determine the path to the pca_birch_config.yaml relative to this module's location
             if default_config_path is None:
-                default_config_path = Path(__file__).resolve().parent / 'default_config.yaml'
+                default_config_path = Path(__file__).resolve().parent / 'pca_birch_config.yaml'
 
             # Load the default configuration
             self.config = self.load_config(default_config_path)

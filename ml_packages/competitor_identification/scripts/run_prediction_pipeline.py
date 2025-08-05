@@ -43,9 +43,9 @@ def main():
     else:
         include_clustering_evaluation = None  # If it doesn't exist, don't pass it
 
-    # Initialize the churn predictor with optional custom config path
+    # Initialize the competitor identification with optional custom config path
     if config_path:
-        competitor_identifier = competitor_identification.CompetitorIdentification(config_path=args.config_path)
+        competitor_identifier = competitor_identification.CompetitorIdentification(custom_config_path=config_path)
     else:
         competitor_identifier = competitor_identification.CompetitorIdentification()
 

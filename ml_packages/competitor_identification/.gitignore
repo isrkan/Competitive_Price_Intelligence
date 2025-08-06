@@ -4,6 +4,7 @@ __pycache__/
 
 # Environments
 .env
+venv/
 
 # Distribution files
 dist/
@@ -16,6 +17,9 @@ mlruns/
 # IDE files
 .vscode/
 .idea/
+
+# Pytest
+.pytest_cache/
 
 # Compiled Python files
 *.pyc

@@ -16,11 +16,12 @@ if __name__ == "__main__":
         "project": "Competitive Price Intelligence"
     }
 
-    # Create MLflow client
+    # Create MLflow client to manage experiments
     client = MlflowClient()
 
     # Get or create experiment
     experiment = client.get_experiment_by_name(experiment_name)
+    # Check if the experiment already exists, otherwise create it
     if experiment is None:
         experiment_id = client.create_experiment(experiment_name)
         # Set tags and description only after creation
@@ -28,8 +29,8 @@ if __name__ == "__main__":
         for key, value in experiment_tags.items():
             client.set_experiment_tag(experiment_id, key, value)
     else:
+        # Use existing experiment ID and optionally update tags
         experiment_id = experiment.experiment_id
-        # Optionally update tags even if it exists (safe to do)
         client.set_experiment_tag(experiment_id, "mlflow.note.content", experiment_description)
         for key, value in experiment_tags.items():
             client.set_experiment_tag(experiment_id, key, value)
@@ -47,26 +48,13 @@ if __name__ == "__main__":
     store = input_data.get("store_name")
     product = input_data.get("product_description")
     geo = input_data.get("geographic")
-    config_path = input_data.get("config_path")
+    config_path = ".." + input_data.get("config_path")
 
-    # Slice config filename from path
-    config_key = config_path[36:-5]  # Assumes fixed path prefix and .yaml suffix
+    # Slice config filename from path to extract dr and clustering methods
+    dr_clustering_methods = config_path[36:-12]  # Assumes fixed path prefix and .yaml suffix
 
-    if config_key == "default_config":
-        dr_method = "pca"
-        clustering_method = "birch"
-    elif config_key == "tsne_dbscan_config":
-        dr_method = "tsne"
-        clustering_method = "dbscan"
-    elif config_key == "umap_optics_config":
-        dr_method = "umap"
-        clustering_method = "optics"
-    else:
-        raise ValueError(f"Unknown config key: {config_key}")
-
-
-    # Build the run name
-    run_name = f"{dr_method}_{clustering_method}_{category}_{subchain}_{store}_{product}_{geo}"
+    # Define run name combining relevant info
+    run_name = f"{dr_clustering_methods}_{category}_{subchain}_{store}_{product}_{geo}"
 
     # Define the parameters dictionary
     parameters = {
@@ -77,7 +65,7 @@ if __name__ == "__main__":
     mlflow.projects.run(
         uri=project_uri,  # The URI of the project - current directory
         entry_point="main",  # The entry point to run
-        parameters=parameters,
-        experiment_id=experiment_id,
-        run_name=run_name
+        parameters=parameters,  # Parameters to send to the entry point
+        experiment_id=experiment_id,  # Track under this experiment
+        run_name=run_name  # Name for this run
     )

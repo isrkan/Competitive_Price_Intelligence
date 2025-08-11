@@ -25,6 +25,9 @@ setup(
     packages=find_packages(where='.'),  # Root directory of the package
     package_dir={'competitor_identification': 'competitor_identification'},  # Correct mapping
     include_package_data=True,
+    package_data={
+        'competitor_identification': ['scripts/*'],
+    },
     install_requires=required,
     python_requires='>=3.7',
     entry_points={

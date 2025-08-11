@@ -29,7 +29,7 @@ setup(
     python_requires='>=3.7',
     entry_points={
         'console_scripts': [
-            'run_prediction_pipeline=scripts.run_prediction_pipeline:main',
+            'run_prediction_pipeline=competitor_identification.scripts.run_prediction_pipeline:main',
         ]
     },
 )

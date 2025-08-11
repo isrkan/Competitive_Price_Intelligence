@@ -12,12 +12,8 @@ def read_version():
         raise RuntimeError("Unable to find version string.")
 
 # Read requirements from the requirements.txt file
-with open('requirements.txt', 'rb') as f:
-    content = f.read()
-    # Remove BOM if present and decode
-    if content.startswith(b'\xef\xbb\xbf'):
-        content = content[3:]
-    required = content.decode('utf-8').splitlines()
+with open('requirements.txt', encoding='utf-8-sig') as f:
+    required = f.read().splitlines()
 
 
 setup(

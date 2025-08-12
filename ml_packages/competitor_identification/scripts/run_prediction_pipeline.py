@@ -44,7 +44,7 @@ def main():
         include_clustering_evaluation = None  # If it doesn't exist, don't pass it
 
     # Initialize the competitor identification with optional custom config path
-    if config_path:
+    if config_path!="/competitor_identification/config/pca_birch_config.yaml":
         competitor_identifier = competitor_identification.CompetitorIdentification(custom_config_path=config_path)
     else:
         competitor_identifier = competitor_identification.CompetitorIdentification()

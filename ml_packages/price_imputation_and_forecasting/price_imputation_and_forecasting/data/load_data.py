@@ -27,7 +27,7 @@ def load_store_data(store_file_path, subchain_file_path):
             raise RuntimeError(f"Unexpected error loading CSV file {store_file_path}: {e}")
 
         # Check required columns are present in store data
-        required_store_columns = {'ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName'}
+        required_store_columns = {'ChainID', 'ChainName', 'SubChainID', 'SubChainName', 'StoreID', 'StoreName', 'DistrictName', 'SubDistrictName', 'CityName', 'StoreType', 'LocationType'}
         if not required_store_columns.issubset(store_data.columns):
             missing_columns = required_store_columns - set(store_data.columns)
             raise ValueError(f"Missing columns in store data: {missing_columns}")

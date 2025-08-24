@@ -29,6 +29,10 @@ def encode_store_data(store_data):
             drop_first=True
         )
 
+        # Convert all boolean columns to integers (0/1)
+        bool_cols = store_data_encoded.select_dtypes(include=['bool']).columns
+        store_data_encoded[bool_cols] = store_data_encoded[bool_cols].astype(int)
+
         # Set StoreID as the index (needed for merging later)
         store_data_encoded = store_data_encoded.set_index('StoreID')
     except Exception as e:

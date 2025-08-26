@@ -168,12 +168,13 @@ def split_train_val_test_for_imputation(df_sim_input, df_input, matrix_sim_maske
                 raise TypeError(f"{name} must be a NumPy array, got {type(arr)} instead.")
 
         # Check dimensions consistency
-        n_samples = df_sim_input.shape[0]
-        for arr, name in zip(
-            [df_input, matrix_sim_masked_inputs, df_store_input, matrix_target_mask],
-            ["df_input", "matrix_sim_masked_inputs", "df_store_input", "matrix_target_mask"]):
-            if arr.shape[0] != n_samples:
-                raise ValueError(f"{name} must have the same number of samples ({arr.shape[0]}) as df_sim_input ({n_samples}).")
+        n, T = df_sim_input.shape
+        if df_input.shape != (n, T):
+            raise ValueError(f"df_input shape {df_input.shape} must equal (n,T)={(n, T)}")
+        if matrix_sim_masked_inputs.shape != (n, T):
+            raise ValueError(f"matrix_sim_masked_inputs shape {matrix_sim_masked_inputs.shape} must equal {(n, T)}")
+        if matrix_target_mask.shape != (n, T):
+            raise ValueError(f"matrix_target_mask shape {matrix_target_mask.shape} must equal {(n, T)}")
 
         # Check test_size and val_size ranges
         if not (0 < test_size < 1):
@@ -185,22 +186,28 @@ def split_train_val_test_for_imputation(df_sim_input, df_input, matrix_sim_maske
         raise RuntimeError(f"Input validation failed: {e}")
 
     # Step 1: Build the model input (X).
-    # Here we concatenate the "df_input" (time series with NaNs filled) and the "matrix_sim_masked_inputs" along the feature dimension.
+    # Here we stack the "df_sim_input" (time series with NaNs filled) and the "matrix_sim_masked_inputs" to build tensors for the neural networks model.
     # So if values.shape = (n_samples, seq_len, 1) and mask.shape = (n_samples, seq_len, 1), then X.shape = (n_samples, seq_len, 2).
     try:
-        X = np.concatenate([df_sim_input, matrix_sim_masked_inputs, df_store_input], axis=-1)
+        # X_sequence: (n, T, 2) : channel 0 -> price_with_gaps; channel 1 -> observation mask
+        X_sequence = np.stack([df_sim_input, matrix_sim_masked_inputs], axis=-1)
+
+        # X_static: (n, D) as-is (no time dimension)
+        X_static = df_store_input  # (n, D)
     except Exception as e:
-        raise RuntimeError(f"Failed to concatenate inputs into X: {e}")
+        raise RuntimeError(f"Failed to stack inputs into X: {e}")
 
     # Step 2: Define the target (y).
     # For imputation, the target is always the full ground truth values (not the input with gaps, but the original filled series).
-    y = df_input
+    # y and target masks to (n, T, 1)
+    y = df_input[..., None]          # (n, T, 1)
+    target_mask_3d = matrix_target_mask[..., None]  # (n, T, 1)
 
     # Step 3: First split into (train+val) and test.
     # We only split indices here (not the arrays yet), to ensure all arrays (X, matrix_sim_masked_inputs, matrix_target_mask, y) stay aligned.
     try:
         train_val_idx, test_idx = train_test_split(
-            np.arange(X.shape[0]),  # indices of samples
+            np.arange(X_sequence.shape[0]),  # indices of samples
             test_size=test_size,
             random_state=random_state
         )
@@ -220,7 +227,7 @@ def split_train_val_test_for_imputation(df_sim_input, df_input, matrix_sim_maske
     # Step 5: Use the indices to slice ALL arrays consistently.
     # This way we guarantee that X, matrix_masked_inputs, matrix_target_mask, y stay in sync.
     return (
-        X[train_idx], matrix_sim_masked_inputs[train_idx], matrix_target_mask[train_idx], y[train_idx],  # Training
-        X[val_idx], matrix_sim_masked_inputs[val_idx], matrix_target_mask[val_idx], y[val_idx],  # Validation
-        X[test_idx], matrix_sim_masked_inputs[test_idx], matrix_target_mask[test_idx], y[test_idx],  # Testing
+        X_sequence[train_idx], X_static[train_idx], target_mask_3d[train_idx], y[train_idx],  # Training
+        X_sequence[val_idx], X_static[val_idx], target_mask_3d[val_idx], y[val_idx],  # Validation
+        X_sequence[test_idx], X_static[test_idx], target_mask_3d[test_idx], y[test_idx],  # Testing
     )

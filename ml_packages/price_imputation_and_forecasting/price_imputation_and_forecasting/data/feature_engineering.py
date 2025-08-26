@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def encode_store_data(store_data):
     """
@@ -40,3 +41,52 @@ def encode_store_data(store_data):
         raise RuntimeError(f"Error encoding store data: {e}")
 
     return store_data_encoded
+
+def scale_price_inputs(df_price_input, df_sim_price_input):
+    """
+    Apply log1p scaling (log(1 + x)) to both ground truth and simulated price inputs.
+    Compresses large values, makes the distribution more symmetric and stabilizes variance.
+
+    Parameters:
+    - df_price_input (np.ndarray): Ground truth price values (NaN already filled).
+    - df_sim_price_input (np.ndarray): Simulated price values (with artificial gaps).
+
+    Returns:
+    - df_price_input_scaled (np.ndarray)
+    - df_sim_price_input_scaled (np.ndarray)
+    """
+    if not isinstance(df_price_input, np.ndarray) or not isinstance(df_sim_price_input, np.ndarray):
+        raise TypeError("Inputs must be NumPy arrays.")
+
+    if df_price_input.shape != df_sim_price_input.shape:
+        raise ValueError("df_price_input and df_sim_price_input must have the same shape.")
+
+    try:
+        # log1p transform (safe for zeros)
+        df_price_input_scaled = np.log1p(df_price_input)
+        df_sim_price_input_scaled = np.log1p(df_sim_price_input)
+    except Exception as e:
+        raise RuntimeError(f"Failed during log1p scaling: {e}")
+
+    return df_price_input_scaled, df_sim_price_input_scaled
+
+
+def inverse_scale_price_inputs_with_expm1(scaled_array):
+    """
+    Apply the inverse of log1p scaling (expm1) to recover original price values.
+
+    Parameters:
+    - scaled_array (np.ndarray): Array transformed with log1p.
+
+    Returns:
+    - original_array (np.ndarray): Back-transformed array with original scale.
+    """
+    if not isinstance(scaled_array, np.ndarray):
+        raise TypeError("Input must be a NumPy array.")
+
+    try:
+        original_array = np.expm1(scaled_array)
+    except Exception as e:
+        raise RuntimeError(f"Failed during inverse expm1 scaling: {e}")
+
+    return original_array

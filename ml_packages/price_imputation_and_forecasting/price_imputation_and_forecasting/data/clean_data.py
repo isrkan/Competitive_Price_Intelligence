@@ -26,32 +26,3 @@ def filter_missing_values_from_price_data(category_df, threshold_ratio):
     except Exception as e:
         raise RuntimeError(f"Error filtering DataFrame with threshold {thresh}: {e}")
     return df_filtered
-
-def impute_missing_values(df):
-    """
-    Imputes missing values in the price data DataFrame by linear interpolation followed by backward and forward filling.
-
-    Parameters:
-    - df (pd.DataFrame): DataFrame to impute missing values in.
-
-    Returns:
-    - pd.DataFrame: DataFrame with imputed missing values.
-    """
-    if not isinstance(df, pd.DataFrame):
-        raise TypeError(f"Expected input df to be a pandas DataFrame, got {type(df)} instead.")
-    if df.empty:
-        raise ValueError("Input DataFrame 'df' is empty.")
-
-    try:
-        # Step 1: Interpolation - linear (along columns)
-        df_interpolated = df.T.interpolate(method='linear').T
-    except Exception as e:
-        raise RuntimeError(f"Error during linear interpolation: {e}")
-
-    # Imputation - first NOCB and then LOCB
-    # Step 2: Backward fill (NOCB)
-    df_bfill = df_interpolated.T.bfill().T
-    # Step 3: Forward fill (LOCF)
-    df_imputed = df_bfill.T.ffill().T
-
-    return df_imputed

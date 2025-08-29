@@ -255,3 +255,118 @@ def prepare_imputation_model_inputs_for_predictions(df_scaled_price_input, matri
         return X_sequence, X_static
     except Exception as e:
         raise RuntimeError(f"[prepare_model_inputs] Error preparing inputs: {e}")
+
+
+
+def split_chronologically_train_val_test_for_forecasting(data, test_size, val_size):
+    """
+    Chronologically split a matrix of series into train/val/test segments.
+
+    Parameters:
+    - series_matrix (np.ndarray): Shape (n_series, T). Each row = one time series (already scaled/transformed).
+    - test_size (float): Fraction of total timeline reserved for test.
+    - val_size (float): Fraction of remaining timeline (after test) reserved for validation.
+
+    Returns:
+    - train_data (np.ndarray): Array of shape (n_series, train_len). Earliest part of each series.
+    - val_data (np.ndarray): Array of shape (n_series, val_len). Middle part of each series.
+    - test_data (np.ndarray): Array of shape (n_series, test_len). Most recent part of each series.
+    """
+    # Input checks
+    if not isinstance(data, np.ndarray):
+        raise TypeError("Expected input `data` to be a numpy array.")
+    if data.ndim != 2:
+        raise ValueError("Expected 2D array (n_series, T). Got shape {}".format(data.shape))
+
+    # Unpack dimensions
+    n_series, T = data.shape  # Number of series, timeline length
+
+    # Compute sizes of train/val/test splits
+    test_len = int(T * test_size)  # Length of test set (last part of timeline)
+    if test_len <= 0 or test_len >= T:
+        raise ValueError("Invalid test_size resulting in length {}".format(test_len))
+
+    train_val_len = T - test_len  # Length remaining for train + validation
+    val_len = int(train_val_len * val_size)  # Fraction of remaining reserved for validation
+    train_len = train_val_len - val_len  # Rest for training
+
+    # Check that splits are valid (no empty sets)
+    if train_len <= 0 or val_len <= 0:
+        raise ValueError("Invalid split sizes: train={}, val={}, test={}".format(train_len, val_len, test_len))
+
+    # Perform chronological split (no shuffling, keep time order)
+    train_data = data[:, :train_len]  # first part = training
+    val_data = data[:, train_len:train_len + val_len]  # middle part = validation
+    test_data = data[:, train_len + val_len:]  # last part = test
+
+    return train_data, val_data, test_data
+
+
+def create_sliding_windows(data, input_lookback, horizon, min_stride, max_stride, random_state):
+    """
+    Create sliding windows (X, y) from time series data.
+
+    Parameters:
+    - data (np.ndarray): 2D array of shape (n_series, T) where T is the timeline length.
+    - input_lookback (int): Number of timesteps in the input window (history).
+    - horizon (int): Forecast horizon (how many timesteps into the future to predict).
+    - stride: Step size to slide the window across the timeline.
+        - min_stride (int): Minimum stride length for sliding window.
+        - max_stride (int): Maximum stride length for sliding window.
+    - random_state (int): Random seed for reproducibility.
+
+    Returns:
+    - X (np.ndarray): Input windows, shape (n_samples, input_lookback).
+    - y (np.ndarray): Targets, shape (n_samples, horizon).
+    - ids (np.ndarray): Series index for each sample, shape (n_samples,) - Each element = integer ID of which series (row in `data`) the sample came from.
+                        Useful when you have many series and want to link windows back to products.
+    - t0s (np.ndarray): Forecast start time index (column index in original series) for each sample. This marks where the prediction begins.
+                        Useful for reconstructing predictions back into the original timeline.
+    """
+    # Ensure input is a numpy array with 2D shape (n_series, T)
+    if not isinstance(data, np.ndarray):
+        raise TypeError("Expected input `data` to be a numpy array.")
+    if data.ndim != 2:
+        raise ValueError("Expected 2D array (n_series, T). Got shape {}".format(data.shape))
+
+    n_series, T = data.shape  # Number of series, timeline length
+
+    # Random generator for reproducibility
+    rng = np.random.default_rng(random_state)
+    # Storage lists for collecting samples
+    X_list, y_list, ids, t0s = [], [], [], []
+
+    # Iterate over each series separately
+    for s in range(n_series):
+        # Last possible starting index to leave room for horizon
+        last_t0 = T - horizon
+
+        # Choose a random stride for this series
+        stride = rng.integers(min_stride, max_stride + 1)
+
+        # Slide a moving window across the timeline
+        # Start at input_lookback (so we have enough history), stop at last_t0 (so we have enough future for horizon) and move forward by `stride` each time
+        for t0 in range(input_lookback, last_t0 + 1, stride):
+            # Input = window of past `input_lookback` values ending at t0-1
+            x = data[s, t0 - input_lookback:t0]
+            # Target = next `horizon` values starting at t0
+            y = data[s, t0:t0 + horizon]
+
+            # Only keep if window sizes match (in case series is too short)
+            if x.shape[0] == input_lookback and y.shape[0] == horizon:
+                X_list.append(x)
+                y_list.append(y)
+                ids.append(s)  # remember which series it came from
+                t0s.append(t0)  # remember forecast start position
+
+    # Safety check: ensure we actually created windows
+    if not X_list:
+        raise RuntimeError("No windows created. Check lookback, horizon, and series length.")
+
+    # Stack lists into numpy arrays
+    X = np.stack(X_list, axis=0)  # shape (n_samples, input_lookback)
+    y = np.stack(y_list, axis=0)  # shape (n_samples, horizon)
+    ids = np.array(ids, dtype=int)  # series IDs
+    t0s = np.array(t0s, dtype=int)  # forecast start indices
+
+    return X, y, ids, t0s

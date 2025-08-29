@@ -231,3 +231,27 @@ def split_train_val_test_for_imputation(df_sim_input, df_input, matrix_sim_maske
         X_sequence[val_idx], X_static[val_idx], target_mask_3d[val_idx], y[val_idx],  # Validation
         X_sequence[test_idx], X_static[test_idx], target_mask_3d[test_idx], y[test_idx],  # Testing
     )
+
+
+def prepare_imputation_model_inputs_for_predictions(df_scaled_price_input, matrix_masked_price_inputs, df_store_input):
+    """
+    Prepare imputation model inputs (X_sequence, X_static) for predictions.
+
+    Parameters:
+    - df_scaled_price_input (np.ndarray): Scaled price input matrix, shape (n_samples, seq_len).
+    - matrix_masked_price_inputs (np.ndarray): Mask matrix for missing values, shape (n_samples, seq_len).
+    - df_store_input (np.ndarray): Store-level static input features, shape (n_samples, num_static_features).
+
+    Returns:
+    - X_sequence (np.ndarray): Sequence input for the model, shape (n_samples, seq_len, 2).
+    - X_static (np.ndarray): Static input for the model, shape (n_samples, num_static_features).
+    """
+    try:
+        # Stack scaled input and mask to form sequence input
+        X_sequence = np.stack([df_scaled_price_input, matrix_masked_price_inputs], axis=-1)
+        # Static input is directly the store features
+        X_static = df_store_input
+
+        return X_sequence, X_static
+    except Exception as e:
+        raise RuntimeError(f"[prepare_model_inputs] Error preparing inputs: {e}")

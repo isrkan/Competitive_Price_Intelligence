@@ -78,3 +78,29 @@ def save_model(model, history, save_path):
             json.dump(history.history, f)
     except Exception as e:
         raise RuntimeError(f"Error saving model or history: {e}")
+
+
+def load_model(save_path):
+    """
+    Load a trained Keras model.
+
+    Parameters:
+    - save_path (str): Directory path where model and history were saved.
+
+    Returns:
+    - model (tf.keras.Model): Loaded Keras model instance.
+    """
+    # Ensure provided path exists
+    if not os.path.exists(save_path):
+        raise FileNotFoundError(f"Provided save path does not exist: {save_path}")
+
+    try:
+        # Load model from .h5 file
+        model_path = os.path.join(save_path, "model.h5")
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Model file not found at: {model_path}")
+        model = tf.keras.models.load_model(model_path, compile=False)
+
+        return model
+    except Exception as e:
+        raise RuntimeError(f"Error loading model or history: {e}")

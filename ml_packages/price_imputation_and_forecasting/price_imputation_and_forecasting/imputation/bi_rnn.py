@@ -24,7 +24,7 @@ def train_bi_rnn(
         - y_train (np.ndarray): Ground truth price series (scaled), shape (n_samples, seq_len).
         - y_val (np.ndarray): Validation ground truth.
 
-    Hyperparameters:
+    Hyperparameters (kwargs):
     - imputation_model_params (dict): Dictionary of hyperparameters passed from config.
         - seq_units (int): Number of BiRNN units.
         - dense_units (int): Number of dense layer units after concatenation.
@@ -34,7 +34,7 @@ def train_bi_rnn(
         - callbacks: Optional list of Keras callbacks (if None, defaults with EarlyStopping & ReduceLROnPlateau)
 
     Returns:
-    - model (tf.keras.Model): Trained model.
+    - model (tf.keras.Model): Trained Bi-RNN model.
     - history: Keras training history (loss, val_loss, etc.)
     """
     # Ensure sequence tensors are 3D and static tensors are 2D
@@ -51,12 +51,12 @@ def train_bi_rnn(
     seq_units = kwargs.get("seq_units", 64)
     dense_units = kwargs.get("dense_units", 64)
     dropout_rate = kwargs.get("dropout_rate", 0.3)
-    epochs = kwargs.get("epochs", 5)
+    epochs = kwargs.get("epochs", 50)
     batch_size = kwargs.get("batch_size", 32)
     callbacks = kwargs.get("callbacks", None)
 
     # ----------------------------------------------------
-    # Extract Input Shapes
+    # Extract input shapes
     # ----------------------------------------------------
     # Define sequence input (time series + mask)
     # Calculate the number of time steps per series (e.g. ~731 days).
@@ -68,7 +68,7 @@ def train_bi_rnn(
     static_features = X_static_train.shape[1]  # static features dimension (D)
 
     # ----------------------------------------------------
-    # Sequence Input (Bi-LSTM for temporal features)
+    # Sequence input (Bi-LSTM for temporal features)
     # ----------------------------------------------------
     # Sequence input (price_with_gaps, obs_mask)
     sequence_input = Input(shape=(seq_len, seq_features), name="sequence_input")
@@ -77,7 +77,7 @@ def train_bi_rnn(
     x = Dropout(dropout_rate)(x)  # Regularize the sequence encoding
 
     # ----------------------------------------------------
-    # Static Input (dense layers for store metadata)
+    # Static input (dense layers for store metadata)
     # ----------------------------------------------------
     static_input = Input(shape=(static_features,), name="static_input")
 
@@ -96,7 +96,7 @@ def train_bi_rnn(
     combined = Concatenate(axis=-1)([x, s_expanded])  # Shape: (n, T, seq_units*2 + dense_units)
 
     # ----------------------------------------------------
-    # Decoder: Fully Connected Layers to predict prices
+    # Decoder: Fully connected layers to predict prices
     # ----------------------------------------------------
     # Decoder dense layers → output imputed prices
     out = Dense(dense_units, activation="relu")(combined)
@@ -105,7 +105,7 @@ def train_bi_rnn(
     output = Dense(1, activation="linear", name="price_output")(out)
 
     # ----------------------------------------------------
-    # Define and Compile the Model
+    # Define and compile the model
     # ----------------------------------------------------
     # Define model
     model = Model(inputs=[sequence_input, static_input], outputs=output)
@@ -125,7 +125,7 @@ def train_bi_rnn(
     y_val_masked = np.concatenate([y_val, target_mask_val], axis=-1)  # Shape: (n_samples, seq_len, 2)
 
     # -----------------------
-    # Callbacks (early stop, LR scheduler, checkpoint)
+    # Callbacks
     # -----------------------
     if callbacks is None:
         callbacks = [
@@ -136,7 +136,7 @@ def train_bi_rnn(
         ]
 
     # ----------------------------------------------------
-    # Train the Model
+    # Train the model
     # ----------------------------------------------------
     history = model.fit(
         [X_sequence_train, X_static_train], y_train_masked,

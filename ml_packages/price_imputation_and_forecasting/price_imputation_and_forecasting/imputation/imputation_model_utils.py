@@ -51,7 +51,7 @@ def masked_mae(y_true_with_mask, y_pred):
     return tf.reduce_sum(abs_error) / (tf.reduce_sum(mask) + 1e-6)
 
 
-def save_model(model, history, save_path):
+def save_imputation_model(model, history, save_path):
     """
     Save a trained Keras model and its training history.
 
@@ -80,7 +80,7 @@ def save_model(model, history, save_path):
         raise RuntimeError(f"Error saving model or history: {e}")
 
 
-def load_model(save_path):
+def load_imputation_model(save_path):
     """
     Load a trained Keras model.
 

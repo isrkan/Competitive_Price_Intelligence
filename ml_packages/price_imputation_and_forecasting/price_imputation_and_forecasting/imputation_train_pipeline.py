@@ -1,6 +1,6 @@
 import os
 from .data import load_data, clean_data, feature_engineering, preprocess_data
-from .imputation import train, model_utils
+from .imputation import train, imputation_model_utils
 from .evaluation import imputation_evaluation
 from .config.config import Config
 
@@ -105,10 +105,10 @@ def run_imputation_train_pipeline(config, data_directory_path, product_category_
 
         # Save trained model and training metrics
         model_save_path = model_save_dir_imputation + product_category_name
-        model_utils.save_model(model, history, model_save_path)
+        imputation_model_utils.save_imputation_model(model, history, model_save_path)
 
         # Evaluate trained model on test data
-        evaluation_metrics = imputation_evaluation.evaluate_model(model, X_sequence_test, X_static_test, y_test, target_mask_test)
+        evaluation_metrics = imputation_evaluation.evaluate_imputation_model(model, X_sequence_test, X_static_test, y_test, target_mask_test)
 
         return evaluation_metrics  # Return evaluation results dictionary
     except Exception as e:

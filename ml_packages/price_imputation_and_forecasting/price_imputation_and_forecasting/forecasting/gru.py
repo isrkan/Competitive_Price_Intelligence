@@ -3,7 +3,7 @@ import tensorflow as tf
 from keras import Input, Model
 from keras.layers import GRU, Dense, Dropout
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from .model_utils import symmetric_mean_absolute_percentage_error, r2_score
+from .forecasting_model_utils import smape, r2_score
 
 def train_gru(
     X_train, y_train, X_val, y_val,
@@ -90,7 +90,7 @@ def train_gru(
         loss="mse",
         metrics=[
             "mae",
-            symmetric_mean_absolute_percentage_error,  # SMAPE (%)
+            smape,  # SMAPE (%)
             r2_score  # R^2 (goodness of fit)
         ]
     )
@@ -114,7 +114,6 @@ def train_gru(
         validation_data=(X_val, y_val),
         epochs=epochs,
         batch_size=batch_size,
-        callbacks=callbacks,
         verbose=1
     )
 

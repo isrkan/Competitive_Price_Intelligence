@@ -1,6 +1,9 @@
 import tensorflow as tf
+import json
+import os
 
-def symmetric_mean_absolute_percentage_error(y_true, y_pred):
+
+def smape(y_true, y_pred):
     """
     Compute Symmetric Mean Absolute Percentage Error (sMAPE).
 
@@ -43,3 +46,32 @@ def r2_score(y_true, y_pred):
 
     # compute R^2, with epsilon in denominator to avoid division by zero
     return 1 - ss_res / (ss_tot + tf.keras.backend.epsilon())
+
+
+def save_forecasting_model(model, history, save_path):
+    """
+    Save a trained Keras model and its training history.
+
+    Parameters:
+    - model (tf.keras.Model): Trained model instance.
+    - history (keras.callbacks.History): Training history (loss, metrics).
+    - save_path (str): Directory path where model and history will be saved.
+    """
+    # Validate model type
+    if not isinstance(model, tf.keras.Model):
+        raise TypeError("Expected 'model' to be a tf.keras.Model instance.")
+
+    # Ensure save directory exists
+    os.makedirs(save_path, exist_ok=True)
+
+    try:
+        # Save model as .h5 file
+        model_path = os.path.join(save_path, "model.h5")
+        model.save(model_path)
+
+        # Save training history as JSON
+        history_path = os.path.join(save_path, "history.json")
+        with open(history_path, "w") as f:
+            json.dump(history.history, f)
+    except Exception as e:
+        raise RuntimeError(f"Error saving model or history: {e}")

@@ -3,7 +3,7 @@ from keras.models import Model
 from keras.layers import Input, Bidirectional, SimpleRNN, Dense, Dropout, Concatenate
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import numpy as np
-from .model_utils import masked_mse, masked_mae
+from .imputation_model_utils import masked_mse, masked_mae
 
 def train_bi_rnn(
     X_sequence_train, X_static_train, target_mask_train, y_train, X_sequence_val, X_static_val, target_mask_val, y_val,

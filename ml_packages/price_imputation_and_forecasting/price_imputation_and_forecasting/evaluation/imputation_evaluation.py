@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from ..imputation import model_utils
+from ..imputation import imputation_model_utils
 
-def evaluate_model(model, X_sequence, X_static, y_true, target_mask):
+def evaluate_imputation_model(model, X_sequence, X_static, y_true, target_mask):
     """
     Evaluate a trained model using masked MSE and masked MAE.
 
@@ -30,8 +30,8 @@ def evaluate_model(model, X_sequence, X_static, y_true, target_mask):
         y_true_with_mask = np.concatenate([y_true, target_mask], axis=-1)  # (n_samples, seq_len, 2)
 
         # Compute masked losses
-        mse_value = model_utils.masked_mse(y_true_with_mask, y_pred).numpy()
-        mae_value = model_utils.masked_mae(y_true_with_mask, y_pred).numpy()
+        mse_value = imputation_model_utils.masked_mse(y_true_with_mask, y_pred).numpy()
+        mae_value = imputation_model_utils.masked_mae(y_true_with_mask, y_pred).numpy()
 
         results = {"masked_mse": mse_value, "masked_mae": mae_value}
 

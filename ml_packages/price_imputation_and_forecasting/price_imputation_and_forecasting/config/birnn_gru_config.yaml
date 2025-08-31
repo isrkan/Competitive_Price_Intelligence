@@ -13,6 +13,12 @@ fill_nan_value: 0        # Value used for replacing NaNs during masking
 gap_prob: 0.3            # Probability of simulating a missing gap
 max_gap: 30              # Maximum length of missing gap (in days)
 
+# Sliding window parameters (for forecasting model training)
+lookback: 84  # Number of past days to use as input (historical window length)
+horizon: 28  # Number of future days to forecast (prediction horizon)
+min_stride: 28  # Minimum gap (stride) between starting points of sliding windows
+max_stride: 84  # Maximum gap (stride) between sliding windows
+
 # Train/val/test split
 test_size: 0.2
 val_size: 0.2
@@ -28,5 +34,16 @@ imputation_model_params:
   batch_size: 32
   callbacks: null
 
+# Default forecasting model
+forecasting_model: "gru"
+forecasting_model_params:
+  gru_units: 128
+  dense_units: 64
+  dropout_rate: 0.2
+  epochs: 1
+  batch_size: 64
+  learning_rate: 0.001
+
 # Save settings
 model_save_dir_imputation: "./saved_models/imputation/"
+model_save_dir_forecasting: "./saved_models/forecasting/"

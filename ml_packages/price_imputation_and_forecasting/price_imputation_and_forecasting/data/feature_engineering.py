@@ -90,3 +90,28 @@ def inverse_scale_price_inputs_with_expm1(scaled_array):
         raise RuntimeError(f"Failed during inverse expm1 scaling: {e}")
 
     return original_array
+
+
+def round_prices_to_nearest_10_cents(prices_array):
+    """
+    Round each price in the DataFrame to the nearest 0.1 (10 cents).
+    Prices less than 0.1 are set to 0.1 to avoid zeros.
+
+    Parameters:
+    - prices_array (np.ndarray): Array of prices.
+
+    Returns:
+    - rounded_prices (np.ndarray): Prices rounded to nearest 0.1, with minimum 0.1.
+    """
+    if not isinstance(prices_array, np.ndarray):
+        raise TypeError("Input must be a NumPy array.")
+
+    try:
+        # Round to nearest 0.1
+        rounded_prices = np.round(prices_array * 10) / 10.0
+        # Replace any 0s with 0.1
+        rounded_prices[rounded_prices == 0] = 0.1
+    except Exception as e:
+        raise RuntimeError(f"Failed during rounding prices. Details: {e}")
+
+    return rounded_prices

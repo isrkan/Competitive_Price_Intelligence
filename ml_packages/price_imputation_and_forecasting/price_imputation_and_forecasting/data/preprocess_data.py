@@ -370,3 +370,30 @@ def create_sliding_windows(data, input_lookback, horizon, min_stride, max_stride
     t0s = np.array(t0s, dtype=int)  # forecast start indices
 
     return X, y, ids, t0s
+
+
+def prepare_forecasting_model_inputs_for_predictions(df_price_with_imputed_data, input_lookback):
+    """
+    Prepare the most recent lookback window per series for forecasting.
+
+    Parameters:
+    - df_price_with_imputed_data (np.ndarray): 2D array of shape (n_series, T), containing fully imputed + scaled time series data.
+    - input_lookback (int): Number of past timesteps to feed into the forecasting model.
+
+    Returns:
+    - X_sequence (np.ndarray): Last lookback timesteps for each series, shape (n_series, input_lookback, 1).
+    """
+    # Validate inputs
+    if not isinstance(df_price_with_imputed_data, np.ndarray):
+        raise TypeError("Expected df_price_with_imputed_data to be numpy array.")
+    n_series, T = df_price_with_imputed_data.shape
+    if T < input_lookback:
+        raise ValueError(f"Series length {T} is shorter than input_lookback {input_lookback}.")
+
+    try:
+        # Take the last input_lookback timesteps for each series
+        X_sequence = df_price_with_imputed_data[:, -input_lookback:]  # shape (n_series, lookback)
+
+        return X_sequence
+    except Exception as e:
+        raise RuntimeError(f"[prepare_model_inputs] Error preparing inputs: {e}")

@@ -1,7 +1,6 @@
 import plotly.graph_objects as go
 
-def visualize_imputation_forecasting_results(df_price_input,df_price_with_imputed_data,df_price_with_forecasted_data
-):
+def visualize_imputation_forecasting_results(df_price_input,df_price_with_imputed_data,df_price_with_forecasted_data):
     """
     Visualize original, imputed, and forecasted price data for selected stores.
 

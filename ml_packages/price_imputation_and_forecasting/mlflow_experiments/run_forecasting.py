@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # Run the MLflow project using the API
     mlflow.projects.run(
         uri=project_uri,  # The URI of the project - current directory
-        entry_point="main",  # The entry point to run - defined in MLproject file
+        entry_point="forecasting",  # The entry point to run - defined in MLproject file
         parameters=parameters,  # Parameters to send to the entry point
         experiment_id=experiment_id,  # Track under this experiment
         run_name=run_name  # Name for this run

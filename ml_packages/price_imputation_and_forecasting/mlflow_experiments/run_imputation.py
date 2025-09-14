@@ -46,7 +46,7 @@ if __name__ == "__main__":
     category = input_data.get("category")
     config_path = ".." + input_data.get("config_path")
 
-    # Slice config filename from path to extract dr and clustering methods
+    # Slice config filename from path to extract imputation model name
     imputation_model = config_path[40:-12]  # Assumes fixed path prefix and .yaml suffix
 
     # Define run name combining relevant info name
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # Run the MLflow project using the API
     mlflow.projects.run(
         uri=project_uri,  # The URI of the project - current directory
-        entry_point="main",  # The entry point to run - defined in MLproject file
+        entry_point="imputation",  # The entry point to run - defined in MLproject file
         parameters=parameters,  # Parameters to send to the entry point
         experiment_id=experiment_id,  # Track under this experiment
         run_name=run_name  # Name for this run

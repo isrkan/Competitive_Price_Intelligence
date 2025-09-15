@@ -1,0 +1,14 @@
+name: price_imputation_and_forecasting
+
+conda_env: conda.yaml
+
+entry_points:
+  imputation:
+    parameters:
+      input_file: string
+    command: "python mlflow_imputation_pipeline.py --input_file {input_file}"
+
+  forecasting:
+    parameters:
+      input_file: string
+    command: "python mlflow_forecasting_pipeline.py --input_file {input_file}"

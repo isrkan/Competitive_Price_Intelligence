@@ -47,7 +47,7 @@ if __name__ == "__main__":
     config_path = ".." + input_data.get("config_path")
 
     # Slice config filename to extract forecasting model name
-    forecasting_model = config_path[40:-12]  # Assumes fixed path prefix and .yaml suffix
+    forecasting_model = os.path.splitext(os.path.basename(config_path))[0].split("_")[1]
 
     # Define run name combining relevant info name
     run_name = f"{forecasting_model}_{category}"

@@ -31,6 +31,19 @@ def run_pipeline(input_file_path: str):
     if not all([category, data_directory_path, config_path]):
         print("Error: Missing required values in YAML file. Ensure 'category', 'data_directory_path', and 'config_path' are provided.")
         return
+    
+    # Resolve config_path to an absolute path if it is not already absolute.
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    if config_path:
+        # remove leading slashes/backslashes to avoid absolute-root issues on Windows
+        cfg_rel = config_path.lstrip("/\\")
+        if not os.path.isabs(cfg_rel):
+            candidate = os.path.join(project_root, cfg_rel)
+            if os.path.exists(candidate):
+                config_path = candidate
+            else:
+                # fall back to original string
+                config_path = config_path
 
     # Initialize PriceImputationForecasting object (loads config internally)
     price_imputer_forecaster = price_imputation_and_forecasting.PriceImputationForecasting(custom_config_path=config_path)

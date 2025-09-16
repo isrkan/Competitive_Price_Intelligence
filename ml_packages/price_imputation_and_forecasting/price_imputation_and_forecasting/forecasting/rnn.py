@@ -1,0 +1,125 @@
+import numpy as np
+import tensorflow as tf
+from keras import Input, Model
+from keras.layers import SimpleRNN, Dense, Dropout
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from .forecasting_model_utils import smape, r2_score
+
+def train_rnn(
+    X_train, y_train, X_val, y_val,
+    **kwargs
+):
+    """
+    Build, train, and return an RNN model for price forecasting.
+
+    Parameters:
+    - X_train (np.ndarray): Training input windows, shape (n_samples, lookback).
+    - y_train (np.ndarray): Training targets, shape (n_samples, horizon).
+    - X_val (np.ndarray): Validation input windows.
+    - y_val (np.ndarray): Validation targets.
+
+    Hyperparameters (kwargs):
+    - forecasting_model_params (dict): Dictionary of hyperparameters passed from config.
+        - rnn_units (int): Number of SimpleRNN units.
+        - dense_units (int): Units in dense layer.
+        - dropout_rate (float): Dropout rate.
+        - epochs (int): Training epochs.
+        - batch_size (int): Batch size.
+        - learning_rate (float): Adam learning rate.
+        - callbacks: Optional list of callbacks.
+
+    Returns:
+    - model (tf.keras.Model): Trained RNN model.
+    - history: Training history (loss, val_loss, etc.)
+    """
+    # Validate inputs
+    if X_train.ndim != 2:
+        raise ValueError("X_train must be 2D: (n_samples, lookback).")
+    if y_train.ndim != 2:
+        raise ValueError("y_train must be 2D: (n_samples, horizon).")
+
+    # ----------------------------------------------------
+    # Extract hyperparameters with defaults
+    # ----------------------------------------------------
+    rnn_units = kwargs.get("rnn_units", 256)
+    dense_units = kwargs.get("dense_units", 128)
+    dropout_rate = kwargs.get("dropout_rate", 0.15)
+    epochs = kwargs.get("epochs", 50)
+    batch_size = kwargs.get("batch_size", 64)
+    learning_rate = kwargs.get("learning_rate", 1e-3)
+    callbacks = kwargs.get("callbacks", None)
+
+    # Sequence lengths
+    lookback = X_train.shape[1]  # timesteps in input window
+    horizon = y_train.shape[1]  # timesteps to forecast
+
+    # ---------------------------
+    # Reshape inputs
+    # ---------------------------
+    # Reshape inputs for RNN → expects 3D (n, timesteps, features)
+    # We only have 1 feature (the price), so expand last dim. Shape becomes (n_samples, lookback, 1)
+    X_train = X_train[..., np.newaxis]  # shape (n, lookback, 1)
+    X_val = X_val[..., np.newaxis]      # shape (n, lookback, 1)
+
+    # ----------------------------------------------------
+    # Build the RNN model architecture
+    # ----------------------------------------------------
+    # Sequence input (sliding window of prices)
+    sequence_input = Input(shape=(lookback, 1), name="sequence_input")
+
+    # RNN encoder: captures temporal dependencies
+    # return_sequences=False → only final hidden state is used (suitable for forecasting horizon)
+    # First RNN → returns sequence for stacking
+    x = SimpleRNN(rnn_units, return_sequences=True, dropout=dropout_rate, recurrent_dropout=dropout_rate)(sequence_input)
+
+    # Second RNN → compress sequence into final hidden state (a smaller representation)
+    x = SimpleRNN(rnn_units // 2, return_sequences=False, dropout=dropout_rate, recurrent_dropout=dropout_rate)(x)
+
+    # Fully connected layers to transform hidden state into forecast
+    x = Dense(dense_units, activation="relu")(x)
+    x = Dropout(dropout_rate)(x)
+    x = Dense(dense_units // 2, activation="relu")(x)
+    x = Dropout(dropout_rate)(x)
+
+    # Output layer: predict horizon steps ahead (vector output)
+    output = Dense(horizon, activation="linear", name="forecast_output")(x)
+
+    # Define model
+    model = Model(inputs=sequence_input, outputs=output)
+
+    # -----------------------
+    # Compile model
+    # -----------------------
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+        loss="mse",
+        metrics=[
+            "mae",
+            smape,  # SMAPE (%)
+            r2_score  # R^2 (goodness of fit)
+        ]
+    )
+
+    # -----------------------
+    # Callbacks
+    # -----------------------
+    if callbacks is None:
+        callbacks = [
+            # Stop early when val loss hasn't improved for some epochs (prevents overfitting)
+            EarlyStopping(monitor="val_loss", patience=6, restore_best_weights=True),
+            # Reduce learning-rate when val loss plateaus (helps escape shallow minima)
+            ReduceLROnPlateau(monitor="val_loss", patience=3, factor=0.5, verbose=1)
+        ]
+
+    # ----------------------------------------------------
+    # Train the Model
+    # ----------------------------------------------------
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=epochs,
+        batch_size=batch_size,
+        verbose=1
+    )
+
+    return model, history

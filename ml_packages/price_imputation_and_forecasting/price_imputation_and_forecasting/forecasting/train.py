@@ -1,4 +1,6 @@
 from .gru import train_gru
+from .lstm import train_lstm
+from .rnn import train_rnn
 
 def train_forecasting_model(
     model_name, forecasting_model_params,
@@ -9,7 +11,7 @@ def train_forecasting_model(
     Dispatcher function to train a price forecasting model based on the specified model_name.
 
     Parameters:
-    - model_name (str): Name of the model to train (currently only 'gru' supported).
+    - model_name (str): Name of the model to train (currently only 'gru', 'lstm', 'rnn' supported).
     - forecasting_model_params (dict): Dictionary of model hyperparameters.
     - X_train (np.ndarray): Training input windows, shape (n_samples, lookback).
     - y_train (np.ndarray): Training targets, shape (n_samples, horizon).
@@ -22,7 +24,7 @@ def train_forecasting_model(
     """
     try:
         # Validate model_name
-        valid_models = {"gru"}
+        valid_models = {"gru", "lstm", "rnn"}
         if not isinstance(model_name, str):
             raise TypeError("model_name must be a string.")
         if model_name not in valid_models:
@@ -32,6 +34,24 @@ def train_forecasting_model(
         if model_name == "gru":
             from .gru import train_gru
             model, history = train_gru(
+                X_train=X_train,
+                y_train=y_train,
+                X_val=X_val,
+                y_val=y_val,
+                **forecasting_model_params  # <- inject hyperparameters from config
+            )
+        elif model_name == "lstm":
+            from .lstm import train_lstm
+            model, history = train_lstm(
+                X_train=X_train,
+                y_train=y_train,
+                X_val=X_val,
+                y_val=y_val,
+                **forecasting_model_params
+            )
+        elif model_name == "rnn":
+            from .rnn import train_rnn
+            model, history = train_rnn(
                 X_train=X_train,
                 y_train=y_train,
                 X_val=X_val,

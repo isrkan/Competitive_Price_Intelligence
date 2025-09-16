@@ -48,11 +48,13 @@ def train_bi_rnn(
     # ----------------------------------------------------
     # Extract hyperparameters with defaults
     # ----------------------------------------------------
-    seq_units = kwargs.get("seq_units", 64)
-    dense_units = kwargs.get("dense_units", 64)
-    dropout_rate = kwargs.get("dropout_rate", 0.3)
-    epochs = kwargs.get("epochs", 50)
-    batch_size = kwargs.get("batch_size", 32)
+    seq_units = kwargs.get("seq_units", 128)  # per-direction units for each SimpleRNN
+    dense_units = kwargs.get("dense_units", 128)  # dense units used in static pathway and decoder
+    dropout_rate = kwargs.get("dropout_rate", 0.2)
+    recurrent_dropout = kwargs.get("recurrent_dropout", 0.1)  # regularize RNN recurrent connections
+    epochs = kwargs.get("epochs", 30)
+    batch_size = kwargs.get("batch_size", 64)
+    learning_rate = kwargs.get("learning_rate", 1e-3)
     callbacks = kwargs.get("callbacks", None)
 
     # ----------------------------------------------------
@@ -73,8 +75,13 @@ def train_bi_rnn(
     # Sequence input (price_with_gaps, obs_mask)
     sequence_input = Input(shape=(seq_len, seq_features), name="sequence_input")
     # Bi-LSTM encodes temporal context both forwards and backwards. return_sequences=True because we need predictions at every time step.
-    x = Bidirectional(SimpleRNN(seq_units, return_sequences=True))(sequence_input)
-    x = Dropout(dropout_rate)(x)  # Regularize the sequence encoding
+    # First BiRNN block (returns full sequence)
+    x = Bidirectional(SimpleRNN(seq_units, return_sequences=True, activation="tanh", recurrent_dropout=recurrent_dropout), name="bidir_rnn_1")(sequence_input)
+    x = Dropout(dropout_rate, name="dropout_rnn_1")(x)  # Regularize the sequence encoding
+
+    # Second BiRNN block (returns full sequence)
+    x2 = Bidirectional(SimpleRNN(seq_units, return_sequences=True, activation="tanh", recurrent_dropout=recurrent_dropout), name="bidir_rnn_2")(x)
+    x2 = Dropout(dropout_rate, name="dropout_rnn_2")(x2)
 
     # ----------------------------------------------------
     # Static input (dense layers for store metadata)
@@ -93,7 +100,10 @@ def train_bi_rnn(
     # ----------------------------------------------------
     # Combine Sequence and Static Features
     # ----------------------------------------------------
-    combined = Concatenate(axis=-1)([x, s_expanded])  # Shape: (n, T, seq_units*2 + dense_units)
+    combined = Concatenate(axis=-1)([x2, s_expanded])  # Shape: (n, T, seq_units*2 + dense_units)
+    # Projector to mix features before decoder
+    combined = Dense(dense_units, activation="relu", name="combined_projector")(combined)
+    combined = Dropout(dropout_rate, name="combined_dropout")(combined)
 
     # ----------------------------------------------------
     # Decoder: Fully connected layers to predict prices
@@ -112,7 +122,7 @@ def train_bi_rnn(
 
     # Compile
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
         loss=masked_mse,
         metrics=[masked_mae]
     )
@@ -130,9 +140,9 @@ def train_bi_rnn(
     if callbacks is None:
         callbacks = [
             # Stop early when val loss hasn't improved for some epochs (prevents overfitting)
-            EarlyStopping(monitor="val_loss", patience=6, restore_best_weights=True),
+            EarlyStopping(monitor="val_loss", patience=8, restore_best_weights=True),
             # Reduce learning-rate when val loss plateaus (helps escape shallow minima)
-            ReduceLROnPlateau(monitor="val_loss", patience=3, factor=0.5, verbose=1)
+            ReduceLROnPlateau(monitor="val_loss", patience=4, factor=0.5, verbose=1)
         ]
 
     # ----------------------------------------------------

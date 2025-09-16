@@ -27,11 +27,13 @@ random_state: 42
 # Default imputation model
 imputation_model: "bi_rnn"
 imputation_model_params:
-  seq_units: 64
-  dense_units: 64
-  dropout_rate: 0.3
-  epochs: 1
-  batch_size: 32
+  seq_units: 128
+  dense_units: 128
+  dropout_rate: 0.2
+  recurrent_dropout: 0.1
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
   callbacks: null
 
 # Default forecasting model

@@ -41,11 +41,11 @@ def train_gru(
     # ----------------------------------------------------
     # Extract hyperparameters with defaults
     # ----------------------------------------------------
-    gru_units = kwargs.get("gru_units", 64)
-    dense_units = kwargs.get("dense_units", 64)
-    dropout_rate = kwargs.get("dropout_rate", 0.3)
+    gru_units = kwargs.get("gru_units", 256)
+    dense_units = kwargs.get("dense_units", 128)
+    dropout_rate = kwargs.get("dropout_rate", 0.15)
     epochs = kwargs.get("epochs", 50)
-    batch_size = kwargs.get("batch_size", 32)
+    batch_size = kwargs.get("batch_size", 64)
     learning_rate = kwargs.get("learning_rate", 1e-3)
     callbacks = kwargs.get("callbacks", None)
 
@@ -69,11 +69,16 @@ def train_gru(
 
     # GRU encoder: captures temporal dependencies
     # return_sequences=False → only final hidden state is used (suitable for forecasting horizon)
-    x = GRU(gru_units, return_sequences=False)(sequence_input)
-    x = Dropout(dropout_rate)(x)  # Regularize to avoid overfitting
+    # First GRU → returns sequence for stacking
+    x = GRU(gru_units, return_sequences=True, dropout=dropout_rate, recurrent_dropout=dropout_rate)(sequence_input)
+
+    # Second GRU → compress sequence into final hidden state (a smaller representation)
+    x = GRU(gru_units // 2, return_sequences=False, dropout=dropout_rate, recurrent_dropout=dropout_rate)(x)
 
     # Fully connected layers to transform hidden state into forecast
     x = Dense(dense_units, activation="relu")(x)
+    x = Dropout(dropout_rate)(x)
+    x = Dense(dense_units // 2, activation="relu")(x)
     x = Dropout(dropout_rate)(x)
 
     # Output layer: predict horizon steps ahead (vector output)

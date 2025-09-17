@@ -1,0 +1,21 @@
+# Custom imputation model
+imputation_model: "bi_gru"
+imputation_model_params:
+  seq_units: 128
+  dense_units: 128
+  dropout_rate: 0.2
+  recurrent_dropout: 0.1
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  callbacks: null
+
+# Custom forecasting model
+forecasting_model: "rnn"
+forecasting_model_params:
+  rnn_units: 256
+  dense_units: 128
+  dropout_rate: 0.15
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001

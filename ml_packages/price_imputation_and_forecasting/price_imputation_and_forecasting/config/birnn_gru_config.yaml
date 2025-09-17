@@ -39,10 +39,10 @@ imputation_model_params:
 # Default forecasting model
 forecasting_model: "gru"
 forecasting_model_params:
-  gru_units: 128
-  dense_units: 64
-  dropout_rate: 0.2
-  epochs: 1
+  gru_units: 256
+  dense_units: 128
+  dropout_rate: 0.15
+  epochs: 30
   batch_size: 64
   learning_rate: 0.001
 

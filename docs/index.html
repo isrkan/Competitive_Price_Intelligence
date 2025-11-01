@@ -11,16 +11,16 @@
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h1>🎯 ML Packages</h1>
-                <p>Competitive Price Intelligence</p>
+                <h1>🎯 Competitive Price Intelligence</h1> 
+                <p>ML Package Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Overview</div>
                     <ul class="nav-links">
-                        <li><a href="#introduction" class="active">Introduction</a></li>
+                        <li><a href="#overview" class="active">Overview</a></li>
                         <li><a href="#packages">Packages</a></li>
-                        <li><a href="#getting-started">Getting Started</a></li>
+                        <li><a href="#data-requirements">Data Requirements</a></li>
                         <li><a href="#features">Key Features</a></li>
                     </ul>
                 </div>
@@ -45,22 +45,14 @@
         <main class="main-content">
             <div class="content-header">
                 <h1>Competitive Price Intelligence</h1>
-                <p>Advanced Machine Learning Packages for Retail Analytics and Price Optimization</p>
+                <p>Machine Learning Packages for Retail Analytics and Price Optimization</p>
             </div>
 
             <div class="content-body">
-                <section id="introduction">
-                    <h2>Introduction</h2>
-                    <p>
-                        Welcome to the <strong>Competitive Price Intelligence</strong> documentation. This comprehensive suite of machine learning packages is designed to empower retailers and market analysts with cutting-edge tools for competitive analysis, price optimization, and market intelligence.
-                    </p>
-                    <p>
-                        Our packages leverage state-of-the-art unsupervised learning algorithms, advanced time series forecasting models, and sophisticated statistical analysis techniques to extract actionable insights from complex pricing data ecosystems.
-                    </p>
-                    
-                    <div class="alert alert-info">
-                        <strong>Industry-Grade Solutions:</strong> These packages are built to handle real-world retail challenges with production-ready implementations, comprehensive error handling, and scalable architectures.
-                    </div>
+                <section id="overview">
+                    <h2>Overview</h2>
+                    <p>Welcome to the <strong>Competitive Price Intelligence</strong> documentation hub. This project provides a comprehensive suite of machine learning packages designed to help retailers and market analysts gain competitive advantages through data-driven pricing strategies.</p>
+                    <p>Our ML packages leverage advanced unsupervised learning techniques, time series forecasting, and statistical analysis to deliver actionable insights from pricing data. Whether you're identifying competitors, forecasting prices, or imputing missing data, these tools provide production-ready solutions for real-world retail challenges.</p>
                 </section>
 
                 <section id="packages">
@@ -134,69 +126,48 @@
                     </div>
                 </section>
 
-                <section id="getting-started">
-                    <h2>Getting Started</h2>
-                    <p>Follow these steps to begin using our ML packages in your retail analytics workflow:</p>
+                <section id="data-requirements">
+                    <h2>Data Requirements</h2>
+                    <p>To use these ML packages effectively, you'll need the following data formats:</p>
                     
-                    <h3>1. Installation</h3>
-                    <p>Install packages directly from our GitHub repository using pip:</p>
-                    <pre><code># Install Competitor Identification package
-pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/competitor_identification
-
-# Install Price Imputation and Forecasting package
-pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/price_imputation_and_forecasting</code></pre>
-                    
-                    <h3>2. Quick Start Example</h3>
-                    <p>Here's a simple example to get you started with competitor identification:</p>
-                    <pre><code>from competitor_identification import CompetitorIdentification
-from competitor_identification.pipeline import run_pipeline
-
-# Initialize
-ci = CompetitorIdentification()
-config = ci.get_config()
-
-# Run complete pipeline
-results = run_pipeline(
-    config=config,
-    data_directory_path='./data',
-    category='rice',
-    SubChainName='Tesco Express',
-    StoreName='Tesco Express - Oxford Street',
-    product_description='Basmati Rice 1kg',
-    Geographic='City',
-    include_clustering_evaluation=True
-)
-
-# Access results
-top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results
-print(f"Identified {len(top_competitors)} competitors")
-print(f"Cluster quality score: {silhouette:.3f}")</code></pre>
-                    
-                    <h3>3. Data Requirements</h3>
-                    <p>Our packages are designed to work with standard retail pricing datasets:</p>
-                    
-                    <div class="feature-grid">
-                        <div class="feature-card">
-                            <h4>📊 Pricing Data</h4>
-                            <p>CSV/Parquet format with store identifiers, product barcodes, prices, and timestamps for time-series analysis.</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>🏪 Store Metadata</h4>
-                            <p>Store locations, attributes, chain information, and operational characteristics.</p>
-                        </div>
-                        <div class="feature-card">
-                            <h4>🏷️ Product Information</h4>
-                            <p>Product categories, brand information, and hierarchical product classifications.</p>
-                        </div>
+                    <h3>Required Data Files</h3>
+                    <div class="alert alert-info">
+                        <strong>Essential Data:</strong> All packages require properly formatted pricing and store data for optimal performance.
                     </div>
                     
-                    <h3>4. Next Steps</h3>
-                    <p>Ready to dive deeper? Explore our comprehensive package documentation:</p>
+                    <h4>1. Price Data</h4>
                     <ul>
-                        <li><strong><a href="competitor_identification.html">Competitor Identification</a></strong> - Learn about clustering algorithms, dimensionality reduction, and competitive analysis</li>
-                        <li><strong><a href="price_imputation_forecasting.html">Price Imputation & Forecasting</a></strong> - Discover imputation techniques, forecasting models, and prediction pipelines</li>
+                        <li><strong>Format:</strong> CSV or Parquet files</li>
+                        <li><strong>Structure:</strong> Time series data with store identifiers, product details, and price values</li>
+                        <li><strong>Columns:</strong> StoreID, ProductDescription, Date, Price, Category</li>
+                        <li><strong>Requirements:</strong> Minimum 30 days of data per product-store combination</li>
+                    </ul>
+                    
+                    <h4>2. Store Metadata</h4>
+                    <ul>
+                        <li><strong>Format:</strong> CSV file</li>
+                        <li><strong>Structure:</strong> Store information and attributes</li>
+                        <li><strong>Columns:</strong> StoreID, StoreName, ChainID, ChainName, Location, StoreType</li>
+                        <li><strong>Requirements:</strong> Complete store hierarchy information</li>
+                    </ul>
+                    
+                    <h4>3. Sub-chain Data (Optional)</h4>
+                    <ul>
+                        <li><strong>Format:</strong> Excel (.xlsx) file</li>
+                        <li><strong>Structure:</strong> Sub-chain categorization</li>
+                        <li><strong>Columns:</strong> ChainID, SubChainName, Region</li>
+                        <li><strong>Purpose:</strong> Enhanced competitor grouping and analysis</li>
+                    </ul>
+                    
+                    <h3>Data Quality Guidelines</h3>
+                    <ul>
+                        <li><strong>Completeness:</strong> Aim for >75% data completeness per time series</li>
+                        <li><strong>Consistency:</strong> Standardized product descriptions and store identifiers</li>
+                        <li><strong>Temporal Coverage:</strong> Sufficient historical data for trend analysis</li>
+                        <li><strong>Geographic Scope:</strong> Clear geographic boundaries for competitor analysis</li>
                     </ul>
                 </section>
+
 
                 <section>
                     <h2>Support & Community</h2>
@@ -206,6 +177,10 @@ print(f"Cluster quality score: {silhouette:.3f}")</code></pre>
                         <li><strong>Documentation:</strong> Comprehensive guides and API references for each package</li>
                         <li><strong>Examples:</strong> Jupyter notebooks with real-world use cases and tutorials</li>
                     </ul>
+
+                    <div class="alert alert-success">
+                        <strong>Contributing:</strong> We welcome contributions! Please feel free to submit a Pull Request or open an issue for discussion.
+                    </div>
                 </section>
             </div>
         </main>

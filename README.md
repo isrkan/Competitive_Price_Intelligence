@@ -1,22 +1,27 @@
-# Supermarket price analysis
+# Competitive Price Intelligence
 
-This repository contains various Jupyter notebooks that analyze prices in supermarkets using various data science techniques. The codes here are intended for research use and may be helpful in identifying competitors, forecasting prices and imputing missing data.
+This repository contains code for a competitive price intelligence system. It includes ML packages for competitor identification and price forecasting, as well as a Flask application for demonstrating the models. The codes here are intended for research and may be helpful for analyzing supermarket prices.
 
-## Contents
+## Overview
+This project provides a suite of tools for competitive price intelligence in the retail sector. It is designed to help researchers, policy-makers and businesses understand their competitive landscape, predict price trends, and make data-driven pricing decisions. The repository is organized into three main components: Jupyter notebooks, machine learning packages and a Flask web application.
 
-- Identifying competitors: This notebook uses dimension reduction techniques together with clustering methods to identify distinct clusters within the data and identify competitors.
-- Price forecasting: This notebook explores the use of deep learning methods to forecast prices for a given product.
-- Price imputation and interpolation: This notebook uses deep learning methods to impute and interpolate missing prices in the dataset.
-- Multi-class classification of promotion description: This notebook uses various machine learning algorithms to classify different types of promotions based on their description.
-- Estimating the determinants of food prices: This notebook analyzes the factors impacting food prices using regression analysis.
-- Assessing promotion impact on competitors: This notebook evaluates the effect of promotions on competitor price reductions using A/B testing and one-Way ANOVA.
-- Competitor's promotion prediction: This notebook uses various ensemble methods to predict promotion strategies of competitors.
+## Features
+- Jupyter notebooks used for research and exploratory data analysis. These notebooks cover various topics, including:
+    - Identifying competitors
+    - Price imputation and interpolation
+    - Price forecasting
+    - Multi-class classification of promotion descriptions
+    - Estimating the determinants of food prices
+    - Assessing promotion impact on competitors
+    - Competitor's promotion prediction
+- ML packages:
+    - Automated competitor identification using dimensionality reduction and clustering.
+    - Price imputation for handling missing data in time-series and price forecasting using deep learning models.
+- A web interface for interacting with the models.
+- Comprehensive API documentation and examples.
 
-### Data Sources
+## Data Sources
+The pricing data used in this repository was collected from supermarkets in Israel and is made publicly available under the 'Price Transparency Law'.
 
-The prices data used in this repository were collected from supermarkets in Israel.
-
-### Additional Notes
-
+## Additional Notes
 - Additional analysis and visualization may be added in the future to further explore the data.
-- The code is well-commented and documented, providing explanations and context for each step of the analysis.

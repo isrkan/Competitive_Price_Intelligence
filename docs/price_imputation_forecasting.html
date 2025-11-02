@@ -1017,63 +1017,6 @@ config.set('lookback', 60)</code></pre>
 config.set('batch_size', 64)</code></pre>
                 </section>
 
-    </body>
-</html>
-                
-
-                <section id="best-practices">
-                    <h2>Best Practices</h2>
-                    
-                    <h3>Data Quality</h3>
-                    <ul>
-                        <li>Ensure price data covers sufficient time periods (minimum 30 days recommended)</li>
-                        <li>Handle missing values appropriately using the threshold_ratio parameter</li>
-                        <li>Verify store metadata completeness before analysis</li>
-                    </ul>
-
-                    <h3>Model Selection</h3>
-                    <ul>
-                        <li><strong>Bidirectional LSTM:</strong> Best for imputation with temporal context</li>
-                        <li><strong>LSTM:</strong> Best for forecasting with sequential patterns</li>
-                        <li><strong>GRU:</strong> Faster alternative to LSTM with similar performance</li>
-                    </ul>
-
-                    <h3>Pipeline Order</h3>
-                    <div class="alert alert-info">
-                        <strong>Critical:</strong> Always perform imputation before forecasting. The forecasting models require complete data without missing values.
-                    </div>
-                    
-                    <h3>Training Workflow</h3>
-                    <ol>
-                        <li>Train imputation model using <code>run_imputation_train_pipeline</code></li>
-                        <li>Save the trained imputation model</li>
-                        <li>Train forecasting model using <code>run_forecasting_train_pipeline</code></li>
-                        <li>Save the trained forecasting model</li>
-                        <li>Use both models in <code>run_prediction_pipeline</code> for production predictions</li>
-                    </ol>
-                </section>
-
-                <section id="troubleshooting">
-                    <h2>Troubleshooting</h2>
-                    
-                    <h3>Common Issues</h3>
-                    
-                    <h4>Issue: Poor imputation quality</h4>
-                    <p><strong>Solution:</strong> Try adjusting model parameters or using more training data</p>
-                    <pre><code>config.set('seq_units', 256)
-config.set('epochs', 50)</code></pre>
-
-                    <h4>Issue: Forecasts are inaccurate</h4>
-                    <p><strong>Solution:</strong> Ensure imputation was successful and try different model architectures</p>
-                    <pre><code>config.set('lstm_units', 256)
-config.set('lookback', 60)</code></pre>
-                    
-                    <h4>Issue: Model training is too slow</h4>
-                    <p><strong>Solution:</strong> Reduce model complexity or use GPU acceleration</p>
-                    <pre><code>config.set('seq_units', 64)
-config.set('batch_size', 64)</code></pre>
-                </section>
-
                 <section>
                     <h2>Support & Resources</h2>
                     <ul>

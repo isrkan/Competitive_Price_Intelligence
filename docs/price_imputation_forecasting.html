@@ -11,7 +11,7 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h1>📈 Price Imputation & Forecasting</h1>
-                <p>ML Package Documentation</p>
+                <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -134,9 +134,24 @@ predictions = run_prediction_pipeline(
                     <h3><span class="function-name">__init__(custom_config_path=None)</span></h3>
                     <p>Initialize the Price Imputation and Forecasting system.</p>
                     <h4>Parameters:</h4>
-                    <ul>
-                        <li><strong>custom_config_path</strong> (str, optional): Path to custom YAML configuration file</li>
-                    </ul>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>custom_config_path</td>
+                                <td>str, optional</td>
+                                <td>Path to custom YAML configuration file</td>
+                                <td>Valid file path or None</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <h4>Example:</h4>
                     <pre><code>pif = PriceImputationForecasting(custom_config_path='my_config.yaml')</code></pre>
 
@@ -163,6 +178,7 @@ predictions = run_prediction_pipeline(
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -170,20 +186,23 @@ predictions = run_prediction_pipeline(
                                 <td>config</td>
                                 <td>Config</td>
                                 <td>Configuration object from PriceImputationForecasting</td>
+                                <td>Valid Config object</td>
                             </tr>
                             <tr>
                                 <td>data_directory_path</td>
                                 <td>str</td>
                                 <td>Root directory containing data files</td>
+                                <td>Valid directory path</td>
                             </tr>
                             <tr>
                                 <td>category</td>
                                 <td>str</td>
-                                <td>Product category name (e.g., 'rice', 'pasta')</td>
+                                <td>Product category name</td>
+                                <td>e.g., 'rice', 'pasta'</td>
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <h4>Returns:</h4>
                     <p>Dictionary containing:</p>
                     <ul>
@@ -216,6 +235,7 @@ print(f"Imputation RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></p
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -223,16 +243,19 @@ print(f"Imputation RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></p
                                 <td>config</td>
                                 <td>Config</td>
                                 <td>Configuration object from PriceImputationForecasting</td>
+                                <td>Valid Config object</td>
                             </tr>
                             <tr>
                                 <td>data_directory_path</td>
                                 <td>str</td>
                                 <td>Root directory containing data files</td>
+                                <td>Valid directory path</td>
                             </tr>
                             <tr>
                                 <td>category</td>
                                 <td>str</td>
-                                <td>Product category name (e.g., 'rice', 'pasta')</td>
+                                <td>Product category name</td>
+                                <td>e.g., 'rice', 'pasta'</td>
                             </tr>
                         </tbody>
                     </table>
@@ -269,6 +292,7 @@ print(f"Forecasting RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -276,26 +300,31 @@ print(f"Forecasting RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></
                                 <td>config</td>
                                 <td>Config</td>
                                 <td>Configuration object from PriceImputationForecasting</td>
+                                <td>Valid Config object</td>
                             </tr>
                             <tr>
                                 <td>data_directory_path</td>
                                 <td>str</td>
                                 <td>Root directory containing data files</td>
+                                <td>Valid directory path</td>
                             </tr>
                             <tr>
                                 <td>category</td>
                                 <td>str</td>
-                                <td>Product category name (e.g., 'rice', 'pasta')</td>
+                                <td>Product category name</td>
+                                <td>e.g., 'rice', 'pasta'</td>
                             </tr>
                             <tr>
                                 <td>imputation_model_path</td>
                                 <td>str</td>
                                 <td>Path to saved imputation model</td>
+                                <td>Valid .h5 file path</td>
                             </tr>
                             <tr>
                                 <td>forecasting_model_path</td>
                                 <td>str</td>
                                 <td>Path to saved forecasting model</td>
+                                <td>Valid .h5 file path</td>
                             </tr>
                         </tbody>
                     </table>
@@ -327,8 +356,13 @@ print(f"Generated {len(predictions['forecasts'])} forecasts")</code></pre>
                     </div>
                 </section>
 
+                <section id="api-reference">
+                    <h2>API Reference</h2>
+                    <p>Comprehensive documentation for all modules and functions in the package.</p>
+                </section>
+
                 <section id="api-data">
-                    <h2>API Reference: Data Processing Module</h2>
+                    <h2>Data Processing Module</h2>
                     
                     <h3>load_store_data</h3>
                     <p>Loads store metadata from CSV files and merges with sub-chain information.</p>
@@ -346,6 +380,7 @@ print(f"Generated {len(predictions['forecasts'])} forecasts")</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -353,14 +388,21 @@ print(f"Generated {len(predictions['forecasts'])} forecasts")</code></pre>
                                 <td>store_file_path</td>
                                 <td>str</td>
                                 <td>Path to CSV file containing store data</td>
+                                <td>Valid CSV file path</td>
                             </tr>
                             <tr>
                                 <td>subchain_file_path</td>
                                 <td>str</td>
                                 <td>Path to Excel file containing subchain names</td>
+                                <td>Valid Excel file path</td>
                             </tr>
                         </tbody>
                     </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>store_data_df</strong> (pd.DataFrame): Merged DataFrame containing store information with subchain names</li>
+                    </ul>
 
                     <h4>Examples:</h4>
                     <pre><code># Example 1: Load store data
@@ -381,13 +423,14 @@ print(store_data.head())</code></pre>
     price_data_dir: str
 ) -> pd.DataFrame</code></pre>
 
-                    <h4>Parameters:</h4>
+<h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -395,14 +438,21 @@ print(store_data.head())</code></pre>
                                 <td>category</td>
                                 <td>str</td>
                                 <td>Product category name</td>
+                                <td>e.g., 'rice', 'pasta', 'milk'</td>
                             </tr>
                             <tr>
                                 <td>price_data_dir</td>
                                 <td>str</td>
                                 <td>Directory containing price data Parquet files</td>
+                                <td>Valid directory path</td>
                             </tr>
                         </tbody>
                     </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>price_data_df</strong> (pd.DataFrame): Price data with multi-index and date columns</li>
+                    </ul>
 
                     <h4>Examples:</h4>
                     <pre><code># Example 1: Load price data
@@ -430,6 +480,7 @@ print(price_data.head())</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -437,14 +488,21 @@ print(price_data.head())</code></pre>
                                 <td>category_df</td>
                                 <td>pd.DataFrame</td>
                                 <td>Input price data DataFrame</td>
+                                <td>Non-empty DataFrame</td>
                             </tr>
                             <tr>
                                 <td>threshold_ratio</td>
                                 <td>float</td>
-                                <td>Minimum ratio of non-NaN values required per row (between 0 and 1)</td>
+                                <td>Minimum ratio of non-missing values (0-1)</td>
+                                <td>0.0 to 1.0</td>
                             </tr>
                         </tbody>
                     </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>filtered_df</strong> (pd.DataFrame): Filtered DataFrame with rows meeting threshold</li>
+                    </ul>
 
                     <h4>Examples:</h4>
                     <pre><code># Example 1: Filter rows with too many missing values
@@ -459,7 +517,7 @@ print(f"Removed {len(price_data) - len(filtered_data)} rows")</code></pre>
                 </section>
 
                 <section id="api-imputation">
-                    <h2>API Reference: Imputation Models Module</h2>
+                    <h2>Imputation Models Module</h2>
                     
                     <h3>train_bi_lstm</h3>
                     <p>Trains a bidirectional LSTM model for price imputation using dual-input architecture.</p>
@@ -483,46 +541,121 @@ print(f"Removed {len(price_data) - len(filtered_data)} rows")</code></pre>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
-                                <th>Default</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>X_sequence_train</td>
+                                <td>np.ndarray</td>
+                                <td>Sequential training data (prices with gaps and observation masks)</td>
+                                <td>Shape: (samples, sequence_length, 2)</td>
+                            </tr>
+                            <tr>
+                                <td>X_static_train</td>
+                                <td>np.ndarray</td>
+                                <td>Static features (store metadata)</td>
+                                <td>Shape: (samples, num_static_features)</td>
+                            </tr>
+                            <tr>
+                                <td>target_mask_train</td>
+                                <td>np.ndarray</td>
+                                <td>Binary mask indicating positions to impute</td>
+                                <td>Shape: (samples, sequence_length)</td>
+                            </tr>
+                            <tr>
+                                <td>y_train</td>
+                                <td>np.ndarray</td>
+                                <td>Target values for training</td>
+                                <td>Shape: (samples, sequence_length)</td>
+                            </tr>
+                            <tr>
+                                <td>seq_units</td>
+                                <td>int</td>
+                                <td>Number of LSTM units</td>
+                                <td>Default: 128, Range: 64-512</td>
+                            </tr>
+                            <tr>
+                                <td>dropout_rate</td>
+                                <td>float</td>
+                                <td>Dropout rate for regularization</td>
+                                <td>Default: 0.2, Range: 0.0-0.5</td>
+                            </tr>
+                            <tr>
+                                <td>epochs</td>
+                                <td>int</td>
+                                <td>Number of training epochs</td>
+                                <td>Default: 30, Range: 10-100</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>model</strong> (Model): Trained Keras model</li>
+                        <li><strong>history</strong> (History): Training history object</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.imputation.bi_lstm import train_bi_lstm
+
+model, history = train_bi_lstm(
+    X_sequence_train, X_static_train, target_mask_train, y_train,
+    X_sequence_val, X_static_val, target_mask_val, y_val,
+    seq_units=128,
+    dropout_rate=0.2,
+    epochs=30
+)</code></pre>
+
+                    <h3>train_bi_gru</h3>
+                    <p>Trains a bidirectional GRU model for price imputation.</p>
+                    
+                    <h4>Key Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>seq_units</td>
                                 <td>int</td>
-                                <td>128</td>
-                                <td>LSTM layer units</td>
+                                <td>Number of GRU units</td>
+                                <td>Default: 128, Range: 64-512</td>
                             </tr>
                             <tr>
                                 <td>dropout_rate</td>
                                 <td>float</td>
-                                <td>0.2</td>
-                                <td>Dropout rate</td>
+                                <td>Dropout rate for regularization</td>
+                                <td>Default: 0.2, Range: 0.0-0.5</td>
                             </tr>
                             <tr>
                                 <td>epochs</td>
                                 <td>int</td>
-                                <td>30</td>
-                                <td>Training epochs</td>
+                                <td>Number of training epochs</td>
+                                <td>Default: 30, Range: 10-100</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Train bidirectional LSTM for imputation
-model, history = train_bi_lstm(
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.imputation.bi_gru import train_bi_gru
+
+model, history = train_bi_gru(
     X_sequence_train, X_static_train, target_mask_train, y_train,
     X_sequence_val, X_static_val, target_mask_val, y_val,
-    seq_units=128, epochs=30
-)
-
-# Example 2: Use trained model for imputation
-imputed_prices = model.predict([X_sequence, X_static])</code></pre>
+    seq_units=128,
+    epochs=30
+)</code></pre>
                 </section>
 
                 <section id="api-forecasting">
-                    <h2>API Reference: Forecasting Models Module</h2>
+                    <h2>Forecasting Models Module</h2>
                     
                     <h3>train_lstm</h3>
                     <p>Trains an LSTM model for price forecasting.</p>
@@ -542,51 +675,167 @@ imputed_prices = model.predict([X_sequence, X_static])</code></pre>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
-                                <th>Default</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td>X_train</td>
+                                <td>np.ndarray</td>
+                                <td>Training sequences</td>
+                                <td>Shape: (samples, lookback, features)</td>
+                            </tr>
+                            <tr>
+                                <td>y_train</td>
+                                <td>np.ndarray</td>
+                                <td>Target forecasts</td>
+                                <td>Shape: (samples, horizon)</td>
+                            </tr>
+                            <tr>
                                 <td>lstm_units</td>
                                 <td>int</td>
-                                <td>128</td>
-                                <td>LSTM layer units</td>
+                                <td>Number of LSTM units</td>
+                                <td>Default: 128, Range: 64-512</td>
                             </tr>
                             <tr>
                                 <td>dropout_rate</td>
                                 <td>float</td>
-                                <td>0.2</td>
-                                <td>Dropout rate</td>
+                                <td>Dropout rate for regularization</td>
+                                <td>Default: 0.2, Range: 0.0-0.5</td>
                             </tr>
                             <tr>
                                 <td>epochs</td>
                                 <td>int</td>
-                                <td>30</td>
-                                <td>Training epochs</td>
+                                <td>Number of training epochs</td>
+                                <td>Default: 30, Range: 10-100</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Train LSTM for forecasting
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>model</strong> (Model): Trained Keras model</li>
+                        <li><strong>history</strong> (History): Training history object</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.forecasting.lstm import train_lstm
+
 model, history = train_lstm(
     X_train, y_train, X_val, y_val,
-    lstm_units=256, epochs=50
-)
+    lstm_units=256,
+    epochs=50
+)</code></pre>
 
-# Example 2: Generate forecasts
-forecasts = model.predict(X_test)</code></pre>
+                    <h3>train_gru</h3>
+                    <p>Trains a GRU model for price forecasting.</p>
+                    
+                    <h4>Key Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>gru_units</td>
+                                <td>int</td>
+                                <td>Number of GRU units</td>
+                                <td>Default: 128, Range: 64-512</td>
+                            </tr>
+                            <tr>
+                                <td>dropout_rate</td>
+                                <td>float</td>
+                                <td>Dropout rate for regularization</td>
+                                <td>Default: 0.2, Range: 0.0-0.5</td>
+                            </tr>
+                            <tr>
+                                <td>epochs</td>
+                                <td>int</td>
+                                <td>Number of training epochs</td>
+                                <td>Default: 30, Range: 10-100</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.forecasting.gru import train_gru
+
+model, history = train_gru(
+    X_train, y_train, X_val, y_val,
+    gru_units=256,
+    epochs=50
+)</code></pre>
                 </section>
 
                 <section id="api-evaluation">
-                    <h2>API Reference: Evaluation Module</h2>
+                    <h2>Evaluation Module</h2>
                     
-                    <h3>evaluate_model</h3>
-                    <p>Computes model quality metrics: MAE, RMSE, and MAPE.</p>
+                    <h3>evaluate_imputation</h3>
+                    <p>Evaluates imputation model performance using multiple metrics.</p>
                     
                     <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_model(
+                    <pre><code>def evaluate_imputation(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    mask: np.ndarray
+) -> Dict[str, float]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>y_true</td>
+                                <td>np.ndarray</td>
+                                <td>True values</td>
+                                <td>Shape: (samples, sequence_length)</td>
+                            </tr>
+                            <tr>
+                                <td>y_pred</td>
+                                <td>np.ndarray</td>
+                                <td>Predicted values</td>
+                                <td>Shape: (samples, sequence_length)</td>
+                            </tr>
+                            <tr>
+                                <td>mask</td>
+                                <td>np.ndarray</td>
+                                <td>Binary mask for evaluation positions</td>
+                                <td>Shape: (samples, sequence_length)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>metrics</strong> (Dict[str, float]): Dictionary containing MAE, RMSE, MAPE</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.evaluation.evaluate_imputation import evaluate_imputation
+
+metrics = evaluate_imputation(y_true, y_pred, mask)
+print(f"MAE: {metrics['mae']:.3f}")
+print(f"RMSE: {metrics['rmse']:.3f}")
+print(f"MAPE: {metrics['mape']:.3f}")</code></pre>
+
+                    <h3>evaluate_forecasting</h3>
+                    <p>Evaluates forecasting model performance using multiple metrics.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def evaluate_forecasting(
     y_true: np.ndarray,
     y_pred: np.ndarray
 ) -> Dict[str, float]</code></pre>
@@ -598,49 +847,55 @@ forecasts = model.predict(X_test)</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>y_true</td>
                                 <td>np.ndarray</td>
-                                <td>True values</td>
+                                <td>True forecast values</td>
+                                <td>Shape: (samples, horizon)</td>
                             </tr>
                             <tr>
                                 <td>y_pred</td>
                                 <td>np.ndarray</td>
-                                <td>Predicted values</td>
+                                <td>Predicted forecast values</td>
+                                <td>Shape: (samples, horizon)</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>mae</strong> (float): Mean Absolute Error</li>
-                        <li><strong>rmse</strong> (float): Root Mean Squared Error</li>
-                        <li><strong>mape</strong> (float): Mean Absolute Percentage Error</li>
+                        <li><strong>metrics</strong> (Dict[str, float]): Dictionary containing MAE, RMSE, MAPE</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Evaluate model performance
-metrics = evaluate_model(y_true, y_pred)
-print(f"MAE: {metrics['mae']:.3f}")
-print(f"RMSE: {metrics['rmse']:.3f}")
-print(f"MAPE: {metrics['mape']:.2f}%")</code></pre>
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.evaluation.evaluate_forecasting import evaluate_forecasting
+
+metrics = evaluate_forecasting(y_true, y_pred)
+print(f"Forecasting MAE: {metrics['mae']:.3f}")
+print(f"Forecasting RMSE: {metrics['rmse']:.3f}")</code></pre>
                 </section>
 
                 <section id="api-visualization">
-                    <h2>API Reference: Visualization Module</h2>
+                    <h2>Visualization Module</h2>
                     
-                    <h3>plot_imputation_results</h3>
-                    <p>Creates interactive Plotly visualizations of imputation results showing original vs imputed prices.</p>
-                    
+                    <h3>visualize_imputation_forecasting_results</h3>
+                    <p>Creates interactive plots showing both imputation and forecasting results in a comprehensive visualization. The function creates comprehensive time series plots for each row in the input data, displaying:</p>
+                    <ul>
+                        <li><strong>Forecasted Series:</strong> Future price predictions shown as red dashed line ("dot" style)</li>
+                        <li><strong>Imputed Series:</strong> Historical prices with missing values filled, shown as blue solid line</li>
+                        <li><strong>Original Series:</strong> Raw historical data with NaN values, shown as black circular markers</li>
+                    </ul>
+
                     <h4>Function Signature:</h4>
-                    <pre><code>def plot_imputation_results(
-    original_df: pd.DataFrame,
-    imputed_df: pd.DataFrame,
-    title: str = "Imputation Results"
-) -> go.Figure</code></pre>
+                    <pre><code>def visualize_imputation_forecasting_results(
+    df_price_input: pd.DataFrame,
+    df_price_with_imputed_data: pd.DataFrame,
+    df_price_with_forecasted_data: pd.DataFrame
+) -> Dict[int, plotly.graph_objects.Figure]</code></pre>
 
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
@@ -649,194 +904,64 @@ print(f"MAPE: {metrics['mape']:.2f}%")</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>original_df</td>
+                                <td>df_price_input</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame with original price data including missing values</td>
+                                <td>Original price data with missing values (input data)</td>
+                                <td>DataFrame with datetime index and price columns</td>
                             </tr>
                             <tr>
-                                <td>imputed_df</td>
+                                <td>df_price_with_imputed_data</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame with imputed price data (missing values filled)</td>
+                                <td>Price data after imputation (missing values filled)</td>
+                                <td>DataFrame with datetime index and price columns</td>
                             </tr>
                             <tr>
-                                <td>title</td>
-                                <td>str</td>
-                                <td>Title for the visualization</td>
+                                <td>df_price_with_forecasted_data</td>
+                                <td>pd.DataFrame</td>
+                                <td>Price data with forecasted future values</td>
+                                <td>DataFrame with datetime index and price columns</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>figure</strong> (go.Figure): Interactive Plotly figure object showing imputation comparison</li>
+                        <li><strong>figs</strong> (Dict[int, plotly.graph_objects.Figure]): Dictionary of interactive Plotly figures keyed by row index, showing:
+                            <ul>
+                                <li>Forecasted series (future predictions) in red dashed line</li>
+                                <li>Imputed series (filled missing values) in blue solid line</li>
+                                <li>Original series (raw historical data with NaNs) in black markers</li>
+                            </ul>
+                        </li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Visualize imputation results
-fig = plot_imputation_results(
-    original_df=original_prices,
-    imputed_df=imputed_prices,
-    title="Price Imputation Results"
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.visualization.plot_predicted_time_series import visualize_imputation_forecasting_results
+import pandas as pd
+
+# Assume you have three DataFrames:
+# - df_original: Original price data with missing values
+# - df_imputed: Price data after imputation
+# - df_forecasted: Price data with forecasted future values
+
+figs = visualize_imputation_forecasting_results(
+    df_price_input=df_original,
+    df_price_with_imputed_data=df_imputed,
+    df_price_with_forecasted_data=df_forecasted
 )
-fig.show()
 
-# Example 2: Save imputation plot as HTML
-fig.write_html('imputation_results.html')</code></pre>
+# Display the first figure
+figs[0].show()
 
-                    <h3>plot_forecasting_results</h3>
-                    <p>Creates interactive Plotly visualizations of forecasting results showing historical and predicted prices.</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def plot_forecasting_results(
-    historical_df: pd.DataFrame,
-    forecast_df: pd.DataFrame,
-    title: str = "Forecasting Results"
-) -> go.Figure</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>historical_df</td>
-                                <td>pd.DataFrame</td>
-                                <td>DataFrame with historical price data and dates</td>
-                            </tr>
-                            <tr>
-                                <td>forecast_df</td>
-                                <td>pd.DataFrame</td>
-                                <td>DataFrame with forecasted prices and dates</td>
-                            </tr>
-                            <tr>
-                                <td>title</td>
-                                <td>str</td>
-                                <td>Title for the visualization</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Returns:</h4>
-                    <ul>
-                        <li><strong>figure</strong> (go.Figure): Interactive Plotly figure object with historical and forecast data</li>
-                    </ul>
-
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Create forecasting plot
-fig = plot_forecasting_results(
-    historical_df=historical_prices,
-    forecast_df=forecasted_prices,
-    title="Price Forecasting Results"
-)
-fig.show()
-
-# Example 2: Save forecasting plot as HTML
-fig.write_html('forecasting_results.html')</code></pre>
-
-                    <h3>plot_model_training_history</h3>
-                    <p>Creates interactive Plotly visualizations of model training history showing loss curves.</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def plot_model_training_history(
-    history: dict,
-    title: str = "Model Training History"
-) -> go.Figure</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>history</td>
-                                <td>dict</td>
-                                <td>Training history dictionary with 'loss' and 'val_loss' keys</td>
-                            </tr>
-                            <tr>
-                                <td>title</td>
-                                <td>str</td>
-                                <td>Title for the visualization</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Returns:</h4>
-                    <ul>
-                        <li><strong>figure</strong> (go.Figure): Interactive Plotly figure object with training and validation loss curves</li>
-                    </ul>
-
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Visualize training history
-fig = plot_model_training_history(
-    history=model_history,
-    title="Imputation Model Training History"
-)
-fig.show()
-
-# Example 2: Save training history plot as HTML
-fig.write_html('training_history.html')</code></pre>
-
-                    <h3>plot_evaluation_metrics</h3>
-                    <p>Creates interactive Plotly visualizations of model evaluation metrics (MAE, RMSE, MAPE).</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def plot_evaluation_metrics(
-    metrics: dict,
-    title: str = "Model Evaluation Metrics"
-) -> go.Figure</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>metrics</td>
-                                <td>dict</td>
-                                <td>Dictionary containing evaluation metrics with keys: 'mae', 'rmse', 'mape'</td>
-                            </tr>
-                            <tr>
-                                <td>title</td>
-                                <td>str</td>
-                                <td>Title for the visualization</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Returns:</h4>
-                    <ul>
-                        <li><strong>figure</strong> (go.Figure): Interactive Plotly figure object with metric comparison</li>
-                    </ul>
-
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Visualize evaluation metrics
-fig = plot_evaluation_metrics(
-    metrics={'mae': 0.15, 'rmse': 0.22, 'mape': 2.5},
-    title="Model Performance Metrics"
-)
-fig.show()
-
-# Example 2: Save metrics plot as HTML
-fig.write_html('evaluation_metrics.html')</code></pre>
+# Or iterate through all figures
+for idx, fig in figs.items():
+    print(f"Displaying figure for row {idx}")
+    fig.show()</code></pre>
                 </section>
 
                 <section id="best-practices">

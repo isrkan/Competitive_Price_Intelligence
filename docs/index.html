@@ -12,7 +12,7 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h1>🎯 Competitive Price Intelligence</h1> 
-                <p>ML Package Documentation</p>
+                <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -20,8 +20,8 @@
                     <ul class="nav-links">
                         <li><a href="#overview" class="active">Overview</a></li>
                         <li><a href="#packages">Packages</a></li>
-                        <li><a href="#data-requirements">Data Requirements</a></li>
                         <li><a href="#features">Key Features</a></li>
+                        <li><a href="#data-requirements">Data Requirements</a></li>
                     </ul>
                 </div>
                 <div class="nav-section">
@@ -64,15 +64,14 @@
                         <div class="package-card" onclick="window.location.href='competitor_identification.html'">
                             <h3><span class="icon">🎯</span> Competitor Identification</h3>
                             <p>
-                                Automatically discover and analyze competing retail stores using advanced unsupervised machine learning techniques. This package processes product-level pricing data to identify competitive relationships and market segments through sophisticated clustering algorithms.
+                                Automatically discover and analyze competing retail stores using advanced unsupervised machine learning techniques. This package processes product-level pricing data to identify competitive relationships and market segments through clustering algorithms.
                             </p>
                             <ul class="features">
-                                <li>Multi-algorithm clustering (Birch, DBSCAN, OPTICS)</li>
-                                <li>Advanced dimensionality reduction (PCA, t-SNE, UMAP)</li>
-                                <li>Comprehensive evaluation metrics (Silhouette, Davies-Bouldin)</li>
+                                <li>Dimensionality reduction algorithms (PCA, t-SNE, UMAP)</li>
+                                <li>Clustering algorithms (Birch, DBSCAN, OPTICS)</li>
+                                <li>Evaluation metrics (Silhouette, Davies-Bouldin)</li>
                                 <li>Interactive visualization suite</li>
                                 <li>Configurable ML pipelines</li>
-                                <li>Production-ready deployment</li>
                             </ul>
                             <a href="competitor_identification.html" class="btn">Explore Documentation →</a>
                         </div>
@@ -84,11 +83,10 @@
                                 Handle missing price data and predict future pricing trends using state-of-the-art deep learning models. This package combines dual-input architectures with masked loss functions for comprehensive price analytics.
                             </p>
                             <ul class="features">
+                                <li>Comprehensive preprocessing pipelines</li>
                                 <li>Bidirectional RNN/LSTM/GRU imputation models</li>
                                 <li>Advanced forecasting with temporal sequences</li>
                                 <li>Three specialized pipelines (imputation training, forecasting training, prediction)</li>
-                                <li>Comprehensive preprocessing pipelines</li>
-                                <li>Production-ready prediction workflows</li>
                                 <li>Interactive Plotly visualizations</li>
                             </ul>
                             <a href="price_imputation_forecasting.html" class="btn">Explore Documentation →</a>

@@ -11,7 +11,7 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h1>🎯 Competitor Identification</h1>
-                <p>ML Package Documentation</p>
+                <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -38,10 +38,11 @@
                 <div class="nav-section">
                     <div class="nav-section-title">API Reference</div>
                     <ul class="nav-links">
+                        <li><a href="#api-data">Data Processing</a></li>
                         <li><a href="#api-dimensionality-reduction">Dimensionality Reduction</a></li>
                         <li><a href="#api-clustering">Clustering</a></li>
-                        <li><a href="#api-data">Data Processing</a></li>
                         <li><a href="#api-evaluation">Evaluation</a></li>
+                        <li><a href="#api-visualization">Visualization</a></li>
                     </ul>
                 </div>
                 <div class="nav-section">
@@ -123,9 +124,24 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                     <h3><span class="function-name">__init__(custom_config_path=None)</span></h3>
                     <p>Initialize the CompetitorIdentification system.</p>
                     <h4>Parameters:</h4>
-                    <ul>
-                        <li><strong>custom_config_path</strong> (str, optional): Path to custom YAML configuration file</li>
-                    </ul>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>custom_config_path</td>
+                                <td>str, optional</td>
+                                <td>Path to custom YAML configuration file</td>
+                                <td>Valid file path or None</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <h4>Example:</h4>
                     <pre><code>ci = CompetitorIdentification(custom_config_path='my_config.yaml')</code></pre>
 
@@ -142,22 +158,175 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                     <h3><span class="function-name">run_pipeline(...)</span></h3>
                     <p>Main function that executes the complete competitor identification workflow.</p>
                     <h4>Parameters:</h4>
-                    <ul>
-                        <li><strong>config</strong>: Configuration object from CompetitorIdentification</li>
-                        <li><strong>data_directory_path</strong> (str): Root directory containing data files</li>
-                        <li><strong>category</strong> (str): Product category name (e.g., 'rice', 'pasta')</li>
-                        <li><strong>SubChainName</strong> (str): Sub-chain name for filtering</li>
-                        <li><strong>StoreName</strong> (str): Target store name for competitor identification</li>
-                        <li><strong>product_description</strong> (str): Product description for filtering</li>
-                        <li><strong>Geographic</strong> (str): Geographic level ('City', 'District', 'County')</li>
-                        <li><strong>include_clustering_evaluation</strong> (bool): Whether to compute evaluation metrics</li>
-                    </ul>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>config</td>
+                                <td>Config</td>
+                                <td>Configuration object from CompetitorIdentification</td>
+                                <td>Valid Config object</td>
+                            </tr>
+                            <tr>
+                                <td>data_directory_path</td>
+                                <td>str</td>
+                                <td>Root directory containing data files</td>
+                                <td>Valid directory path</td>
+                            </tr>
+                            <tr>
+                                <td>category</td>
+                                <td>str</td>
+                                <td>Product category name</td>
+                                <td>e.g., 'rice', 'pasta'</td>
+                            </tr>
+                            <tr>
+                                <td>SubChainName</td>
+                                <td>str</td>
+                                <td>Sub-chain name for filtering</td>
+                                <td>Valid sub-chain name</td>
+                            </tr>
+                            <tr>
+                                <td>StoreName</td>
+                                <td>str</td>
+                                <td>Target store name for competitor identification</td>
+                                <td>Valid store name</td>
+                            </tr>
+                            <tr>
+                                <td>product_description</td>
+                                <td>str</td>
+                                <td>Product description for filtering</td>
+                                <td>Valid product description</td>
+                            </tr>
+                            <tr>
+                                <td>Geographic</td>
+                                <td>str</td>
+                                <td>Geographic level</td>
+                                <td>'City', 'District', 'County'</td>
+                            </tr>
+                            <tr>
+                                <td>include_clustering_evaluation</td>
+                                <td>bool</td>
+                                <td>Whether to compute evaluation metrics</td>
+                                <td>True, False</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <h4>Returns:</h4>
                     <p>Tuple containing: (top_competitors_df, dimensionality_reduction_fig, clustering_fig, competitors_table_fig, silhouette_score, davies_bouldin_score)</p>
                 </section>
 
+                <section id="api-reference">
+                    <h2>API Reference</h2>
+                    <p>Comprehensive documentation for all modules and functions in the package.</p>
+                </section>
+                
+                <section id="api-data">
+                    <h2>Data Processing Module</h2>
+                    
+                    <h3>load_store_data</h3>
+                    <p>Loads store metadata from CSV files and merges with sub-chain information.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def load_store_data(
+    data_directory_path: str
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>data_directory_path</td>
+                                <td>str</td>
+                                <td>Root directory containing store_data.csv and sub_chain_data.xlsx files</td>
+                                <td>Valid directory path</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>store_data_df</strong> (pd.DataFrame): Merged DataFrame containing store information with sub-chain names, including columns: ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</li>
+                    </ul>
+
+                    <h4>Examples:</h4>
+                    <pre><code># Example 1: Load store data
+store_data = load_store_data(data_directory_path='./data')
+
+# Example 2: Access store information
+print(f"Total stores: {len(store_data)}")
+print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
+
+                    <h3>load_price_data</h3>
+                    <p>Loads price data from Parquet files for a specific product category.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def load_price_data(
+    category: str,
+    price_data_dir: str
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>category</td>
+                                <td>str</td>
+                                <td>Product category name (e.g., 'rice', 'pasta', 'milk')</td>
+                                <td>Valid category name</td>
+                            </tr>
+                            <tr>
+                                <td>price_data_dir</td>
+                                <td>str</td>
+                                <td>Directory containing category-specific Parquet files</td>
+                                <td>Valid directory path</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>price_data_df</strong> (pd.DataFrame): Price data DataFrame with multi-index (category, ProductDescription, StoreID) and date columns containing price values</li>
+                    </ul>
+
+                    <h4>Examples:</h4>
+                    <pre><code># Example 1: Load rice category prices
+price_data = load_price_data(
+    category='rice',
+    price_data_dir='./data/price_data'
+)
+
+# Example 2: Load pasta category prices
+pasta_prices = load_price_data(
+    category='pasta',
+    price_data_dir='./data/price_data'
+)</code></pre>
+                </section>
+
                 <section id="api-dimensionality-reduction">
-                    <h2>API Reference: Dimensionality Reduction Module</h2>
+                    <h2>Dimensionality Reduction Module</h2>
                     
                     <h3>perform_dimensionality_reduction_on_price_movement_and_level</h3>
                     <p>Performs dimensionality reduction separately on price movement and price level data, then combines the results into a unified 4D space.</p>
@@ -252,7 +421,7 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                 </section>
 
                 <section id="api-clustering">
-                    <h2>API Reference: Clustering Module</h2>
+                    <h2>Clustering Module</h2>
                     
                     <h3>perform_clustering</h3>
                     <p>Performs clustering on dimensionality-reduced data using the specified algorithm.</p>
@@ -295,6 +464,11 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                             </tr>
                         </tbody>
                     </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>clustered_df</strong> (pd.DataFrame): Input DataFrame with added 'cluster_label' column containing cluster assignments for each data point</li>
+                    </ul>
 
                     <h4>Examples:</h4>
                     <pre><code># Example 1: Using Birch clustering
@@ -360,6 +534,11 @@ clustered_df = perform_clustering(
                         </tbody>
                     </table>
 
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>top_competitors_df</strong> (pd.DataFrame): DataFrame containing the top N competitors sorted by distance, with columns including store metadata and calculated Euclidean distances</li>
+                    </ul>
+
                     <h4>Examples:</h4>
                     <pre><code># Example 1: Find top 10 competitors
 top_competitors = find_top_competitors(
@@ -376,91 +555,8 @@ top_5_competitors = find_top_competitors(
 )</code></pre>
                 </section>
 
-                <section id="api-data">
-                    <h2>API Reference: Data Processing Module</h2>
-                    
-                    <h3>load_store_data</h3>
-                    <p>Loads store metadata from CSV files and merges with sub-chain information.</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def load_store_data(
-    data_directory_path: str
-) -> pd.DataFrame</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>data_directory_path</td>
-                                <td>str</td>
-                                <td>Root directory containing store_data.csv and sub_chain_data.xlsx files</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load store data
-store_data = load_store_data(data_directory_path='./data')
-
-# Example 2: Access store information
-print(f"Total stores: {len(store_data)}")
-print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
-
-                    <h3>load_price_data</h3>
-                    <p>Loads price data from Parquet files for a specific product category.</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def load_price_data(
-    category: str,
-    price_data_dir: str
-) -> pd.DataFrame</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>category</td>
-                                <td>str</td>
-                                <td>Product category name (e.g., 'rice', 'pasta', 'milk')</td>
-                            </tr>
-                            <tr>
-                                <td>price_data_dir</td>
-                                <td>str</td>
-                                <td>Directory containing category-specific Parquet files</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load rice category prices
-price_data = load_price_data(
-    category='rice',
-    price_data_dir='./data/price_data'
-)
-
-# Example 2: Load pasta category prices
-pasta_prices = load_price_data(
-    category='pasta',
-    price_data_dir='./data/price_data'
-)</code></pre>
-                </section>
-
                 <section id="api-evaluation">
-                    <h2>API Reference: Evaluation Module</h2>
+                    <h2>Evaluation Module</h2>
                     
                     <h3>evaluate_clustering</h3>
                     <p>Computes clustering quality metrics: Silhouette Score and Davies-Bouldin Score.</p>
@@ -478,6 +574,7 @@ pasta_prices = load_price_data(
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
+                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -485,11 +582,13 @@ pasta_prices = load_price_data(
                                 <td>cluster_labels</td>
                                 <td>np.ndarray</td>
                                 <td>Array of cluster labels for each data point</td>
+                                <td>Integer array with cluster assignments</td>
                             </tr>
                             <tr>
                                 <td>clustered_dr_components_df</td>
                                 <td>pd.DataFrame</td>
                                 <td>DataFrame with 4D components [P_M_1, P_M_2, P_L_1, P_L_2] and cluster labels</td>
+                                <td>DataFrame with numeric 4D components</td>
                             </tr>
                         </tbody>
                     </table>
@@ -514,6 +613,165 @@ if silhouette > 0.5:
     print("Good clustering quality")
 else:
     print("Poor clustering quality, consider adjusting parameters")</code></pre>
+                </section>
+
+                <section id="api-visualization">
+                    <h2>Visualization Module</h2>
+                    
+                    <h3>plot_dimensionality_reduction</h3>
+                    <p>Creates interactive scatter plots showing dimensionality reduction results for price movement and price level data.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def plot_dimensionality_reduction(
+    combined_components_df: pd.DataFrame,
+    chosen_store_info: pd.DataFrame
+) -> plotly.graph_objects.Figure</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>combined_components_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>DataFrame containing the principal components from dimensionality reduction</td>
+                                <td>DataFrame with columns: P_M_1, P_M_2, P_L_1, P_L_2, and store metadata</td>
+                            </tr>
+                            <tr>
+                                <td>chosen_store_info</td>
+                                <td>pd.DataFrame</td>
+                                <td>DataFrame containing the store metadata for highlighting the target store</td>
+                                <td>Single-row DataFrame with store information</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>fig1</strong> (plotly.graph_objects.Figure): Interactive scatter plot showing dimensionality reduction results with the target store highlighted</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from competitor_identification.visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
+
+fig1 = plot_dimensionality_reduction(
+    combined_components_df=combined_df,
+    chosen_store_info=target_store_df
+)
+fig1.show()</code></pre>
+
+                    <h3>plot_clusters</h3>
+                    <p>Creates interactive scatter plots showing clustering results in the dimensionality reduction space.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def plot_clusters(
+    dr_components_df: pd.DataFrame,
+    dr_cluster_labels: np.ndarray,
+    store_dr_components_df: pd.DataFrame,
+    clustering_method: str
+) -> plotly.graph_objects.Figure</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>dr_components_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>DataFrame with dimensionality reduction components and clustering results</td>
+                                <td>DataFrame with columns: P_M_1, P_M_2, P_L_1, P_L_2, cluster_label</td>
+                            </tr>
+                            <tr>
+                                <td>dr_cluster_labels</td>
+                                <td>np.ndarray</td>
+                                <td>Array of cluster labels from clustering algorithm</td>
+                                <td>Integer array with cluster assignments</td>
+                            </tr>
+                            <tr>
+                                <td>store_dr_components_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>DataFrame containing selected store's dimensionality reduction components</td>
+                                <td>Single-row DataFrame with target store data</td>
+                            </tr>
+                            <tr>
+                                <td>clustering_method</td>
+                                <td>str</td>
+                                <td>Name of the clustering method used</td>
+                                <td>'birch', 'dbscan', 'optics'</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>fig2</strong> (plotly.graph_objects.Figure): Interactive scatter plot showing clustering results with different colors for each cluster</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from competitor_identification.visualization.plot_clusters import plot_clusters
+
+fig2 = plot_clusters(
+    dr_components_df=clustered_df,
+    dr_cluster_labels=cluster_labels,
+    store_dr_components_df=target_store_df,
+    clustering_method='dbscan'
+)
+fig2.show()</code></pre>
+
+                    <h3>present_competitors_table</h3>
+                    <p>Creates an interactive table displaying the top competitors with their information.</p>
+                    
+                    <h4>Function Signature:</h4>
+                    <pre><code>def present_competitors_table(
+    top_competitors: pd.DataFrame
+) -> plotly.graph_objects.Figure</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Valid Values</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>top_competitors</td>
+                                <td>pd.DataFrame</td>
+                                <td>DataFrame containing the top competitors' data</td>
+                                <td>DataFrame with competitor information and distance metrics</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>fig3</strong> (plotly.graph_objects.Figure): Interactive table figure displaying competitor information</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from competitor_identification.visualization.present_competitors_table import present_competitors_table
+
+fig3 = present_competitors_table(
+    top_competitors=top_10_competitors
+)
+fig3.show()</code></pre>
                 </section>
 
                 <section id="best-practices">

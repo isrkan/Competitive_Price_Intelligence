@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Competitor Identification - Enhanced Documentation</title>
+    <title>Competitor Identification - API Documentation</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="docs-container">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h1>🎯 Competitor Identification</h1>
+                <h1>Competitor Identification</h1>
                 <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Navigation</div>
                     <ul class="nav-links">
-                        <li><a href="index.html">🏠 Home</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="configuration.html">Configuration Reference</a></li>
                     </ul>
                 </div>
                 <div class="nav-section">
@@ -38,7 +39,10 @@
                 <div class="nav-section">
                     <div class="nav-section-title">API Reference</div>
                     <ul class="nav-links">
-                        <li><a href="#api-data">Data Processing</a></li>
+                        <li><a href="#api-data">Data Loading</a></li>
+                        <li><a href="#api-data-preprocessing">Data Preprocessing</a></li>
+                        <li><a href="#api-data-imputation">Data Imputation</a></li>
+                        <li><a href="#api-data-scaling">Data Scaling</a></li>
                         <li><a href="#api-dimensionality-reduction">Dimensionality Reduction</a></li>
                         <li><a href="#api-clustering">Clustering</a></li>
                         <li><a href="#api-evaluation">Evaluation</a></li>
@@ -65,7 +69,7 @@
                 <section id="introduction">
                     <h2>Introduction</h2>
                     <p>The <strong>Competitor Identification</strong> package provides a production-ready solution for automatically identifying competing retail stores using advanced unsupervised machine learning techniques.</p>
-                    
+
                     <h3>Key Features</h3>
                     <ul>
                         <li><strong>Advanced Dimensionality Reduction:</strong> PCA, t-SNE, and UMAP for high-dimensional data visualization</li>
@@ -79,7 +83,8 @@
                     <h3>Workflow Order</h3>
                     <p>The package executes operations in the following sequence:</p>
                     <ol>
-                        <li><strong>Data Loading & Preprocessing:</strong> Load and clean pricing data</li>
+                        <li><strong>Data Loading &amp; Preprocessing:</strong> Load and clean pricing data</li>
+                        <li><strong>Data Imputation:</strong> Fill missing values using linear interpolation and carry-forward/backward</li>
                         <li><strong>Data Scaling:</strong> Normalize features for consistent analysis</li>
                         <li><strong>Dimensionality Reduction:</strong> Transform high-dimensional data into lower-dimensional space (PCA/t-SNE/UMAP)</li>
                         <li><strong>Clustering:</strong> Group stores with similar pricing behaviors (Birch/DBSCAN/OPTICS)</li>
@@ -99,8 +104,12 @@
                     <pre><code>from competitor_identification import CompetitorIdentification
 from competitor_identification.pipeline import run_pipeline
 
-# Initialize
+# Initialize with default config (PCA + Birch)
 ci = CompetitorIdentification()
+config = ci.get_config()
+
+# Or initialize with a custom config (e.g., t-SNE + DBSCAN)
+ci = CompetitorIdentification(custom_config_path='path/to/tsne_dbscan_config.yaml')
 config = ci.get_config()
 
 # Run complete pipeline
@@ -115,14 +124,28 @@ results = run_pipeline(
     include_clustering_evaluation=True
 )
 
-# Unpack results
-top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></pre>
+# Unpack results (with evaluation)
+top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results
+
+# Without evaluation
+top_competitors, fig1, fig2, fig3 = run_pipeline(
+    config=config,
+    data_directory_path='./data',
+    category='rice',
+    SubChainName='Tesco Express',
+    StoreName='Tesco Express - Oxford Street',
+    product_description='Basmati Rice 1kg',
+    Geographic='City',
+    include_clustering_evaluation=False
+)</code></pre>
                 </section>
 
                 <section id="main-class">
                     <h2>Main Class: CompetitorIdentification</h2>
+                    <pre><code>from competitor_identification import CompetitorIdentification</code></pre>
+
                     <h3><span class="function-name">__init__(custom_config_path=None)</span></h3>
-                    <p>Initialize the CompetitorIdentification system.</p>
+                    <p>Initialize the CompetitorIdentification system. Loads the default <code>pca_birch_config.yaml</code> configuration. If a custom config path is provided, its values override the defaults.</p>
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
@@ -137,26 +160,32 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                             <tr>
                                 <td>custom_config_path</td>
                                 <td>str, optional</td>
-                                <td>Path to custom YAML configuration file</td>
+                                <td>Path to a custom YAML configuration file that overrides the defaults</td>
                                 <td>Valid file path or None</td>
                             </tr>
                         </tbody>
                     </table>
                     <h4>Example:</h4>
-                    <pre><code>ci = CompetitorIdentification(custom_config_path='my_config.yaml')</code></pre>
+                    <pre><code># Default config (PCA + Birch)
+ci = CompetitorIdentification()
+
+# Custom config (e.g., UMAP + OPTICS)
+ci = CompetitorIdentification(custom_config_path='umap_optics_config.yaml')</code></pre>
 
                     <h3><span class="function-name">get_config()</span></h3>
                     <p>Retrieve the current configuration object.</p>
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>Config</strong>: Configuration object containing all settings</li>
+                        <li><strong>Config</strong>: Configuration object containing all settings. Use <code>config.get(key)</code> and <code>config.set(key, value)</code> to read/modify parameters.</li>
                     </ul>
                 </section>
 
                 <section id="pipeline">
                     <h2>Pipeline Module</h2>
+                    <pre><code>from competitor_identification.pipeline import run_pipeline</code></pre>
+
                     <h3><span class="function-name">run_pipeline(...)</span></h3>
-                    <p>Main function that executes the complete competitor identification workflow.</p>
+                    <p>Main function that executes the complete competitor identification workflow. Runs all steps from data loading through visualization and returns the final results.</p>
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
@@ -177,7 +206,7 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                             <tr>
                                 <td>data_directory_path</td>
                                 <td>str</td>
-                                <td>Root directory containing data files</td>
+                                <td>Root directory containing data files (replaces <code>&lt;USER_DIRECTORY_TOKEN&gt;</code> in config paths)</td>
                                 <td>Valid directory path</td>
                             </tr>
                             <tr>
@@ -189,53 +218,53 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                             <tr>
                                 <td>SubChainName</td>
                                 <td>str</td>
-                                <td>Sub-chain name for filtering</td>
-                                <td>Valid sub-chain name</td>
+                                <td>Sub-chain name of the target store</td>
+                                <td>Valid sub-chain name from store data</td>
                             </tr>
                             <tr>
                                 <td>StoreName</td>
                                 <td>str</td>
                                 <td>Target store name for competitor identification</td>
-                                <td>Valid store name</td>
+                                <td>Valid store name from store data</td>
                             </tr>
                             <tr>
                                 <td>product_description</td>
                                 <td>str</td>
-                                <td>Product description for filtering</td>
-                                <td>Valid product description</td>
+                                <td>Product description to filter the data by</td>
+                                <td>Valid product description from price data</td>
                             </tr>
                             <tr>
                                 <td>Geographic</td>
                                 <td>str</td>
-                                <td>Geographic level</td>
-                                <td>'City', 'District', 'County'</td>
+                                <td>Geographic level for filtering. Uses fallback logic: City &rarr; County &rarr; District if fewer than 10 stores at the chosen level.</td>
+                                <td>'City', 'County', 'District'</td>
                             </tr>
                             <tr>
                                 <td>include_clustering_evaluation</td>
                                 <td>bool</td>
-                                <td>Whether to compute evaluation metrics</td>
-                                <td>True, False</td>
+                                <td>Whether to compute clustering evaluation metrics</td>
+                                <td>True, False (default: False)</td>
                             </tr>
                         </tbody>
                     </table>
                     <h4>Returns:</h4>
-                    <p>Tuple containing: (top_competitors_df, dimensionality_reduction_fig, clustering_fig, competitors_table_fig, silhouette_score, davies_bouldin_score)</p>
+                    <p>When <code>include_clustering_evaluation=True</code>: Tuple of <code>(top_competitors_df, dr_fig, cluster_fig, competitors_table_fig, silhouette_score, davies_bouldin_score)</code></p>
+                    <p>When <code>include_clustering_evaluation=False</code>: Tuple of <code>(top_competitors_df, dr_fig, cluster_fig, competitors_table_fig)</code></p>
                 </section>
 
-                <section id="api-reference">
-                    <h2>API Reference</h2>
-                    <p>Comprehensive documentation for all modules and functions in the package.</p>
-                </section>
-                
+                <!-- ================ API REFERENCE ================ -->
+
                 <section id="api-data">
-                    <h2>Data Processing Module</h2>
-                    
+                    <h2>Data Loading Module</h2>
+                    <pre><code>from competitor_identification.data.load_data import load_store_data, load_price_data</code></pre>
+
                     <h3>load_store_data</h3>
-                    <p>Loads store metadata from CSV files and merges with sub-chain information.</p>
-                    
+                    <p>Loads store metadata from a CSV file and merges with sub-chain English names from an Excel file.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def load_store_data(
-    data_directory_path: str
+    store_file_path: str,
+    subchain_file_path: str
 ) -> pd.DataFrame</code></pre>
 
                     <h4>Parameters:</h4>
@@ -245,35 +274,38 @@ top_competitors, fig1, fig2, fig3, silhouette, davies_bouldin = results</code></
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>data_directory_path</td>
+                                <td>store_file_path</td>
                                 <td>str</td>
-                                <td>Root directory containing store_data.csv and sub_chain_data.xlsx files</td>
-                                <td>Valid directory path</td>
+                                <td>Path to the store data CSV file containing columns: ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</td>
+                            </tr>
+                            <tr>
+                                <td>subchain_file_path</td>
+                                <td>str</td>
+                                <td>Path to the sub-chain names Excel file (.xlsx) containing columns: SubChainID, SubChainName, EnglishName</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>store_data_df</strong> (pd.DataFrame): Merged DataFrame containing store information with sub-chain names, including columns: ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</li>
+                        <li><strong>store_data</strong> (pd.DataFrame): Merged DataFrame with SubChainName replaced by EnglishName. Contains columns: ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load store data
-store_data = load_store_data(data_directory_path='./data')
-
-# Example 2: Access store information
+                    <h4>Example:</h4>
+                    <pre><code>store_data = load_store_data(
+    store_file_path='./data/Store_data_git.csv',
+    subchain_file_path='./data/SubChainNameEnglish.xlsx'
+)
 print(f"Total stores: {len(store_data)}")
 print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
 
                     <h3>load_price_data</h3>
-                    <p>Loads price data from Parquet files for a specific product category.</p>
-                    
+                    <p>Loads price data for a specific product category from a Parquet file.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def load_price_data(
     category: str,
@@ -287,50 +319,362 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>category</td>
                                 <td>str</td>
-                                <td>Product category name (e.g., 'rice', 'pasta', 'milk')</td>
-                                <td>Valid category name</td>
+                                <td>Product category name (used to find the correct Parquet file, e.g., 'rice' loads <code>rice.parquet</code>)</td>
                             </tr>
                             <tr>
                                 <td>price_data_dir</td>
                                 <td>str</td>
                                 <td>Directory containing category-specific Parquet files</td>
-                                <td>Valid directory path</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>price_data_df</strong> (pd.DataFrame): Price data DataFrame with multi-index (category, ProductDescription, StoreID) and date columns containing price values</li>
+                        <li><strong>category_df</strong> (pd.DataFrame): Price data with multi-index <code>(category, ProductDescription, StoreID)</code> and date columns containing price values</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load rice category prices
-price_data = load_price_data(
+                    <h4>Example:</h4>
+                    <pre><code>price_data = load_price_data(
     category='rice',
-    price_data_dir='./data/price_data'
-)
-
-# Example 2: Load pasta category prices
-pasta_prices = load_price_data(
-    category='pasta',
     price_data_dir='./data/price_data'
 )</code></pre>
                 </section>
 
+                <section id="api-data-preprocessing">
+                    <h2>Data Preprocessing Module</h2>
+                    <pre><code>from competitor_identification.data.preprocess_data import (
+    get_store_and_chain_ids,
+    filter_nans,
+    filter_by_specific_product_and_add_store_details,
+    filter_by_geographic_region,
+    data_preparation_clustering
+)</code></pre>
+
+                    <h3>get_store_and_chain_ids</h3>
+                    <p>Extracts rows from the store data that match the given SubChainName and StoreName. Used to identify the target store for competitor analysis.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def get_store_and_chain_ids(
+    Store_data: pd.DataFrame,
+    SubChainName: str,
+    StoreName: str
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Store_data</td>
+                                <td>pd.DataFrame</td>
+                                <td>Full store metadata DataFrame</td>
+                            </tr>
+                            <tr>
+                                <td>SubChainName</td>
+                                <td>str</td>
+                                <td>The sub-chain name to filter by</td>
+                            </tr>
+                            <tr>
+                                <td>StoreName</td>
+                                <td>str</td>
+                                <td>The store name to filter by</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>chosen_store_info</strong> (pd.DataFrame): Filtered DataFrame containing rows matching the SubChainName and StoreName</li>
+                    </ul>
+
+                    <h3>filter_nans</h3>
+                    <p>Filters observations from the price DataFrame where the number of NaN values exceeds a given threshold.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def filter_nans(
+    category_df: pd.DataFrame,
+    nan_threshold: float
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>category_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Price data DataFrame with potential NaN values</td>
+                            </tr>
+                            <tr>
+                                <td>nan_threshold</td>
+                                <td>float</td>
+                                <td>Threshold for allowed NaN ratio (0-1). E.g., 0.25 means rows with more than 25% NaN values are removed.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>filtered_df</strong> (pd.DataFrame): DataFrame with rows containing fewer NaN values than the threshold</li>
+                    </ul>
+
+                    <h3>filter_by_specific_product_and_add_store_details</h3>
+                    <p>Filters the imputed price data for a specific product description and merges with store metadata.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def filter_by_specific_product_and_add_store_details(
+    linear_no_cb_fill_df: pd.DataFrame,
+    product_description: str,
+    Store_data: pd.DataFrame
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>linear_no_cb_fill_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Imputed price data DataFrame</td>
+                            </tr>
+                            <tr>
+                                <td>product_description</td>
+                                <td>str</td>
+                                <td>Product description string to filter by</td>
+                            </tr>
+                            <tr>
+                                <td>Store_data</td>
+                                <td>pd.DataFrame</td>
+                                <td>Store metadata DataFrame for merging</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>product_df</strong> (pd.DataFrame): Filtered product data merged with store details (ChainID, ChainName, StoreID, StoreName, geographic columns, etc.)</li>
+                    </ul>
+
+                    <h3>filter_by_geographic_region</h3>
+                    <p>Filters product data based on geographic criteria with automatic fallback. If fewer than 10 stores exist at the City level, it falls back to County; if still fewer than 10, it falls back to District.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def filter_by_geographic_region(
+    product_df: pd.DataFrame,
+    chosen_store_info: pd.DataFrame,
+    Geographic: str
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>product_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Product data merged with store details</td>
+                            </tr>
+                            <tr>
+                                <td>chosen_store_info</td>
+                                <td>pd.DataFrame</td>
+                                <td>Target store information (used to extract CityName, SubDistrictName, DistrictName)</td>
+                            </tr>
+                            <tr>
+                                <td>Geographic</td>
+                                <td>str</td>
+                                <td>Starting geographic level: 'City', 'County', or 'District'</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>product_df</strong> (pd.DataFrame): Geographically filtered DataFrame with multi-level index set to [ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName, category, ProductDescription]</li>
+                    </ul>
+
+                    <h3>data_preparation_clustering</h3>
+                    <p>Prepares dimensionality reduction outputs for the clustering step. Combines price movement and price level principal components, attaches store metadata, and separates the data into: the target store, same-chain stores, and other-chain stores.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def data_preparation_clustering(
+    price_movement_principal: pd.DataFrame,
+    price_level_principal: pd.DataFrame,
+    chosen_store_info: pd.DataFrame,
+    product_df: pd.DataFrame
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>price_movement_principal</td>
+                                <td>pd.DataFrame</td>
+                                <td>Principal components for price movement from dimensionality reduction</td>
+                            </tr>
+                            <tr>
+                                <td>price_level_principal</td>
+                                <td>pd.DataFrame</td>
+                                <td>Principal components for price level from dimensionality reduction</td>
+                            </tr>
+                            <tr>
+                                <td>chosen_store_info</td>
+                                <td>pd.DataFrame</td>
+                                <td>Target store metadata (used for StoreID and ChainID matching)</td>
+                            </tr>
+                            <tr>
+                                <td>product_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Product metadata with store columns (ChainID, StoreID, etc.)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>dr_components_df</strong> (pd.DataFrame): Combined 4D components [P_M_1, P_M_2, P_L_1, P_L_2] with target store + other-chain stores (excludes same-chain stores)</li>
+                        <li><strong>store_dr_components_df</strong> (pd.DataFrame): Components for the target store only</li>
+                        <li><strong>same_chain_dr_components_df</strong> (pd.DataFrame): Components for stores in the same chain (excluding the target store)</li>
+                    </ul>
+                </section>
+
+                <section id="api-data-imputation">
+                    <h2>Data Imputation Module</h2>
+                    <pre><code>from competitor_identification.data.impute_data import impute_missing_data</code></pre>
+
+                    <h3>impute_missing_data</h3>
+                    <p>Performs three-stage missing data imputation: (1) linear interpolation, (2) NOCB (Next Observation Carried Backward / backward fill), and (3) LOCB (Last Observation Carried Forward / forward fill). Applied row-wise (across time for each product-store combination).</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def impute_missing_data(
+    filtered_df: pd.DataFrame
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>filtered_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Price data DataFrame with potential NaN values (all columns must be numeric)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>linear_no_cb_fill_df</strong> (pd.DataFrame): Fully imputed DataFrame with no remaining NaN values</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from competitor_identification.data.impute_data import impute_missing_data
+
+# Impute after filtering NaN rows
+imputed_data = impute_missing_data(filtered_price_data)
+print(f"Remaining NaNs: {imputed_data.isna().sum().sum()}")  # Should be 0</code></pre>
+                </section>
+
+                <section id="api-data-scaling">
+                    <h2>Data Scaling Module</h2>
+                    <pre><code>from competitor_identification.data.scale_data import scale_data</code></pre>
+
+                    <h3>scale_data</h3>
+                    <p>Scales product price data into two separate representations using <code>StandardScaler</code>:</p>
+                    <ul>
+                        <li><strong>Price movement</strong> (temporal changes): Scales along the time axis (columns), capturing how prices change relative to each other over time</li>
+                        <li><strong>Price level</strong> (absolute prices): Scales along the product/store axis (rows), capturing the absolute price positioning of each store</li>
+                    </ul>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def scale_data(
+    product_df: pd.DataFrame
+) -> Tuple[pd.DataFrame, pd.DataFrame]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>product_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>Product price data with rows as product-store combinations and columns as time periods (all numeric)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><strong>price_movement_df</strong> (pd.DataFrame): StandardScaler-normalized price movement data (scaled along columns/time axis)</li>
+                        <li><strong>price_level_df</strong> (pd.DataFrame): StandardScaler-normalized price level data (scaled along rows/product axis)</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code>from competitor_identification.data.scale_data import scale_data
+
+price_movement_df, price_level_df = scale_data(product_regional_df)
+print(f"Movement shape: {price_movement_df.shape}")
+print(f"Level shape: {price_level_df.shape}")</code></pre>
+                </section>
+
                 <section id="api-dimensionality-reduction">
                     <h2>Dimensionality Reduction Module</h2>
-                    
+                    <pre><code>from competitor_identification.dimensionality_reduction.dimensionality_reduction import (
+    perform_dimensionality_reduction_on_price_movement_and_level
+)</code></pre>
+
                     <h3>perform_dimensionality_reduction_on_price_movement_and_level</h3>
                     <p>Performs dimensionality reduction separately on price movement and price level data, then combines the results into a unified 4D space.</p>
-                    
+
                     <h4>Function Signature:</h4>
                     <pre><code>def perform_dimensionality_reduction_on_price_movement_and_level(
     price_movement_df: pd.DataFrame,
@@ -347,91 +691,79 @@ pasta_prices = load_price_data(
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>price_movement_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing price movement data (temporal changes)</td>
-                                <td>Non-empty DataFrame with numeric columns</td>
+                                <td>Scaled price movement data (temporal changes)</td>
                             </tr>
                             <tr>
                                 <td>price_level_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing price level data (absolute prices)</td>
-                                <td>Non-empty DataFrame with numeric columns</td>
+                                <td>Scaled price level data (absolute prices)</td>
                             </tr>
                             <tr>
                                 <td>product_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>Product metadata with store information</td>
-                                <td>Must contain: ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</td>
+                                <td>Product metadata with store columns (ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName)</td>
                             </tr>
                             <tr>
                                 <td>method</td>
                                 <td>str</td>
-                                <td>Dimensionality reduction method to use</td>
-                                <td>'pca', 't-sne', 'umap'</td>
+                                <td>Dimensionality reduction algorithm: <code>'pca'</code>, <code>'t-sne'</code>, or <code>'umap'</code></td>
                             </tr>
                             <tr>
                                 <td>method_params</td>
                                 <td>dict</td>
-                                <td>Method-specific parameters</td>
-                                <td>PCA: {'n_components': int}<br>t-SNE: {'n_components': int, 'perplexity': float}<br>UMAP: {'n_components': int, 'n_neighbors': int}</td>
+                                <td>Algorithm-specific parameters. See <a href="configuration.html">Configuration Reference</a> for details.</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>combined_components_df</strong> (pd.DataFrame): Combined 4D space with columns [P_M_1, P_M_2, P_L_1, P_L_2] plus metadata</li>
-                        <li><strong>price_movement_principal_df</strong> (pd.DataFrame): Price movement components [P_M_1, P_M_2]</li>
-                        <li><strong>price_level_principal_df</strong> (pd.DataFrame): Price level components [P_L_1, P_L_2]</li>
+                        <li><strong>combined_components_df</strong> (pd.DataFrame): Combined 4D space with columns [P_M_1, P_M_2, P_L_1, P_L_2] plus store metadata</li>
+                        <li><strong>price_movement_principal_df</strong> (pd.DataFrame): Price movement principal components</li>
+                        <li><strong>price_level_principal_df</strong> (pd.DataFrame): Price level principal components</li>
                     </ul>
 
                     <h4>Examples:</h4>
-                    <pre><code># Example 1: Using PCA
+                    <pre><code># Using PCA (default)
 combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_movement_and_level(
-    price_movement_df=movement_data,
-    price_level_df=level_data,
-    product_df=product_metadata,
+    price_movement_df=scaled_movement,
+    price_level_df=scaled_level,
+    product_df=product_regional_df,
     method='pca',
-    method_params={'n_components': 2}
+    method_params={'n_oversamples': 10}
 )
 
-# Example 2: Using t-SNE with custom perplexity
+# Using t-SNE
 combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_movement_and_level(
-    price_movement_df=movement_data,
-    price_level_df=level_data,
-    product_df=product_metadata,
+    price_movement_df=scaled_movement,
+    price_level_df=scaled_level,
+    product_df=product_regional_df,
     method='t-sne',
-    method_params={'n_components': 2, 'perplexity': 30.0}
-)
-
-# Example 3: Using UMAP for manifold learning
-combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_movement_and_level(
-    price_movement_df=movement_data,
-    price_level_df=level_data,
-    product_df=product_metadata,
-    method='umap',
-    method_params={'n_components': 2, 'n_neighbors': 15}
+    method_params={'n_components': 2, 'perplexity': 40, 'max_iter': 300}
 )</code></pre>
                 </section>
 
                 <section id="api-clustering">
                     <h2>Clustering Module</h2>
-                    
+                    <pre><code>from competitor_identification.clustering.clustering import perform_clustering, find_top_competitors</code></pre>
+
                     <h3>perform_clustering</h3>
-                    <p>Performs clustering on dimensionality-reduced data using the specified algorithm.</p>
-                    
+                    <p>Performs clustering on the dimensionality-reduced data using the specified algorithm. The function takes the target store info and same-chain store data to properly handle cluster assignment and competitor separation.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def perform_clustering(
-    data: pd.DataFrame,
+    dr_components_df: pd.DataFrame,
+    chosen_store_info: pd.DataFrame,
+    same_chain_dr_components_df: pd.DataFrame,
     method: str,
     method_params: dict
-) -> pd.DataFrame</code></pre>
+) -> Tuple[pd.DataFrame, np.ndarray, pd.DataFrame, pd.DataFrame]</code></pre>
 
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
@@ -440,61 +772,57 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>data</td>
+                                <td>dr_components_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>Dimensionality-reduced data with 4D components [P_M_1, P_M_2, P_L_1, P_L_2]</td>
-                                <td>Non-empty DataFrame with numeric columns</td>
+                                <td>4D components [P_M_1, P_M_2, P_L_1, P_L_2] for target store + other-chain stores (from <code>data_preparation_clustering</code>)</td>
+                            </tr>
+                            <tr>
+                                <td>chosen_store_info</td>
+                                <td>pd.DataFrame</td>
+                                <td>Target store metadata</td>
+                            </tr>
+                            <tr>
+                                <td>same_chain_dr_components_df</td>
+                                <td>pd.DataFrame</td>
+                                <td>4D components for same-chain stores (from <code>data_preparation_clustering</code>)</td>
                             </tr>
                             <tr>
                                 <td>method</td>
                                 <td>str</td>
-                                <td>Clustering algorithm to use</td>
-                                <td>'birch', 'dbscan', 'optics'</td>
+                                <td>Clustering algorithm: <code>'birch'</code>, <code>'dbscan'</code>, or <code>'optics'</code></td>
                             </tr>
                             <tr>
                                 <td>method_params</td>
                                 <td>dict</td>
-                                <td>Algorithm-specific parameters</td>
-                                <td>Birch: {'n_clusters': int, 'threshold': float}<br>DBSCAN: {'eps': float, 'min_samples': int}<br>OPTICS: {'min_samples': int, 'xi': float}</td>
+                                <td>Algorithm-specific parameters. See <a href="configuration.html">Configuration Reference</a> for details.</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>clustered_df</strong> (pd.DataFrame): Input DataFrame with added 'cluster_label' column containing cluster assignments for each data point</li>
+                        <li><strong>clustered_dr_components_df</strong> (pd.DataFrame): Input data with added <code>cluster_label</code> column</li>
+                        <li><strong>cluster_labels</strong> (np.ndarray): Array of cluster label assignments</li>
+                        <li><strong>clustered_store_dr_components_df</strong> (pd.DataFrame): Clustered data for the target store</li>
+                        <li><strong>clustered_competitors_dr_components_df</strong> (pd.DataFrame): Clustered data for potential competitors (stores in the same cluster as the target, from other chains)</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Using Birch clustering
-clustered_df = perform_clustering(
-    data=combined_components_df,
+                    <h4>Example:</h4>
+                    <pre><code>clustered_df, labels, store_df, competitors_df = perform_clustering(
+    dr_components_df=dr_components,
+    chosen_store_info=chosen_store,
+    same_chain_dr_components_df=same_chain_df,
     method='birch',
-    method_params={'n_clusters': 5, 'threshold': 0.5}
-)
-
-# Example 2: Using DBSCAN with automatic epsilon
-clustered_df = perform_clustering(
-    data=combined_components_df,
-    method='dbscan',
-    method_params={'eps': None, 'min_samples': 5}
-)
-
-# Example 3: Using OPTICS for density-based clustering
-clustered_df = perform_clustering(
-    data=combined_components_df,
-    method='optics',
-    method_params={'min_samples': 5, 'xi': 0.05}
+    method_params={'threshold': 9, 'n_clusters': None}
 )</code></pre>
 
                     <h3>find_top_competitors</h3>
                     <p>Identifies top N competitors based on Euclidean distance in the 4D dimensionality reduction space.</p>
-                    
+
                     <h4>Function Signature:</h4>
                     <pre><code>def find_top_competitors(
     clustered_store_dr_components_df: pd.DataFrame,
@@ -517,13 +845,13 @@ clustered_df = perform_clustering(
                                 <td>clustered_store_dr_components_df</td>
                                 <td>pd.DataFrame</td>
                                 <td>-</td>
-                                <td>Single-row DataFrame containing the target store's 4D components and metadata</td>
+                                <td>Target store's 4D components and metadata (from <code>perform_clustering</code>)</td>
                             </tr>
                             <tr>
                                 <td>clustered_competitors_dr_components_df</td>
                                 <td>pd.DataFrame</td>
                                 <td>-</td>
-                                <td>DataFrame containing potential competitors' 4D components and metadata</td>
+                                <td>Potential competitors' 4D components and metadata (from <code>perform_clustering</code>)</td>
                             </tr>
                             <tr>
                                 <td>top_n</td>
@@ -536,31 +864,25 @@ clustered_df = perform_clustering(
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>top_competitors_df</strong> (pd.DataFrame): DataFrame containing the top N competitors sorted by distance, with columns including store metadata and calculated Euclidean distances</li>
+                        <li><strong>top_competitors_df</strong> (pd.DataFrame): Top N competitors sorted by Euclidean distance (ascending), with store metadata and distance values</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Find top 10 competitors
-top_competitors = find_top_competitors(
-    clustered_store_dr_components_df=store_data,
-    clustered_competitors_dr_components_df=competitors_data,
-    top_n=10
-)
-
-# Example 2: Find top 5 closest competitors
-top_5_competitors = find_top_competitors(
-    clustered_store_dr_components_df=store_data,
-    clustered_competitors_dr_components_df=competitors_data,
+                    <h4>Example:</h4>
+                    <pre><code>top_competitors = find_top_competitors(
+    clustered_store_dr_components_df=store_df,
+    clustered_competitors_dr_components_df=competitors_df,
     top_n=5
-)</code></pre>
+)
+print(top_competitors[['StoreName', 'ChainName', 'distance']])</code></pre>
                 </section>
 
                 <section id="api-evaluation">
                     <h2>Evaluation Module</h2>
-                    
+                    <pre><code>from competitor_identification.evaluation.clustering_evaluation import evaluate_clustering</code></pre>
+
                     <h3>evaluate_clustering</h3>
                     <p>Computes clustering quality metrics: Silhouette Score and Davies-Bouldin Score.</p>
-                    
+
                     <h4>Function Signature:</h4>
                     <pre><code>def evaluate_clustering(
     cluster_labels: np.ndarray,
@@ -574,7 +896,6 @@ top_5_competitors = find_top_competitors(
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -582,45 +903,39 @@ top_5_competitors = find_top_competitors(
                                 <td>cluster_labels</td>
                                 <td>np.ndarray</td>
                                 <td>Array of cluster labels for each data point</td>
-                                <td>Integer array with cluster assignments</td>
                             </tr>
                             <tr>
                                 <td>clustered_dr_components_df</td>
                                 <td>pd.DataFrame</td>
                                 <td>DataFrame with 4D components [P_M_1, P_M_2, P_L_1, P_L_2] and cluster labels</td>
-                                <td>DataFrame with numeric 4D components</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>silhouette_score</strong> (float): Cluster cohesion metric, range [-1, 1], higher is better, >0.5 indicates good clustering</li>
-                        <li><strong>davies_bouldin_score</strong> (float): Cluster separation metric, range [0, ∞), lower is better, <1.0 indicates well-separated clusters</li>
+                        <li><strong>silhouette_score</strong> (float): Cluster cohesion metric, range [-1, 1]. Higher is better; &gt;0.5 indicates good clustering.</li>
+                        <li><strong>davies_bouldin_score</strong> (float): Cluster separation metric, range [0, inf). Lower is better; &lt;1.0 indicates well-separated clusters.</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Evaluate clustering quality
-silhouette, davies_bouldin = evaluate_clustering(
-    cluster_labels=clustered_df['cluster_label'].values,
+                    <h4>Example:</h4>
+                    <pre><code>silhouette, davies_bouldin = evaluate_clustering(
+    cluster_labels=labels,
     clustered_dr_components_df=clustered_df
 )
 print(f"Silhouette Score: {silhouette:.3f}")
-print(f"Davies-Bouldin Score: {davies_bouldin:.3f}")
-
-# Example 2: Interpret results
-if silhouette > 0.5:
-    print("Good clustering quality")
-else:
-    print("Poor clustering quality, consider adjusting parameters")</code></pre>
+print(f"Davies-Bouldin Score: {davies_bouldin:.3f}")</code></pre>
                 </section>
 
                 <section id="api-visualization">
                     <h2>Visualization Module</h2>
-                    
+                    <pre><code>from competitor_identification.visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
+from competitor_identification.visualization.plot_clusters import plot_clusters
+from competitor_identification.visualization.present_competitors_table import present_competitors_table</code></pre>
+
                     <h3>plot_dimensionality_reduction</h3>
-                    <p>Creates interactive scatter plots showing dimensionality reduction results for price movement and price level data.</p>
-                    
+                    <p>Creates interactive scatter plots showing dimensionality reduction results for price movement and price level data, with the target store highlighted.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def plot_dimensionality_reduction(
     combined_components_df: pd.DataFrame,
@@ -634,42 +949,30 @@ else:
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>combined_components_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing the principal components from dimensionality reduction</td>
-                                <td>DataFrame with columns: P_M_1, P_M_2, P_L_1, P_L_2, and store metadata</td>
+                                <td>Principal components DataFrame with columns P_M_1, P_M_2, P_L_1, P_L_2, and store metadata</td>
                             </tr>
                             <tr>
                                 <td>chosen_store_info</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing the store metadata for highlighting the target store</td>
-                                <td>Single-row DataFrame with store information</td>
+                                <td>Target store metadata for highlighting</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>fig1</strong> (plotly.graph_objects.Figure): Interactive scatter plot showing dimensionality reduction results with the target store highlighted</li>
+                        <li><strong>fig</strong> (plotly.graph_objects.Figure): Interactive scatter plot</li>
                     </ul>
-
-                    <h4>Example:</h4>
-                    <pre><code>from competitor_identification.visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
-
-fig1 = plot_dimensionality_reduction(
-    combined_components_df=combined_df,
-    chosen_store_info=target_store_df
-)
-fig1.show()</code></pre>
 
                     <h3>plot_clusters</h3>
                     <p>Creates interactive scatter plots showing clustering results in the dimensionality reduction space.</p>
-                    
+
                     <h4>Function Signature:</h4>
                     <pre><code>def plot_clusters(
     dr_components_df: pd.DataFrame,
@@ -685,56 +988,40 @@ fig1.show()</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>dr_components_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame with dimensionality reduction components and clustering results</td>
-                                <td>DataFrame with columns: P_M_1, P_M_2, P_L_1, P_L_2, cluster_label</td>
+                                <td>Clustered data with columns P_M_1, P_M_2, P_L_1, P_L_2, cluster_label</td>
                             </tr>
                             <tr>
                                 <td>dr_cluster_labels</td>
                                 <td>np.ndarray</td>
-                                <td>Array of cluster labels from clustering algorithm</td>
-                                <td>Integer array with cluster assignments</td>
+                                <td>Array of cluster labels</td>
                             </tr>
                             <tr>
                                 <td>store_dr_components_df</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing selected store's dimensionality reduction components</td>
-                                <td>Single-row DataFrame with target store data</td>
+                                <td>Target store data for highlighting</td>
                             </tr>
                             <tr>
                                 <td>clustering_method</td>
                                 <td>str</td>
-                                <td>Name of the clustering method used</td>
-                                <td>'birch', 'dbscan', 'optics'</td>
+                                <td>Name of the clustering method (used in plot title)</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>fig2</strong> (plotly.graph_objects.Figure): Interactive scatter plot showing clustering results with different colors for each cluster</li>
+                        <li><strong>fig</strong> (plotly.graph_objects.Figure): Interactive scatter plot with clusters color-coded</li>
                     </ul>
 
-                    <h4>Example:</h4>
-                    <pre><code>from competitor_identification.visualization.plot_clusters import plot_clusters
-
-fig2 = plot_clusters(
-    dr_components_df=clustered_df,
-    dr_cluster_labels=cluster_labels,
-    store_dr_components_df=target_store_df,
-    clustering_method='dbscan'
-)
-fig2.show()</code></pre>
-
                     <h3>present_competitors_table</h3>
-                    <p>Creates an interactive table displaying the top competitors with their information.</p>
-                    
+                    <p>Creates an interactive Plotly table displaying the top competitors with their information.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def present_competitors_table(
     top_competitors: pd.DataFrame
@@ -747,77 +1034,188 @@ fig2.show()</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>top_competitors</td>
                                 <td>pd.DataFrame</td>
-                                <td>DataFrame containing the top competitors' data</td>
-                                <td>DataFrame with competitor information and distance metrics</td>
+                                <td>DataFrame from <code>find_top_competitors</code> containing competitor info and distances</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>fig3</strong> (plotly.graph_objects.Figure): Interactive table figure displaying competitor information</li>
+                        <li><strong>fig</strong> (plotly.graph_objects.Figure): Interactive table figure</li>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from competitor_identification.visualization.present_competitors_table import present_competitors_table
+                    <pre><code># Display all visualizations
+fig1 = plot_dimensionality_reduction(combined_df, chosen_store_info)
+fig2 = plot_clusters(clustered_df, labels, store_df, 'BIRCH')
+fig3 = present_competitors_table(top_competitors)
 
-fig3 = present_competitors_table(
-    top_competitors=top_10_competitors
-)
+fig1.show()
+fig2.show()
 fig3.show()</code></pre>
                 </section>
 
                 <section id="best-practices">
                     <h2>Best Practices</h2>
-                    
+
                     <h3>Data Quality</h3>
                     <ul>
                         <li>Ensure price data covers sufficient time periods (minimum 30 days recommended)</li>
-                        <li>Handle missing values appropriately using the nan_threshold parameter</li>
+                        <li>Handle missing values appropriately using the <code>nan_threshold</code> parameter</li>
                         <li>Verify store metadata completeness before analysis</li>
                     </ul>
 
                     <h3>Algorithm Selection</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Combination</th>
+                                <th>Config File</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PCA + Birch</td>
+                                <td><code>pca_birch_config.yaml</code> (default)</td>
+                                <td>Large datasets, fast processing</td>
+                            </tr>
+                            <tr>
+                                <td>t-SNE + DBSCAN</td>
+                                <td><code>tsne_dbscan_config.yaml</code></td>
+                                <td>Best visualization quality, density-based clusters</td>
+                            </tr>
+                            <tr>
+                                <td>UMAP + OPTICS</td>
+                                <td><code>umap_optics_config.yaml</code></td>
+                                <td>Good balance of quality and speed, hierarchical density</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Geographic Filtering</h3>
                     <ul>
-                        <li><strong>PCA + Birch:</strong> Best for large datasets, fast processing</li>
-                        <li><strong>UMAP + DBSCAN:</strong> Best balance of quality and speed</li>
-                        <li><strong>t-SNE + OPTICS:</strong> Best visualization, slower processing</li>
+                        <li>Start with <code>'City'</code> for the most relevant local competitors</li>
+                        <li>The automatic fallback logic ensures you always get enough data points (minimum 10 stores)</li>
+                        <li>Use <code>'District'</code> directly for a broader regional analysis</li>
                     </ul>
                 </section>
 
                 <section id="troubleshooting">
                     <h2>Troubleshooting</h2>
-                    
+
                     <h3>Common Issues</h3>
-                    
+
                     <h4>Issue: No competitors found</h4>
-                    <p><strong>Solution:</strong> Try broader geographic filtering or lower nan_threshold</p>
+                    <p><strong>Solution:</strong> Try broader geographic filtering or adjust the NaN threshold to include more data:</p>
                     <pre><code>config.set('nan_threshold', 0.5)
-config.set('Geographic', 'District')</code></pre>
+# Use 'District' for a broader geographic scope</code></pre>
 
                     <h4>Issue: Poor cluster quality (low Silhouette score)</h4>
-                    <p><strong>Solution:</strong> Try different algorithm combinations</p>
-                    <pre><code>config.set('dimensionality_reduction_method', 'umap')
-config.set('clustering_method', 'dbscan')</code></pre>
+                    <p><strong>Solution:</strong> Try different algorithm combinations. Load a different config:</p>
+                    <pre><code># Switch to UMAP + OPTICS
+ci = CompetitorIdentification(custom_config_path='path/to/umap_optics_config.yaml')</code></pre>
+
+                    <h4>Issue: Store not found</h4>
+                    <p><strong>Solution:</strong> Verify that the SubChainName and StoreName match exactly what's in the store data:</p>
+                    <pre><code>store_data = load_store_data(store_file_path, subchain_file_path)
+print(store_data[['SubChainName', 'StoreName']].drop_duplicates())</code></pre>
                 </section>
 
                 <section>
-                    <h2>Support & Resources</h2>
+                    <h2>Support &amp; Resources</h2>
                     <ul>
                         <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Report bugs and request features</a></li>
-                        <li><strong>Documentation:</strong> Comprehensive guides and API references for each package</li>
-                        <li><strong>Examples:</strong> Jupyter notebooks with real-world use cases and tutorials</li>
+                        <li><strong>Configuration Reference:</strong> <a href="configuration.html">Full YAML configuration documentation</a></li>
+                        <li><strong>Other Packages:</strong> <a href="price_imputation_forecasting.html">Price Imputation &amp; Forecasting</a></li>
                     </ul>
                 </section>
             </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <p>Competitive Price Intelligence &mdash; v0.1.0</p>
+                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                </div>
+            </footer>
         </main>
     </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(event.target) &&
+                !menuBtn.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Active nav link tracking on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Copy-to-clipboard for code blocks
+        document.querySelectorAll('pre').forEach(block => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', () => {
+                const code = block.querySelector('code');
+                navigator.clipboard.writeText(code.textContent).then(() => {
+                    btn.textContent = 'Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+            block.appendChild(btn);
+        });
+    </script>
 </body>
 </html>

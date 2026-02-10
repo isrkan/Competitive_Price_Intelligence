@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Reference - API Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="docs-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>Configuration Reference</h1>
+                <p>YAML Config Documentation</p>
+            </div>
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Navigation</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="competitor_identification.html">Competitor Identification</a></li>
+                        <li><a href="price_imputation_forecasting.html">Price Imputation &amp; Forecasting</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Configuration System</div>
+                    <ul class="nav-links">
+                        <li><a href="#overview" class="active">Overview</a></li>
+                        <li><a href="#config-class">Config Class API</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Competitor Identification</div>
+                    <ul class="nav-links">
+                        <li><a href="#ci-data-paths">Data Paths</a></li>
+                        <li><a href="#ci-preprocessing">Preprocessing</a></li>
+                        <li><a href="#ci-dr">Dimensionality Reduction</a></li>
+                        <li><a href="#ci-clustering">Clustering</a></li>
+                        <li><a href="#ci-presets">Config Presets</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Price Imputation &amp; Forecasting</div>
+                    <ul class="nav-links">
+                        <li><a href="#pif-data-paths">Data Paths</a></li>
+                        <li><a href="#pif-preprocessing">Preprocessing</a></li>
+                        <li><a href="#pif-sliding-window">Sliding Window</a></li>
+                        <li><a href="#pif-imputation-model">Imputation Model</a></li>
+                        <li><a href="#pif-forecasting-model">Forecasting Model</a></li>
+                        <li><a href="#pif-save">Save Settings</a></li>
+                        <li><a href="#pif-presets">Config Presets</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Configuration Reference</h1>
+                <p>Complete YAML Configuration Documentation for All ML Packages</p>
+            </div>
+
+            <div class="content-body">
+                <section id="overview">
+                    <h2>Overview</h2>
+                    <p>Both ML packages use a YAML-based configuration system. Each package ships with a default config file and optional preset configs for different algorithm combinations. Configuration values can be overridden at initialization or at runtime.</p>
+
+                    <h3>How Configuration Works</h3>
+                    <ol>
+                        <li><strong>Default config</strong> is loaded automatically when the package is initialized</li>
+                        <li><strong>Custom config file</strong> (optional) overrides specific keys from the default</li>
+                        <li><strong>Runtime overrides</strong> via <code>config.set(key, value)</code> take highest priority</li>
+                    </ol>
+
+                    <h3>Token Replacement</h3>
+                    <p>Config files use tokens that are replaced at runtime:</p>
+                    <ul>
+                        <li><code>&lt;USER_DIRECTORY_TOKEN&gt;</code> &mdash; replaced by <code>data_directory_path</code> passed to the pipeline function</li>
+                        <li><code>%price_data_dir%</code> &mdash; replaced by the resolved <code>price_data_dir</code> value</li>
+                    </ul>
+
+                    <h4>Example:</h4>
+                    <pre><code># In YAML config:
+price_data_dir: "&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data"
+store_file_path: "%price_data_dir%/Store_data_git.csv"
+
+# At runtime with data_directory_path = "/home/user/data":
+# price_data_dir becomes: "/home/user/data/retail_pricing/competitor_recognition_data"
+# store_file_path becomes: "/home/user/data/retail_pricing/competitor_recognition_data/Store_data_git.csv"</code></pre>
+                </section>
+
+                <section id="config-class">
+                    <h2>Config Class API</h2>
+                    <p>Both packages use the same <code>Config</code> class interface.</p>
+
+                    <pre><code>from competitor_identification.config.config import Config
+# or
+from price_imputation_and_forecasting.config.config import Config</code></pre>
+
+                    <h3><span class="function-name">Config(default_config_path=None, custom_config_path=None)</span></h3>
+                    <p>Loads the default YAML config. If <code>custom_config_path</code> is provided, those values override the defaults.</p>
+
+                    <h3><span class="function-name">config.load_config(config_path)</span></h3>
+                    <p>Loads a YAML file and returns the parsed dictionary.</p>
+
+                    <h3><span class="function-name">config.update_config(config_path)</span></h3>
+                    <p>Loads a YAML file and merges its values into the current configuration (overriding existing keys).</p>
+
+                    <h3><span class="function-name">config.get(key, default=None)</span></h3>
+                    <p>Retrieve a configuration value by key. Returns <code>default</code> if the key is not found.</p>
+
+                    <h3><span class="function-name">config.set(key, value)</span></h3>
+                    <p>Set or override a configuration value at runtime.</p>
+
+                    <h4>Usage Example:</h4>
+                    <pre><code>from competitor_identification import CompetitorIdentification
+
+# Load with custom config
+ci = CompetitorIdentification(custom_config_path='tsne_dbscan_config.yaml')
+config = ci.get_config()
+
+# Read a value
+method = config.get('dimensionality_reduction_method')  # 't-sne'
+
+# Override at runtime
+config.set('top_n_competitors', 10)
+config.set('nan_threshold', 0.3)</code></pre>
+                </section>
+
+                <!-- ============================================= -->
+                <!-- COMPETITOR IDENTIFICATION CONFIG               -->
+                <!-- ============================================= -->
+
+                <section id="ci-data-paths">
+                    <h2>Competitor Identification: Data Paths</h2>
+                    <p>These settings control where the pipeline looks for input data files.</p>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>price_data_dir</code></td>
+                                <td>str</td>
+                                <td><code>&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data</code></td>
+                                <td>Directory containing category Parquet files. The <code>&lt;USER_DIRECTORY_TOKEN&gt;</code> is replaced by <code>data_directory_path</code> at runtime.</td>
+                            </tr>
+                            <tr>
+                                <td><code>store_file_path</code></td>
+                                <td>str</td>
+                                <td><code>%price_data_dir%/Store_data_git.csv</code></td>
+                                <td>Path to the store metadata CSV file. <code>%price_data_dir%</code> is resolved at runtime.</td>
+                            </tr>
+                            <tr>
+                                <td><code>subchain_file_path</code></td>
+                                <td>str</td>
+                                <td><code>%price_data_dir%/SubChainNameEnglish.xlsx</code></td>
+                                <td>Path to the sub-chain English names Excel file.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="ci-preprocessing">
+                    <h2>Competitor Identification: Preprocessing</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>nan_threshold</code></td>
+                                <td>float</td>
+                                <td><code>0.25</code></td>
+                                <td>Maximum allowed NaN ratio per row. Rows exceeding this threshold are removed. E.g., 0.25 means rows with more than 25% NaN values are dropped.</td>
+                            </tr>
+                            <tr>
+                                <td><code>top_n_competitors</code></td>
+                                <td>int</td>
+                                <td><code>5</code></td>
+                                <td>Number of top competitors to return, ranked by Euclidean distance in the 4D space.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="ci-dr">
+                    <h2>Competitor Identification: Dimensionality Reduction</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>dimensionality_reduction_method</code></td>
+                                <td>str</td>
+                                <td><code>'pca'</code></td>
+                                <td>Algorithm to use: <code>'pca'</code>, <code>'t-sne'</code>, or <code>'umap'</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>dimensionality_reduction_method_params</code></td>
+                                <td>dict</td>
+                                <td><em>(varies by method)</em></td>
+                                <td>Algorithm-specific hyperparameters (see below)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>PCA Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>n_oversamples</code></td>
+                                <td>int</td>
+                                <td><code>10</code></td>
+                                <td>Oversampling parameter for randomized SVD</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>t-SNE Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>n_components</code></td>
+                                <td>int</td>
+                                <td><code>2</code></td>
+                                <td>Number of output dimensions</td>
+                            </tr>
+                            <tr>
+                                <td><code>perplexity</code></td>
+                                <td>float</td>
+                                <td><code>40</code></td>
+                                <td>Perplexity parameter (balances local vs global structure). Typical range: 5-50.</td>
+                            </tr>
+                            <tr>
+                                <td><code>max_iter</code></td>
+                                <td>int</td>
+                                <td><code>300</code></td>
+                                <td>Maximum number of optimization iterations</td>
+                            </tr>
+                            <tr>
+                                <td><code>method</code></td>
+                                <td>str</td>
+                                <td><code>'exact'</code></td>
+                                <td>Gradient computation method: <code>'exact'</code> or <code>'barnes_hut'</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>init</code></td>
+                                <td>str</td>
+                                <td><code>'random'</code></td>
+                                <td>Initialization method</td>
+                            </tr>
+                            <tr>
+                                <td><code>learning_rate</code></td>
+                                <td>float</td>
+                                <td><code>200</code></td>
+                                <td>Learning rate for optimization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>UMAP Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>n_neighbors</code></td>
+                                <td>int</td>
+                                <td><code>5</code></td>
+                                <td>Number of neighbors for manifold approximation. Smaller values preserve more local structure.</td>
+                            </tr>
+                            <tr>
+                                <td><code>n_components</code></td>
+                                <td>int</td>
+                                <td><code>2</code></td>
+                                <td>Number of output dimensions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="ci-clustering">
+                    <h2>Competitor Identification: Clustering</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>clustering_method</code></td>
+                                <td>str</td>
+                                <td><code>'birch'</code></td>
+                                <td>Algorithm to use: <code>'birch'</code>, <code>'dbscan'</code>, or <code>'optics'</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>clustering_method_params</code></td>
+                                <td>dict</td>
+                                <td><em>(varies by method)</em></td>
+                                <td>Algorithm-specific hyperparameters (see below)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Birch Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>threshold</code></td>
+                                <td>float</td>
+                                <td><code>9</code></td>
+                                <td>Radius of the subcluster obtained by merging a new sample. Smaller values create more clusters.</td>
+                            </tr>
+                            <tr>
+                                <td><code>n_clusters</code></td>
+                                <td>int or null</td>
+                                <td><code>null</code></td>
+                                <td>Number of clusters after the final clustering step. <code>null</code> uses the sub-clusters directly.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>DBSCAN Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>min_samples</code></td>
+                                <td>int</td>
+                                <td><code>5</code></td>
+                                <td>Minimum number of points required to form a dense region</td>
+                            </tr>
+                            <tr>
+                                <td><code>eps</code></td>
+                                <td>float or null</td>
+                                <td><code>null</code></td>
+                                <td>Maximum distance between two samples for them to be considered neighbors. <code>null</code> triggers automatic epsilon estimation.</td>
+                            </tr>
+                            <tr>
+                                <td><code>n_neighbors</code></td>
+                                <td>int</td>
+                                <td><code>2</code></td>
+                                <td>Number of neighbors used for automatic epsilon estimation (only when <code>eps</code> is <code>null</code>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>OPTICS Parameters</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>min_samples</code></td>
+                                <td>int</td>
+                                <td><code>5</code></td>
+                                <td>Minimum number of points in a neighborhood to define a core point</td>
+                            </tr>
+                            <tr>
+                                <td><code>min_cluster_size</code></td>
+                                <td>float</td>
+                                <td><code>0.02</code></td>
+                                <td>Minimum fraction of total data points for a cluster (0-1)</td>
+                            </tr>
+                            <tr>
+                                <td><code>metric</code></td>
+                                <td>str</td>
+                                <td><code>'minkowski'</code></td>
+                                <td>Distance metric for neighbor calculations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="ci-presets">
+                    <h2>Competitor Identification: Config Presets</h2>
+                    <p>The package ships with three pre-built YAML configuration files:</p>
+
+                    <h3>pca_birch_config.yaml (Default)</h3>
+                    <p>Fastest combination, good for large datasets.</p>
+                    <pre><code># Default configurations
+price_data_dir: "&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data"
+store_file_path: "%price_data_dir%/Store_data_git.csv"
+subchain_file_path: "%price_data_dir%/SubChainNameEnglish.xlsx"
+
+nan_threshold: 0.25
+
+dimensionality_reduction_method: 'pca'
+dimensionality_reduction_method_params:
+  n_oversamples: 10
+
+clustering_method: 'birch'
+clustering_method_params:
+  threshold: 9
+  n_clusters: null
+
+top_n_competitors: 5</code></pre>
+
+                    <h3>tsne_dbscan_config.yaml</h3>
+                    <p>Best visualization quality with density-based clustering.</p>
+                    <pre><code>dimensionality_reduction_method: 't-sne'
+dimensionality_reduction_method_params:
+  n_components: 2
+  perplexity: 40
+  max_iter: 300
+  method: 'exact'
+  init: 'random'
+  learning_rate: 200
+
+clustering_method: 'dbscan'
+clustering_method_params:
+  min_samples: 5
+  eps: null
+  n_neighbors: 2</code></pre>
+
+                    <h3>umap_optics_config.yaml</h3>
+                    <p>Good balance of quality and speed with hierarchical density-based clustering.</p>
+                    <pre><code>dimensionality_reduction_method: 'umap'
+dimensionality_reduction_method_params:
+  n_neighbors: 5
+  n_components: 2
+
+clustering_method: 'optics'
+clustering_method_params:
+  min_samples: 5
+  min_cluster_size: 0.02
+  metric: 'minkowski'</code></pre>
+
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> The <code>tsne_dbscan_config.yaml</code> and <code>umap_optics_config.yaml</code> files only contain the keys they override. All other settings (data paths, nan_threshold, top_n_competitors) are inherited from the default <code>pca_birch_config.yaml</code>.
+                    </div>
+                </section>
+
+                <!-- ============================================= -->
+                <!-- PRICE IMPUTATION & FORECASTING CONFIG          -->
+                <!-- ============================================= -->
+
+                <section id="pif-data-paths">
+                    <h2>Price Imputation &amp; Forecasting: Data Paths</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>price_data_dir</code></td>
+                                <td>str</td>
+                                <td><code>&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data</code></td>
+                                <td>Directory containing category Parquet files</td>
+                            </tr>
+                            <tr>
+                                <td><code>store_file_path</code></td>
+                                <td>str</td>
+                                <td><code>%price_data_dir%/Store_data_git.csv</code></td>
+                                <td>Path to the store metadata CSV file</td>
+                            </tr>
+                            <tr>
+                                <td><code>subchain_file_path</code></td>
+                                <td>str</td>
+                                <td><code>%price_data_dir%/SubChainNameEnglish.xlsx</code></td>
+                                <td>Path to the sub-chain names Excel file</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="pif-preprocessing">
+                    <h2>Price Imputation &amp; Forecasting: Preprocessing</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>nan_threshold_ratio</code></td>
+                                <td>float</td>
+                                <td><code>0.75</code></td>
+                                <td>Keep observations with at least this ratio of non-NaN values. 0.75 means rows must have &ge;75% valid data.</td>
+                            </tr>
+                            <tr>
+                                <td><code>fill_nan_value</code></td>
+                                <td>float</td>
+                                <td><code>0</code></td>
+                                <td>Placeholder value used to replace NaN entries during masking. The model learns to predict these positions.</td>
+                            </tr>
+                            <tr>
+                                <td><code>gap_prob</code></td>
+                                <td>float</td>
+                                <td><code>0.3</code></td>
+                                <td>Probability of simulating a missing gap during imputation training (data augmentation).</td>
+                            </tr>
+                            <tr>
+                                <td><code>max_gap</code></td>
+                                <td>int</td>
+                                <td><code>30</code></td>
+                                <td>Maximum length of a simulated missing gap in days.</td>
+                            </tr>
+                            <tr>
+                                <td><code>test_size</code></td>
+                                <td>float</td>
+                                <td><code>0.2</code></td>
+                                <td>Fraction of data reserved for testing (chronological split).</td>
+                            </tr>
+                            <tr>
+                                <td><code>val_size</code></td>
+                                <td>float</td>
+                                <td><code>0.2</code></td>
+                                <td>Fraction of data reserved for validation (chronological split).</td>
+                            </tr>
+                            <tr>
+                                <td><code>random_state</code></td>
+                                <td>int</td>
+                                <td><code>42</code></td>
+                                <td>Random seed for reproducibility in sliding window stride randomization.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="pif-sliding-window">
+                    <h2>Price Imputation &amp; Forecasting: Sliding Window</h2>
+                    <p>These parameters control the sliding window mechanism used to create training samples for the forecasting model.</p>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>lookback</code></td>
+                                <td>int</td>
+                                <td><code>84</code></td>
+                                <td>Number of past days used as input (historical window length). The model sees this many time steps.</td>
+                            </tr>
+                            <tr>
+                                <td><code>horizon</code></td>
+                                <td>int</td>
+                                <td><code>28</code></td>
+                                <td>Number of future days to forecast (prediction horizon).</td>
+                            </tr>
+                            <tr>
+                                <td><code>min_stride</code></td>
+                                <td>int</td>
+                                <td><code>28</code></td>
+                                <td>Minimum gap between the starting points of consecutive sliding windows.</td>
+                            </tr>
+                            <tr>
+                                <td><code>max_stride</code></td>
+                                <td>int</td>
+                                <td><code>84</code></td>
+                                <td>Maximum gap between sliding windows. Actual stride is randomized between min and max.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="pif-imputation-model">
+                    <h2>Price Imputation &amp; Forecasting: Imputation Model</h2>
+                    <p>The imputation model uses a bidirectional RNN architecture with a dual-input design: sequential price data (with mask) + static store features.</p>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>imputation_model</code></td>
+                                <td>str</td>
+                                <td><code>'bi_rnn'</code></td>
+                                <td>Bidirectional RNN architecture: <code>'bi_rnn'</code>, <code>'bi_lstm'</code>, or <code>'bi_gru'</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>imputation_model_params</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>seq_units</code></td>
+                                <td>int</td>
+                                <td><code>128</code></td>
+                                <td>Number of units in the bidirectional recurrent layer</td>
+                            </tr>
+                            <tr>
+                                <td><code>dense_units</code></td>
+                                <td>int</td>
+                                <td><code>128</code></td>
+                                <td>Number of units in the dense layer (processes static features)</td>
+                            </tr>
+                            <tr>
+                                <td><code>dropout_rate</code></td>
+                                <td>float</td>
+                                <td><code>0.2</code></td>
+                                <td>Dropout rate for regularization</td>
+                            </tr>
+                            <tr>
+                                <td><code>recurrent_dropout</code></td>
+                                <td>float</td>
+                                <td><code>0.1</code></td>
+                                <td>Recurrent dropout rate (dropout on recurrent connections)</td>
+                            </tr>
+                            <tr>
+                                <td><code>epochs</code></td>
+                                <td>int</td>
+                                <td><code>30</code></td>
+                                <td>Number of training epochs</td>
+                            </tr>
+                            <tr>
+                                <td><code>batch_size</code></td>
+                                <td>int</td>
+                                <td><code>64</code></td>
+                                <td>Training batch size</td>
+                            </tr>
+                            <tr>
+                                <td><code>learning_rate</code></td>
+                                <td>float</td>
+                                <td><code>0.001</code></td>
+                                <td>Adam optimizer learning rate</td>
+                            </tr>
+                            <tr>
+                                <td><code>callbacks</code></td>
+                                <td>list or null</td>
+                                <td><code>null</code></td>
+                                <td>Optional Keras callbacks (e.g., EarlyStopping)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="pif-forecasting-model">
+                    <h2>Price Imputation &amp; Forecasting: Forecasting Model</h2>
+                    <p>The forecasting model uses a unidirectional RNN architecture for future price prediction.</p>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>forecasting_model</code></td>
+                                <td>str</td>
+                                <td><code>'gru'</code></td>
+                                <td>Unidirectional RNN architecture: <code>'rnn'</code>, <code>'lstm'</code>, or <code>'gru'</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>forecasting_model_params</h3>
+                    <p>The recurrent layer key name varies by model type:</p>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>gru_units</code> / <code>lstm_units</code> / <code>rnn_units</code></td>
+                                <td>int</td>
+                                <td><code>256</code></td>
+                                <td>Number of units in the recurrent layer. Use the key matching your model type.</td>
+                            </tr>
+                            <tr>
+                                <td><code>dense_units</code></td>
+                                <td>int</td>
+                                <td><code>128</code></td>
+                                <td>Number of units in the dense output layer</td>
+                            </tr>
+                            <tr>
+                                <td><code>dropout_rate</code></td>
+                                <td>float</td>
+                                <td><code>0.15</code></td>
+                                <td>Dropout rate for regularization</td>
+                            </tr>
+                            <tr>
+                                <td><code>epochs</code></td>
+                                <td>int</td>
+                                <td><code>30</code></td>
+                                <td>Number of training epochs</td>
+                            </tr>
+                            <tr>
+                                <td><code>batch_size</code></td>
+                                <td>int</td>
+                                <td><code>64</code></td>
+                                <td>Training batch size</td>
+                            </tr>
+                            <tr>
+                                <td><code>learning_rate</code></td>
+                                <td>float</td>
+                                <td><code>0.001</code></td>
+                                <td>Adam optimizer learning rate</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-warning">
+                        <strong>Important:</strong> The recurrent layer units key must match the model type. Use <code>gru_units</code> with <code>forecasting_model: 'gru'</code>, <code>lstm_units</code> with <code>'lstm'</code>, and <code>rnn_units</code> with <code>'rnn'</code>.
+                    </div>
+                </section>
+
+                <section id="pif-save">
+                    <h2>Price Imputation &amp; Forecasting: Save Settings</h2>
+
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>model_save_dir_imputation</code></td>
+                                <td>str</td>
+                                <td><code>./saved_models/imputation/</code></td>
+                                <td>Directory for saving trained imputation models. The category name is appended at runtime (e.g., <code>./saved_models/imputation/rice</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><code>model_save_dir_forecasting</code></td>
+                                <td>str</td>
+                                <td><code>./saved_models/forecasting/</code></td>
+                                <td>Directory for saving trained forecasting models. The category name is appended at runtime.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="pif-presets">
+                    <h2>Price Imputation &amp; Forecasting: Config Presets</h2>
+                    <p>Three pre-built configurations pairing different imputation and forecasting architectures:</p>
+
+                    <h3>birnn_gru_config.yaml (Default)</h3>
+                    <p>Bidirectional Simple RNN for imputation + GRU for forecasting.</p>
+                    <pre><code># Default configuration
+imputation_model: "bi_rnn"
+imputation_model_params:
+  seq_units: 128
+  dense_units: 128
+  dropout_rate: 0.2
+  recurrent_dropout: 0.1
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  callbacks: null
+
+forecasting_model: "gru"
+forecasting_model_params:
+  gru_units: 256
+  dense_units: 128
+  dropout_rate: 0.15
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001</code></pre>
+
+                    <h3>bilstm_lstm_config.yaml</h3>
+                    <p>Bidirectional LSTM for imputation + LSTM for forecasting. Best for capturing long-term dependencies.</p>
+                    <pre><code>imputation_model: "bi_lstm"
+imputation_model_params:
+  seq_units: 128
+  dense_units: 128
+  dropout_rate: 0.2
+  recurrent_dropout: 0.1
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  callbacks: null
+
+forecasting_model: "lstm"
+forecasting_model_params:
+  lstm_units: 256
+  dense_units: 128
+  dropout_rate: 0.15
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001</code></pre>
+
+                    <h3>bigru_rnn_config.yaml</h3>
+                    <p>Bidirectional GRU for imputation + Simple RNN for forecasting. Lightweight forecasting with efficient imputation.</p>
+                    <pre><code>imputation_model: "bi_gru"
+imputation_model_params:
+  seq_units: 128
+  dense_units: 128
+  dropout_rate: 0.2
+  recurrent_dropout: 0.1
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  callbacks: null
+
+forecasting_model: "rnn"
+forecasting_model_params:
+  rnn_units: 256
+  dense_units: 128
+  dropout_rate: 0.15
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001</code></pre>
+
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> The <code>bilstm_lstm_config.yaml</code> and <code>bigru_rnn_config.yaml</code> files only override the model-related keys. All other settings (data paths, preprocessing, sliding window, save dirs) are inherited from the default <code>birnn_gru_config.yaml</code>.
+                    </div>
+
+                    <h3>Model Pairing Summary</h3>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Config File</th>
+                                <th>Imputation Model</th>
+                                <th>Forecasting Model</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>birnn_gru_config.yaml</code></td>
+                                <td>Bidirectional Simple RNN (<code>bi_rnn</code>)</td>
+                                <td>GRU (<code>gru</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>bilstm_lstm_config.yaml</code></td>
+                                <td>Bidirectional LSTM (<code>bi_lstm</code>)</td>
+                                <td>LSTM (<code>lstm</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>bigru_rnn_config.yaml</code></td>
+                                <td>Bidirectional GRU (<code>bi_gru</code>)</td>
+                                <td>Simple RNN (<code>rnn</code>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Support &amp; Resources</h2>
+                    <ul>
+                        <li><strong>Competitor Identification API:</strong> <a href="competitor_identification.html">Full API reference</a></li>
+                        <li><strong>Price Imputation &amp; Forecasting API:</strong> <a href="price_imputation_forecasting.html">Full API reference</a></li>
+                        <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Report bugs and request features</a></li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <p>Competitive Price Intelligence &mdash; v0.1.0</p>
+                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(event.target) &&
+                !menuBtn.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Copy-to-clipboard for code blocks
+        document.querySelectorAll('pre').forEach(block => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', () => {
+                const code = block.querySelector('code');
+                navigator.clipboard.writeText(code.textContent).then(() => {
+                    btn.textContent = 'Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+            block.appendChild(btn);
+        });
+    </script>
+</body>
+</html>

@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price Imputation & Forecasting - Enhanced Documentation</title>
+    <title>Price Imputation & Forecasting - API Documentation</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="docs-container">
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h1>📈 Price Imputation & Forecasting</h1>
+                <h1>Price Imputation & Forecasting</h1>
                 <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Navigation</div>
                     <ul class="nav-links">
-                        <li><a href="index.html">🏠 Home</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="configuration.html">Configuration Reference</a></li>
                     </ul>
                 </div>
                 <div class="nav-section">
@@ -39,11 +40,14 @@
                     <div class="nav-section-title">API Reference</div>
                     <ul class="nav-links">
                         <li><a href="#api-data">Data Processing</a></li>
+                        <li><a href="#api-feature-engineering">Feature Engineering</a></li>
                         <li><a href="#api-imputation">Imputation Models</a></li>
+                        <li><a href="#api-imputation-utils">Imputation Utilities</a></li>
                         <li><a href="#api-forecasting">Forecasting Models</a></li>
+                        <li><a href="#api-forecasting-utils">Forecasting Utilities</a></li>
                         <li><a href="#api-evaluation">Evaluation</a></li>
-                                            <li><a href="#api-visualization">Visualization</a></li>
-</ul>
+                        <li><a href="#api-visualization">Visualization</a></li>
+                    </ul>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Advanced Topics</div>
@@ -58,40 +62,43 @@
         <main class="main-content">
             <div class="content-header">
                 <h1>Price Imputation & Forecasting</h1>
-                <p>Comprehensive ML Package for Handling Missing Price Data and Predicting Future Prices</p>
+                <p>Deep Learning Package for Handling Missing Price Data and Predicting Future Prices</p>
             </div>
 
             <div class="content-body">
                 <section id="introduction">
                     <h2>Introduction</h2>
-                    <p>The <strong>Price Imputation and Forecasting</strong> package provides a production-ready solution for handling missing price data and predicting future pricing trends using advanced machine learning techniques.</p>
-                    
+                    <p>The <strong>Price Imputation and Forecasting</strong> package provides a production-ready solution for handling missing price data and predicting future pricing trends using deep learning. It combines bidirectional recurrent architectures with masked loss functions for imputation, and unidirectional sequence models for forecasting.</p>
+
                     <h3>Key Features</h3>
                     <ul>
-                        <li><strong>Advanced Imputation Models:</strong> Bidirectional RNN/LSTM/GRU with dual-input architecture for handling missing prices</li>
-                        <li><strong>Multiple Forecasting Algorithms:</strong> LSTM, GRU, and other time-series models for price prediction</li>
-                        <li><strong>Dual-Input Architecture:</strong> Combines sequential price data with static store features</li>
-                        <li><strong>Comprehensive Data Processing:</strong> Automatic missing value handling, feature engineering, and data scaling</li>
-                        <li><strong>Evaluation Metrics:</strong> MAE, RMSE, and MAPE for model quality assessment</li>
-                        <li><strong>Interactive Visualizations:</strong> Plotly-based plots with customizable styling</li>
+                        <li><strong>Bidirectional Imputation Models:</strong> Bi-LSTM, Bi-GRU, and Bi-RNN with dual-input architecture (sequential + static features)</li>
+                        <li><strong>Forecasting Models:</strong> LSTM, GRU, and RNN for multi-step price prediction</li>
+                        <li><strong>Masked Loss Functions:</strong> Training only on simulated gaps for accurate imputation learning</li>
+                        <li><strong>Three Specialized Pipelines:</strong> Imputation training, forecasting training, and combined prediction</li>
+                        <li><strong>Evaluation Metrics:</strong> Masked MSE/MAE for imputation; MSE, MAE, sMAPE, R&sup2; for forecasting</li>
+                        <li><strong>Interactive Visualizations:</strong> Plotly-based time series plots with original, imputed, and forecasted data</li>
                     </ul>
 
                     <h3>Workflow Order</h3>
-                    <p>The package executes operations in the following sequence:</p>
+                    <p>The package operates through three pipelines executed in sequence:</p>
                     <ol>
-                        <li><strong>Data Loading & Preprocessing:</strong> Load and clean pricing data</li>
-                        <li><strong>Feature Engineering:</strong> Create temporal features and static store attributes</li>
-                        <li><strong>Data Scaling:</strong> Normalize features for consistent analysis</li>
-                        <li><strong>Imputation (Step 1):</strong> Fill missing price values using bidirectional models</li>
-                        <li><strong>Forecasting (Step 2):</strong> Predict future prices using imputed data</li>
-                        <li><strong>Evaluation:</strong> Assess model quality with metrics</li>
-                        <li><strong>Visualization:</strong> Generate interactive plots</li>
+                        <li><strong>Imputation Training Pipeline:</strong> Load data, simulate missing gaps, train a bidirectional model to fill gaps</li>
+                        <li><strong>Forecasting Training Pipeline:</strong> Use imputed data, create sliding windows, train a forecasting model</li>
+                        <li><strong>Prediction Pipeline:</strong> Load pre-trained models, impute missing values, then forecast future prices</li>
                     </ol>
                 </section>
 
                 <section id="installation">
                     <h2>Installation</h2>
                     <pre><code>pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/price_imputation_and_forecasting</code></pre>
+
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Python &gt;=3.8, &lt;3.12</li>
+                        <li>TensorFlow 2.12.0</li>
+                        <li>NumPy, pandas, scikit-learn, Plotly</li>
+                    </ul>
                 </section>
 
                 <section id="quick-start">
@@ -99,78 +106,93 @@
                     <pre><code>from price_imputation_and_forecasting import PriceImputationForecasting
 from price_imputation_and_forecasting.imputation_train_pipeline import run_imputation_train_pipeline
 from price_imputation_and_forecasting.forecasting_train_pipeline import run_forecasting_train_pipeline
-from price_imputation_and_forecasting.prediction_pipeline import run_prediction_pipeline
+from price_imputation_and_forecasting.imputation_forecasting_predict_pipeline import run_imputation_forecasting_predict_pipeline
 
-# Initialize
+# Initialize with default config (birnn_gru_config.yaml)
 pif = PriceImputationForecasting()
 config = pif.get_config()
 
-# Train imputation model
-imputation_results = run_imputation_train_pipeline(
+# Step 1: Train imputation model
+imputation_metrics = run_imputation_train_pipeline(
     config=config,
     data_directory_path='./data',
-    category='rice'
+    product_category_name='rice'
+)
+print(f"Imputation Masked MSE: {imputation_metrics['masked_mse']:.4f}")
+print(f"Imputation Masked MAE: {imputation_metrics['masked_mae']:.4f}")
+
+# Step 2: Train forecasting model (requires trained imputation model)
+forecasting_metrics = run_forecasting_train_pipeline(
+    config=config,
+    data_directory_path='./data',
+    product_category_name='rice'
+)
+print(f"Forecasting MSE: {forecasting_metrics['mse']:.4f}")
+print(f"Forecasting R2: {forecasting_metrics['r2']:.4f}")
+
+# Step 3: Run predictions (imputation + forecasting)
+original_df, imputed_df, forecast_df, figs = run_imputation_forecasting_predict_pipeline(
+    config=config,
+    data_directory_path='./data',
+    product_category_name='rice',
+    store_ids=[101, 102, 103],
+    product_description='Basmati Rice 1kg'
 )
 
-# Train forecasting model
-forecasting_results = run_forecasting_train_pipeline(
-    config=config,
-    data_directory_path='./data',
-    category='rice'
-)
-
-# Make predictions
-predictions = run_prediction_pipeline(
-    config=config,
-    data_directory_path='./data',
-    category='rice',
-    imputation_model_path='models/imputation_model.h5',
-    forecasting_model_path='models/forecasting_model.h5'
-)</code></pre>
+# Display visualization for first store-product combination
+figs[0].show()</code></pre>
                 </section>
 
                 <section id="main-class">
                     <h2>Main Class: PriceImputationForecasting</h2>
+                    <p>Entry point for initializing the package and loading configuration.</p>
+
                     <h3><span class="function-name">__init__(custom_config_path=None)</span></h3>
-                    <p>Initialize the Price Imputation and Forecasting system.</p>
+                    <p>Initialize the Price Imputation and Forecasting system. Loads the default configuration (<code>birnn_gru_config.yaml</code>) and optionally merges with a custom config.</p>
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
+                                <th>Default</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>custom_config_path</td>
-                                <td>str, optional</td>
-                                <td>Path to custom YAML configuration file</td>
-                                <td>Valid file path or None</td>
+                                <td><code>custom_config_path</code></td>
+                                <td>str or None</td>
+                                <td>None</td>
+                                <td>Path to a custom YAML configuration file. If provided, its values override the defaults.</td>
                             </tr>
                         </tbody>
                     </table>
                     <h4>Example:</h4>
-                    <pre><code>pif = PriceImputationForecasting(custom_config_path='my_config.yaml')</code></pre>
+                    <pre><code># Use default config
+pif = PriceImputationForecasting()
+
+# Use custom config (overrides only specified keys)
+pif = PriceImputationForecasting(custom_config_path='configs/bilstm_lstm_config.yaml')</code></pre>
 
                     <h3><span class="function-name">get_config()</span></h3>
                     <p>Retrieve the current configuration object.</p>
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>Config</strong>: Configuration object containing all settings</li>
+                        <li><strong>Config</strong>: Configuration object with <code>.get(key, default)</code> and <code>.set(key, value)</code> methods. See the <a href="configuration.html">Configuration Reference</a> for all available keys.</li>
                     </ul>
                 </section>
 
                 <section id="pipelines">
                     <h2>Pipeline Modules</h2>
-                    <p>The package provides three main pipelines for different stages of the ML workflow:</p>
+                    <p>The package provides three pipelines that should be executed in order: imputation training, forecasting training, then prediction.</p>
 
                     <h3>1. Imputation Training Pipeline</h3>
-                    <h4><span class="function-name">run_imputation_train_pipeline(...)</span></h4>
-                    <p>Trains models to fill missing price values using bidirectional LSTM/GRU/RNN architectures.</p>
-                    
+                    <div class="method-signature">
+                        <span class="method-name">run_imputation_train_pipeline</span>(<span class="params">config, data_directory_path, product_category_name</span>) <span class="return-type">-&gt; dict</span>
+                    </div>
+                    <p>Trains a bidirectional model (Bi-LSTM, Bi-GRU, or Bi-RNN) to fill missing price values. The pipeline loads data, filters by missing value threshold, simulates artificial gaps, and trains the model using a masked loss function.</p>
+
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
@@ -178,56 +200,59 @@ predictions = run_prediction_pipeline(
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>config</td>
+                                <td><code>config</code></td>
                                 <td>Config</td>
-                                <td>Configuration object from PriceImputationForecasting</td>
-                                <td>Valid Config object</td>
+                                <td>Configuration object from <code>PriceImputationForecasting.get_config()</code></td>
                             </tr>
                             <tr>
-                                <td>data_directory_path</td>
+                                <td><code>data_directory_path</code></td>
                                 <td>str</td>
-                                <td>Root directory containing data files</td>
-                                <td>Valid directory path</td>
+                                <td>Root directory for data files (replaces <code>&lt;USER_DIRECTORY_TOKEN&gt;</code> in config paths)</td>
                             </tr>
                             <tr>
-                                <td>category</td>
+                                <td><code>product_category_name</code></td>
                                 <td>str</td>
-                                <td>Product category name</td>
-                                <td>e.g., 'rice', 'pasta'</td>
+                                <td>Product category name (e.g., <code>'rice'</code>, <code>'pasta'</code>). Must be non-empty.</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
-                    <p>Dictionary containing:</p>
+                    <p><code>dict</code> with evaluation metrics on the test set:</p>
                     <ul>
-                        <li><strong>model</strong>: Trained imputation model</li>
-                        <li><strong>history</strong>: Training history with loss values</li>
-                        <li><strong>evaluation_metrics</strong>: MAE, RMSE, MAPE on validation set</li>
-                        <li><strong>imputed_data</strong>: DataFrame with imputed prices</li>
+                        <li><code>"masked_mse"</code> (float): Masked Mean Squared Error</li>
+                        <li><code>"masked_mae"</code> (float): Masked Mean Absolute Error</li>
+                    </ul>
+
+                    <h4>Raises:</h4>
+                    <ul>
+                        <li><code>TypeError</code>: If <code>config</code> is not a Config instance</li>
+                        <li><code>ValueError</code>: If <code>product_category_name</code> is empty or no data is found</li>
+                        <li><code>RuntimeError</code>: If <code>data_directory_path</code> does not exist</li>
                     </ul>
 
                     <h4>Example:</h4>
                     <pre><code>from price_imputation_and_forecasting.imputation_train_pipeline import run_imputation_train_pipeline
 
-results = run_imputation_train_pipeline(
+metrics = run_imputation_train_pipeline(
     config=config,
     data_directory_path='./data',
-    category='rice'
+    product_category_name='rice'
 )
 
-print(f"Imputation MAE: {results['evaluation_metrics']['mae']:.3f}")
-print(f"Imputation RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></pre>
+print(f"Imputation Masked MSE: {metrics['masked_mse']:.4f}")
+print(f"Imputation Masked MAE: {metrics['masked_mae']:.4f}")</code></pre>
 
                     <h3>2. Forecasting Training Pipeline</h3>
-                    <h4><span class="function-name">run_forecasting_train_pipeline(...)</span></h4>
-                    <p>Trains models to predict future prices using LSTM/GRU architectures on imputed data.</p>
-                    
+                    <div class="method-signature">
+                        <span class="method-name">run_forecasting_train_pipeline</span>(<span class="params">config, data_directory_path, product_category_name</span>) <span class="return-type">-&gt; dict</span>
+                    </div>
+                    <p>Trains a forecasting model (LSTM, GRU, or RNN) on imputed data using sliding windows. This pipeline first loads and imputes the data using the pre-trained imputation model, then creates chronological train/val/test splits and sliding windows for training.</p>
+
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
@@ -235,56 +260,60 @@ print(f"Imputation RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></p
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>config</td>
+                                <td><code>config</code></td>
                                 <td>Config</td>
-                                <td>Configuration object from PriceImputationForecasting</td>
-                                <td>Valid Config object</td>
+                                <td>Configuration object from <code>PriceImputationForecasting.get_config()</code></td>
                             </tr>
                             <tr>
-                                <td>data_directory_path</td>
+                                <td><code>data_directory_path</code></td>
                                 <td>str</td>
-                                <td>Root directory containing data files</td>
-                                <td>Valid directory path</td>
+                                <td>Root directory for data files</td>
                             </tr>
                             <tr>
-                                <td>category</td>
+                                <td><code>product_category_name</code></td>
                                 <td>str</td>
-                                <td>Product category name</td>
-                                <td>e.g., 'rice', 'pasta'</td>
+                                <td>Product category name (e.g., <code>'rice'</code>)</td>
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <h4>Returns:</h4>
-                    <p>Dictionary containing:</p>
+                    <p><code>dict</code> with evaluation metrics on the test set:</p>
                     <ul>
-                        <li><strong>model</strong>: Trained forecasting model</li>
-                        <li><strong>history</strong>: Training history with loss values</li>
-                        <li><strong>evaluation_metrics</strong>: MAE, RMSE, MAPE on test set</li>
-                        <li><strong>forecasts</strong>: Array of predicted future prices</li>
+                        <li><code>"mse"</code> (float): Mean Squared Error</li>
+                        <li><code>"mae"</code> (float): Mean Absolute Error</li>
+                        <li><code>"smape"</code> (float): Symmetric Mean Absolute Percentage Error (0-200 scale)</li>
+                        <li><code>"r2"</code> (float): Coefficient of Determination (1.0 = perfect)</li>
                     </ul>
+
+                    <div class="alert alert-warning">
+                        <strong>Prerequisite:</strong> A trained imputation model must exist at <code>model_save_dir_imputation + product_category_name</code> before running this pipeline.
+                    </div>
 
                     <h4>Example:</h4>
                     <pre><code>from price_imputation_and_forecasting.forecasting_train_pipeline import run_forecasting_train_pipeline
 
-results = run_forecasting_train_pipeline(
+metrics = run_forecasting_train_pipeline(
     config=config,
     data_directory_path='./data',
-    category='rice'
+    product_category_name='rice'
 )
 
-print(f"Forecasting MAE: {results['evaluation_metrics']['mae']:.3f}")
-print(f"Forecasting RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></pre>
+print(f"Forecasting MSE: {metrics['mse']:.4f}")
+print(f"Forecasting MAE: {metrics['mae']:.4f}")
+print(f"Forecasting sMAPE: {metrics['smape']:.2f}")
+print(f"Forecasting R2: {metrics['r2']:.4f}")</code></pre>
 
                     <h3>3. Prediction Pipeline</h3>
-                    <h4><span class="function-name">run_prediction_pipeline(...)</span></h4>
-                    <p>Uses trained models to impute missing values and generate price forecasts for new data.</p>
-                    
+                    <div class="method-signature">
+                        <span class="method-name">run_imputation_forecasting_predict_pipeline</span>(<span class="params">config, data_directory_path, product_category_name, store_ids, product_description</span>) <span class="return-type">-&gt; Tuple</span>
+                    </div>
+                    <p>End-to-end prediction pipeline: loads pre-trained imputation and forecasting models, imputes missing values in the input data, and forecasts future prices. Results are inverse-scaled back to original price units and rounded to the nearest 10 cents.</p>
+
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
@@ -292,81 +321,76 @@ print(f"Forecasting RMSE: {results['evaluation_metrics']['rmse']:.3f}")</code></
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>config</td>
+                                <td><code>config</code></td>
                                 <td>Config</td>
-                                <td>Configuration object from PriceImputationForecasting</td>
-                                <td>Valid Config object</td>
+                                <td>Configuration object from <code>PriceImputationForecasting.get_config()</code></td>
                             </tr>
                             <tr>
-                                <td>data_directory_path</td>
+                                <td><code>data_directory_path</code></td>
                                 <td>str</td>
-                                <td>Root directory containing data files</td>
-                                <td>Valid directory path</td>
+                                <td>Root directory for data files</td>
                             </tr>
                             <tr>
-                                <td>category</td>
+                                <td><code>product_category_name</code></td>
                                 <td>str</td>
-                                <td>Product category name</td>
-                                <td>e.g., 'rice', 'pasta'</td>
+                                <td>Product category name (e.g., <code>'rice'</code>)</td>
                             </tr>
                             <tr>
-                                <td>imputation_model_path</td>
-                                <td>str</td>
-                                <td>Path to saved imputation model</td>
-                                <td>Valid .h5 file path</td>
+                                <td><code>store_ids</code></td>
+                                <td>list[str | int]</td>
+                                <td>List of store IDs to include in prediction. Must be non-empty.</td>
                             </tr>
                             <tr>
-                                <td>forecasting_model_path</td>
+                                <td><code>product_description</code></td>
                                 <td>str</td>
-                                <td>Path to saved forecasting model</td>
-                                <td>Valid .h5 file path</td>
+                                <td>Specific product description to filter (e.g., <code>'Basmati Rice 1kg'</code>)</td>
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <h4>Returns:</h4>
-                    <p>Dictionary containing:</p>
+                    <p>Tuple of four values:</p>
                     <ul>
-                        <li><strong>imputed_data</strong>: DataFrame with imputed prices</li>
-                        <li><strong>forecasts</strong>: Array of predicted future prices</li>
-                        <li><strong>forecast_dates</strong>: Dates corresponding to forecasts</li>
+                        <li><code>filtered_category_df</code> (pd.DataFrame): Original filtered price data with NaNs</li>
+                        <li><code>df_price_with_imputed_data</code> (pd.DataFrame): Price data with missing values imputed (original scale)</li>
+                        <li><code>df_price_with_imputed_forecasted_data</code> (pd.DataFrame): Imputed prices + forecasted future prices (original scale)</li>
+                        <li><code>figs</code> (dict): Dictionary of Plotly figures keyed by row index</li>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.prediction_pipeline import run_prediction_pipeline
+                    <pre><code>from price_imputation_and_forecasting.imputation_forecasting_predict_pipeline import run_imputation_forecasting_predict_pipeline
 
-predictions = run_prediction_pipeline(
+original_df, imputed_df, forecast_df, figs = run_imputation_forecasting_predict_pipeline(
     config=config,
     data_directory_path='./data',
-    category='rice',
-    imputation_model_path='models/imputation_model.h5',
-    forecasting_model_path='models/forecasting_model.h5'
+    product_category_name='rice',
+    store_ids=[101, 102, 103],
+    product_description='Basmati Rice 1kg'
 )
 
-print(f"Imputed {len(predictions['imputed_data'])} price records")
-print(f"Generated {len(predictions['forecasts'])} forecasts")</code></pre>
+print(f"Original data shape: {original_df.shape}")
+print(f"Imputed data shape: {imputed_df.shape}")
+print(f"Forecast data shape: {forecast_df.shape}")
+
+# Display visualization
+figs[0].show()</code></pre>
 
                     <div class="alert alert-info">
-                        <strong>Pipeline Order:</strong> For training, always run the imputation training pipeline first, then the forecasting training pipeline. For predictions, the prediction pipeline handles both imputation and forecasting in sequence.
+                        <strong>Pipeline Order:</strong> Always run imputation training first, then forecasting training. The prediction pipeline handles both imputation and forecasting in sequence using pre-trained models.
                     </div>
-                </section>
-
-                <section id="api-reference">
-                    <h2>API Reference</h2>
-                    <p>Comprehensive documentation for all modules and functions in the package.</p>
                 </section>
 
                 <section id="api-data">
                     <h2>Data Processing Module</h2>
-                    
+                    <p>Functions for loading, cleaning, and preprocessing price and store data.</p>
+
                     <h3>load_store_data</h3>
-                    <p>Loads store metadata from CSV files and merges with sub-chain information.</p>
-                    
+                    <p>Loads store metadata from a CSV file and merges with sub-chain names from an Excel file.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def load_store_data(
     store_file_path: str,
@@ -380,93 +404,76 @@ print(f"Generated {len(predictions['forecasts'])} forecasts")</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>store_file_path</td>
+                                <td><code>store_file_path</code></td>
                                 <td>str</td>
                                 <td>Path to CSV file containing store data</td>
-                                <td>Valid CSV file path</td>
                             </tr>
                             <tr>
-                                <td>subchain_file_path</td>
+                                <td><code>subchain_file_path</code></td>
                                 <td>str</td>
                                 <td>Path to Excel file containing subchain names</td>
-                                <td>Valid Excel file path</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>store_data_df</strong> (pd.DataFrame): Merged DataFrame containing store information with subchain names</li>
+                        <li><code>store_data_df</code> (pd.DataFrame): Merged DataFrame with store information and subchain names</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load store data
-store_data = load_store_data(
-    'data/stores.csv',
-    'data/subchains.xlsx'
-)
+                    <h4>Example:</h4>
+                    <pre><code>from price_imputation_and_forecasting.data.load_data import load_store_data
 
-print(f"Loaded {len(store_data)} stores")
-print(store_data.head())</code></pre>
+store_data = load_store_data(
+    store_file_path='data/Store_data_git.csv',
+    subchain_file_path='data/SubChainNameEnglish.xlsx'
+)
+print(f"Loaded {len(store_data)} stores")</code></pre>
 
                     <h3>load_price_data</h3>
-                    <p>Loads price data from Parquet files for a specific product category.</p>
-                    
+                    <p>Loads price data from a Parquet file for a specific product category.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def load_price_data(
     category: str,
     price_data_dir: str
 ) -> pd.DataFrame</code></pre>
 
-<h4>Parameters:</h4>
+                    <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>category</td>
+                                <td><code>category</code></td>
                                 <td>str</td>
-                                <td>Product category name</td>
-                                <td>e.g., 'rice', 'pasta', 'milk'</td>
+                                <td>Product category name (e.g., <code>'rice'</code>, <code>'pasta'</code>)</td>
                             </tr>
                             <tr>
-                                <td>price_data_dir</td>
+                                <td><code>price_data_dir</code></td>
                                 <td>str</td>
-                                <td>Directory containing price data Parquet files</td>
-                                <td>Valid directory path</td>
+                                <td>Directory containing category-specific Parquet files</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>price_data_df</strong> (pd.DataFrame): Price data with multi-index and date columns</li>
+                        <li><code>price_data_df</code> (pd.DataFrame): Price data with multi-index (category, ProductDescription, StoreID) and date columns containing price values</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Load price data
-price_data = load_price_data(
-    category='Electronics',
-    price_data_dir='data/prices/'
-)
-
-print(f"Loaded price data with shape: {price_data.shape}")
-print(price_data.head())</code></pre>
-
                     <h3>filter_missing_values_from_price_data</h3>
-                    <p>Filters rows based on proportion of non-missing values.</p>
-                    
+                    <p>Filters out rows (product-store combinations) that have too many missing values based on a threshold ratio of non-NaN values.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def filter_missing_values_from_price_data(
     category_df: pd.DataFrame,
@@ -480,422 +487,752 @@ print(price_data.head())</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>category_df</td>
+                                <td><code>category_df</code></td>
                                 <td>pd.DataFrame</td>
                                 <td>Input price data DataFrame</td>
-                                <td>Non-empty DataFrame</td>
                             </tr>
                             <tr>
-                                <td>threshold_ratio</td>
+                                <td><code>threshold_ratio</code></td>
                                 <td>float</td>
-                                <td>Minimum ratio of non-missing values (0-1)</td>
-                                <td>0.0 to 1.0</td>
+                                <td>Minimum ratio of non-missing values required to keep a row (0.0 to 1.0). Default config value: <code>0.75</code></td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>filtered_df</strong> (pd.DataFrame): Filtered DataFrame with rows meeting threshold</li>
+                        <li><code>filtered_df</code> (pd.DataFrame): Filtered DataFrame with only rows meeting the threshold</li>
                     </ul>
 
-                    <h4>Examples:</h4>
-                    <pre><code># Example 1: Filter rows with too many missing values
-filtered_data = filter_missing_values_from_price_data(
-    price_data,
-    threshold_ratio=0.7
-)
+                    <h3>align_encoded_store_data_with_price_data</h3>
+                    <p>Aligns one-hot encoded store data with time series price data using StoreID as the key. Ensures each row of price data has the correct store dummy variables.</p>
 
-print(f"Original rows: {len(price_data)}")
-print(f"Filtered rows: {len(filtered_data)}")
-print(f"Removed {len(price_data) - len(filtered_data)} rows")</code></pre>
+                    <h4>Function Signature:</h4>
+                    <pre><code>def align_encoded_store_data_with_price_data(
+    store_data_with_dummies: pd.DataFrame,
+    price_data: pd.DataFrame
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>store_data_with_dummies</code></td>
+                                <td>pd.DataFrame</td>
+                                <td>One-hot encoded store metadata with StoreID as index</td>
+                            </tr>
+                            <tr>
+                                <td><code>price_data</code></td>
+                                <td>pd.DataFrame</td>
+                                <td>Price data with StoreID in the index</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>aligned_store_data_with_dummies</code> (pd.DataFrame): Store-level metadata aligned row-wise with price_data</li>
+                    </ul>
+
+                    <h3>convert_to_numpy_inputs</h3>
+                    <p>Converts price and store DataFrames into NumPy arrays for model input.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def convert_to_numpy_inputs(
+    df_price_input: pd.DataFrame,
+    df_store_input: pd.DataFrame
+) -> Tuple[np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>df_price_input</code> (np.ndarray): NumPy array of price data</li>
+                        <li><code>df_store_input</code> (np.ndarray): NumPy array of store metadata</li>
+                    </ul>
+
+                    <h3>make_mask_and_replace_nan_with_predefined_value</h3>
+                    <p>Creates a binary mask of observed (non-NaN) values and replaces NaN values with a specified fill value. This is a key preprocessing step for the imputation models.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def make_mask_and_replace_nan_with_predefined_value(
+    df_price_input: np.ndarray,
+    fill_nan_value: float
+) -> Tuple[np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>df_price_input</code></td>
+                                <td>np.ndarray</td>
+                                <td>NumPy array with potential NaN values, shape (n_samples, seq_len)</td>
+                            </tr>
+                            <tr>
+                                <td><code>fill_nan_value</code></td>
+                                <td>float</td>
+                                <td>Value to replace NaNs with. Default config value: <code>0</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>filled_nan_price_input_data</code> (np.ndarray): Input with NaNs replaced by fill_nan_value</li>
+                        <li><code>masked_price_inputs</code> (np.ndarray): Binary mask (1 = observed, 0 = missing)</li>
+                    </ul>
+
+                    <h3>simulate_missing_gaps</h3>
+                    <p>Simulates artificial missing gaps in observed time series for supervised training of the imputation model. Randomly creates gaps in observed values so the model learns to reconstruct them.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def simulate_missing_gaps(
+    filled_nan_price_input_data: np.ndarray,
+    masked_price_inputs: np.ndarray,
+    gap_prob: float,
+    max_gap: int,
+    rng: np.random.Generator = None
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>filled_nan_price_input_data</code></td>
+                                <td>np.ndarray</td>
+                                <td>Original values array (NaNs already filled), shape (n_samples, seq_len)</td>
+                            </tr>
+                            <tr>
+                                <td><code>masked_price_inputs</code></td>
+                                <td>np.ndarray</td>
+                                <td>Original mask (1=observed, 0=real missing)</td>
+                            </tr>
+                            <tr>
+                                <td><code>gap_prob</code></td>
+                                <td>float</td>
+                                <td>Probability of creating a simulated gap per series. Default config: <code>0.3</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>max_gap</code></td>
+                                <td>int</td>
+                                <td>Maximum length of simulated gap in days. Default config: <code>30</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>rng</code></td>
+                                <td>np.random.Generator or None</td>
+                                <td>Random generator for reproducibility. Created internally if None.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>sim_nan_filled_nan_price_input_data</code> (np.ndarray): Input data with simulated gaps zeroed out</li>
+                        <li><code>sim_mask_price_inputs</code> (np.ndarray): Mask with both real and artificial gaps (0 at both)</li>
+                        <li><code>target_mask</code> (np.ndarray): Mask of simulated gap positions only (1 = simulated gap)</li>
+                    </ul>
+
+                    <h3>split_train_val_test_for_imputation</h3>
+                    <p>Splits time series arrays into training, validation, and test sets using random sampling. Stacks price values and masks into the model's expected input format.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def split_train_val_test_for_imputation(
+    df_sim_input, df_input, matrix_sim_masked_inputs,
+    df_store_input, matrix_target_mask,
+    test_size, val_size, random_state
+) -> Tuple of 12 np.ndarray</code></pre>
+
+                    <h4>Returns:</h4>
+                    <p>A tuple of 12 arrays in this order:</p>
+                    <pre><code>(X_sequence_train, X_static_train, target_mask_train, y_train,
+ X_sequence_val,   X_static_val,   target_mask_val,   y_val,
+ X_sequence_test,  X_static_test,  target_mask_test,  y_test)</code></pre>
+
+                    <h3>split_chronologically_train_val_test_for_forecasting</h3>
+                    <p>Chronologically splits a matrix of time series into train, validation, and test segments. Unlike the imputation split, this preserves temporal order (no shuffling).</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def split_chronologically_train_val_test_for_forecasting(
+    data: np.ndarray,
+    test_size: float,
+    val_size: float
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>train_data</code> (np.ndarray): Earliest portion of each series, shape (n_series, train_len)</li>
+                        <li><code>val_data</code> (np.ndarray): Middle portion, shape (n_series, val_len)</li>
+                        <li><code>test_data</code> (np.ndarray): Most recent portion, shape (n_series, test_len)</li>
+                    </ul>
+
+                    <h3>create_sliding_windows</h3>
+                    <p>Creates sliding window samples (input/target pairs) from time series data for forecasting model training.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def create_sliding_windows(
+    data: np.ndarray,
+    input_lookback: int,
+    horizon: int,
+    min_stride: int,
+    max_stride: int,
+    random_state: int
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>data</code></td>
+                                <td>np.ndarray</td>
+                                <td>2D array of shape (n_series, T)</td>
+                            </tr>
+                            <tr>
+                                <td><code>input_lookback</code></td>
+                                <td>int</td>
+                                <td>Number of past timesteps in each input window. Default config: <code>84</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>horizon</code></td>
+                                <td>int</td>
+                                <td>Number of future timesteps to predict. Default config: <code>28</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>min_stride</code></td>
+                                <td>int</td>
+                                <td>Minimum stride between window starts. Default config: <code>28</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>max_stride</code></td>
+                                <td>int</td>
+                                <td>Maximum stride between window starts. Default config: <code>84</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>random_state</code></td>
+                                <td>int</td>
+                                <td>Random seed for stride randomization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>X</code> (np.ndarray): Input windows, shape (n_samples, input_lookback)</li>
+                        <li><code>y</code> (np.ndarray): Target values, shape (n_samples, horizon)</li>
+                        <li><code>ids</code> (np.ndarray): Series index for each sample</li>
+                        <li><code>t0s</code> (np.ndarray): Forecast start time index for each sample</li>
+                    </ul>
+
+                    <h3>prepare_imputation_model_inputs_for_predictions</h3>
+                    <p>Prepares model inputs for imputation inference by stacking price data and observation mask.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def prepare_imputation_model_inputs_for_predictions(
+    df_scaled_price_input: np.ndarray,
+    matrix_masked_price_inputs: np.ndarray,
+    df_store_input: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>X_sequence</code> (np.ndarray): Sequence input, shape (n_samples, seq_len, 2)</li>
+                        <li><code>X_static</code> (np.ndarray): Static input, shape (n_samples, num_static_features)</li>
+                    </ul>
+
+                    <h3>prepare_forecasting_model_inputs_for_predictions</h3>
+                    <p>Extracts the most recent lookback window from each series for forecasting inference.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def prepare_forecasting_model_inputs_for_predictions(
+    df_price_with_imputed_data: np.ndarray,
+    input_lookback: int
+) -> np.ndarray</code></pre>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>X_sequence</code> (np.ndarray): Last <code>input_lookback</code> timesteps per series, shape (n_series, input_lookback)</li>
+                    </ul>
+                </section>
+
+                <section id="api-feature-engineering">
+                    <h2>Feature Engineering Module</h2>
+                    <p>Functions for encoding categorical features and scaling price values.</p>
+
+                    <h3>encode_store_data</h3>
+                    <p>One-hot encodes categorical columns in the store data. Encodes <code>ChainID</code>, <code>DistrictName</code>, <code>StoreType</code>, and <code>LocationType</code> using <code>pd.get_dummies</code> with <code>drop_first=True</code>.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def encode_store_data(
+    store_data: pd.DataFrame
+) -> pd.DataFrame</code></pre>
+
+                    <h4>Parameters:</h4>
+                    <table class="parameter-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>store_data</code></td>
+                                <td>pd.DataFrame</td>
+                                <td>Store data with required columns: StoreID, ChainID, DistrictName, StoreType, LocationType</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>store_data_encoded</code> (pd.DataFrame): One-hot encoded store data with StoreID as index</li>
+                    </ul>
+
+                    <h3>scale_price_inputs</h3>
+                    <p>Applies log1p scaling (<code>log(1 + x)</code>) to price arrays. Compresses large values and stabilizes variance for neural network training.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def scale_price_inputs(
+    df_price_input: np.ndarray,
+    df_sim_price_input: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]</code></pre>
+
+                    <h4>Returns:</h4>
+                    <ul>
+                        <li><code>df_price_input_scaled</code> (np.ndarray): Log1p-scaled ground truth prices</li>
+                        <li><code>df_sim_price_input_scaled</code> (np.ndarray): Log1p-scaled simulated prices</li>
+                    </ul>
+
+                    <h3>inverse_scale_price_inputs_with_expm1</h3>
+                    <p>Applies the inverse of log1p scaling (<code>expm1</code>) to recover original price values from scaled predictions.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def inverse_scale_price_inputs_with_expm1(
+    scaled_array: np.ndarray
+) -> np.ndarray</code></pre>
+
+                    <h3>round_prices_to_nearest_10_cents</h3>
+                    <p>Rounds each price to the nearest 0.1 (10 cents). Values below 0.1 are set to 0.1 to avoid zero prices.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def round_prices_to_nearest_10_cents(
+    prices_array: np.ndarray
+) -> np.ndarray</code></pre>
                 </section>
 
                 <section id="api-imputation">
                     <h2>Imputation Models Module</h2>
-                    
+                    <p>Bidirectional recurrent models for filling missing price values. All models use a dual-input architecture: sequential input (price values + observation mask) and static input (store features).</p>
+
                     <h3>train_bi_lstm</h3>
-                    <p>Trains a bidirectional LSTM model for price imputation using dual-input architecture.</p>
-                    
+                    <p>Trains a Bidirectional LSTM model for price imputation. The model processes sequences in both forward and backward directions to capture full temporal context around missing values.</p>
+
                     <h4>Function Signature:</h4>
                     <pre><code>def train_bi_lstm(
-    X_sequence_train: np.ndarray,
-    X_static_train: np.ndarray,
-    target_mask_train: np.ndarray,
-    y_train: np.ndarray,
+    X_sequence_train: np.ndarray,   # (n_samples, seq_len, 2)
+    X_static_train: np.ndarray,     # (n_samples, num_static_features)
+    target_mask_train: np.ndarray,  # (n_samples, seq_len, 1)
+    y_train: np.ndarray,            # (n_samples, seq_len, 1)
     X_sequence_val: np.ndarray,
     X_static_val: np.ndarray,
     target_mask_val: np.ndarray,
     y_val: np.ndarray,
     **kwargs
-) -> Tuple[Model, History]</code></pre>
+) -> Tuple[tf.keras.Model, tf.keras.callbacks.History]</code></pre>
 
-                    <h4>Key Parameters:</h4>
+                    <h4>Keyword Arguments (via config):</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
+                                <th>Default</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>X_sequence_train</td>
-                                <td>np.ndarray</td>
-                                <td>Sequential training data (prices with gaps and observation masks)</td>
-                                <td>Shape: (samples, sequence_length, 2)</td>
-                            </tr>
-                            <tr>
-                                <td>X_static_train</td>
-                                <td>np.ndarray</td>
-                                <td>Static features (store metadata)</td>
-                                <td>Shape: (samples, num_static_features)</td>
-                            </tr>
-                            <tr>
-                                <td>target_mask_train</td>
-                                <td>np.ndarray</td>
-                                <td>Binary mask indicating positions to impute</td>
-                                <td>Shape: (samples, sequence_length)</td>
-                            </tr>
-                            <tr>
-                                <td>y_train</td>
-                                <td>np.ndarray</td>
-                                <td>Target values for training</td>
-                                <td>Shape: (samples, sequence_length)</td>
-                            </tr>
-                            <tr>
-                                <td>seq_units</td>
+                                <td><code>seq_units</code></td>
                                 <td>int</td>
-                                <td>Number of LSTM units</td>
-                                <td>Default: 128, Range: 64-512</td>
+                                <td>128</td>
+                                <td>Number of LSTM units in the bidirectional layer</td>
                             </tr>
                             <tr>
-                                <td>dropout_rate</td>
+                                <td><code>dense_units</code></td>
+                                <td>int</td>
+                                <td>128</td>
+                                <td>Number of units in the dense layer</td>
+                            </tr>
+                            <tr>
+                                <td><code>dropout_rate</code></td>
                                 <td>float</td>
-                                <td>Dropout rate for regularization</td>
-                                <td>Default: 0.2, Range: 0.0-0.5</td>
+                                <td>0.2</td>
+                                <td>Dropout rate for regularization (0.0-0.5)</td>
                             </tr>
                             <tr>
-                                <td>epochs</td>
+                                <td><code>recurrent_dropout</code></td>
+                                <td>float</td>
+                                <td>0.1</td>
+                                <td>Recurrent dropout rate</td>
+                            </tr>
+                            <tr>
+                                <td><code>epochs</code></td>
                                 <td>int</td>
+                                <td>30</td>
                                 <td>Number of training epochs</td>
-                                <td>Default: 30, Range: 10-100</td>
+                            </tr>
+                            <tr>
+                                <td><code>batch_size</code></td>
+                                <td>int</td>
+                                <td>64</td>
+                                <td>Training batch size</td>
+                            </tr>
+                            <tr>
+                                <td><code>learning_rate</code></td>
+                                <td>float</td>
+                                <td>0.001</td>
+                                <td>Adam optimizer learning rate</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>model</strong> (Model): Trained Keras model</li>
-                        <li><strong>history</strong> (History): Training history object</li>
+                        <li><code>model</code> (tf.keras.Model): Trained Keras model</li>
+                        <li><code>history</code> (tf.keras.callbacks.History): Training history with loss values per epoch</li>
                     </ul>
 
-                    <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.imputation.bi_lstm import train_bi_lstm
-
-model, history = train_bi_lstm(
-    X_sequence_train, X_static_train, target_mask_train, y_train,
-    X_sequence_val, X_static_val, target_mask_val, y_val,
-    seq_units=128,
-    dropout_rate=0.2,
-    epochs=30
-)</code></pre>
-
                     <h3>train_bi_gru</h3>
-                    <p>Trains a bidirectional GRU model for price imputation.</p>
-                    
-                    <h4>Key Parameters:</h4>
+                    <p>Trains a Bidirectional GRU model for price imputation. Same architecture as Bi-LSTM but uses GRU cells, which are faster to train with comparable performance.</p>
+                    <p>Same parameters and return types as <code>train_bi_lstm</code>.</p>
+
+                    <h3>train_bi_rnn</h3>
+                    <p>Trains a Bidirectional SimpleRNN model for price imputation. Lightest-weight option, suitable for simpler temporal patterns.</p>
+                    <p>Same parameters and return types as <code>train_bi_lstm</code>.</p>
+
+                    <h3>train_imputation_model</h3>
+                    <p>Dispatcher function that routes to the correct model training function based on the model name.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def train_imputation_model(
+    model_name: str,
+    imputation_model_params: dict,
+    X_sequence_train, X_static_train, target_mask_train, y_train,
+    X_sequence_val, X_static_val, target_mask_val, y_val
+) -> Tuple[tf.keras.Model, tf.keras.callbacks.History]</code></pre>
+
+                    <h4>Parameters:</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>seq_units</td>
-                                <td>int</td>
-                                <td>Number of GRU units</td>
-                                <td>Default: 128, Range: 64-512</td>
+                                <td><code>model_name</code></td>
+                                <td>str</td>
+                                <td>One of: <code>'bi_rnn'</code>, <code>'bi_lstm'</code>, <code>'bi_gru'</code></td>
                             </tr>
                             <tr>
-                                <td>dropout_rate</td>
-                                <td>float</td>
-                                <td>Dropout rate for regularization</td>
-                                <td>Default: 0.2, Range: 0.0-0.5</td>
-                            </tr>
-                            <tr>
-                                <td>epochs</td>
-                                <td>int</td>
-                                <td>Number of training epochs</td>
-                                <td>Default: 30, Range: 10-100</td>
+                                <td><code>imputation_model_params</code></td>
+                                <td>dict</td>
+                                <td>Model hyperparameters (passed as **kwargs to the training function)</td>
                             </tr>
                         </tbody>
                     </table>
+                </section>
 
-                    <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.imputation.bi_gru import train_bi_gru
+                <section id="api-imputation-utils">
+                    <h2>Imputation Utilities</h2>
+                    <p>Loss functions, model persistence, and prediction utilities for imputation models.</p>
 
-model, history = train_bi_gru(
-    X_sequence_train, X_static_train, target_mask_train, y_train,
-    X_sequence_val, X_static_val, target_mask_val, y_val,
-    seq_units=128,
-    epochs=30
+                    <h3>masked_mse</h3>
+                    <p>Computes Mean Squared Error only at positions where the mask equals 1. Used as the training loss function for imputation models, ensuring the model is only penalized for errors on simulated gaps.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def masked_mse(
+    y_true_with_mask: tf.Tensor,  # [..., 2] -> [true_value, mask]
+    y_pred: tf.Tensor
+) -> tf.Tensor  # scalar</code></pre>
+
+                    <h3>masked_mae</h3>
+                    <p>Computes Mean Absolute Error only at masked positions. Used as an evaluation metric alongside masked_mse.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def masked_mae(
+    y_true_with_mask: tf.Tensor,  # [..., 2] -> [true_value, mask]
+    y_pred: tf.Tensor
+) -> tf.Tensor  # scalar</code></pre>
+
+                    <h3>save_imputation_model</h3>
+                    <p>Saves a trained Keras model as <code>.h5</code> and its training history as JSON to the specified directory.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def save_imputation_model(
+    model: tf.keras.Model,
+    history: tf.keras.callbacks.History,
+    save_path: str
 )</code></pre>
+
+                    <h3>load_imputation_model</h3>
+                    <p>Loads a trained Keras model from a directory (expects <code>model.h5</code> inside).</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def load_imputation_model(
+    save_path: str
+) -> tf.keras.Model</code></pre>
+
+                    <h3>run_model_prediction</h3>
+                    <p>Runs forward pass on a trained imputation model with dual inputs.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def run_model_prediction(
+    model: tf.keras.Model,
+    X_sequence: np.ndarray,  # (n_samples, seq_len, 2)
+    X_static: np.ndarray     # (n_samples, num_static_features)
+) -> np.ndarray  # (n_samples, seq_len, 1)</code></pre>
+
+                    <h3>replace_missing_with_predictions</h3>
+                    <p>Replaces values equal to <code>fill_nan_value</code> in the input array with the corresponding model predictions.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def replace_missing_with_predictions(
+    df_price_input: np.ndarray,   # (n_samples, seq_len)
+    y_pred: np.ndarray,           # (n_samples, seq_len, 1)
+    fill_nan_value: float
+) -> np.ndarray  # (n_samples, seq_len)</code></pre>
                 </section>
 
                 <section id="api-forecasting">
                     <h2>Forecasting Models Module</h2>
-                    
+                    <p>Unidirectional recurrent models for multi-step price prediction. These models take a lookback window of historical prices and output a forecast horizon.</p>
+
                     <h3>train_lstm</h3>
                     <p>Trains an LSTM model for price forecasting.</p>
-                    
+
                     <h4>Function Signature:</h4>
                     <pre><code>def train_lstm(
-    X_train: np.ndarray,
-    y_train: np.ndarray,
+    X_train: np.ndarray,  # (n_samples, lookback)
+    y_train: np.ndarray,  # (n_samples, horizon)
     X_val: np.ndarray,
     y_val: np.ndarray,
     **kwargs
-) -> Tuple[Model, History]</code></pre>
+) -> Tuple[tf.keras.Model, tf.keras.callbacks.History]</code></pre>
 
-                    <h4>Key Parameters:</h4>
+                    <h4>Keyword Arguments (via config):</h4>
                     <table class="parameter-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
                                 <th>Type</th>
+                                <th>Default</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>X_train</td>
-                                <td>np.ndarray</td>
-                                <td>Training sequences</td>
-                                <td>Shape: (samples, lookback, features)</td>
-                            </tr>
-                            <tr>
-                                <td>y_train</td>
-                                <td>np.ndarray</td>
-                                <td>Target forecasts</td>
-                                <td>Shape: (samples, horizon)</td>
-                            </tr>
-                            <tr>
-                                <td>lstm_units</td>
+                                <td><code>lstm_units</code></td>
                                 <td>int</td>
+                                <td>256</td>
                                 <td>Number of LSTM units</td>
-                                <td>Default: 128, Range: 64-512</td>
                             </tr>
                             <tr>
-                                <td>dropout_rate</td>
-                                <td>float</td>
-                                <td>Dropout rate for regularization</td>
-                                <td>Default: 0.2, Range: 0.0-0.5</td>
-                            </tr>
-                            <tr>
-                                <td>epochs</td>
+                                <td><code>dense_units</code></td>
                                 <td>int</td>
+                                <td>128</td>
+                                <td>Number of dense layer units</td>
+                            </tr>
+                            <tr>
+                                <td><code>dropout_rate</code></td>
+                                <td>float</td>
+                                <td>0.15</td>
+                                <td>Dropout rate for regularization</td>
+                            </tr>
+                            <tr>
+                                <td><code>epochs</code></td>
+                                <td>int</td>
+                                <td>30</td>
                                 <td>Number of training epochs</td>
-                                <td>Default: 30, Range: 10-100</td>
+                            </tr>
+                            <tr>
+                                <td><code>batch_size</code></td>
+                                <td>int</td>
+                                <td>64</td>
+                                <td>Training batch size</td>
+                            </tr>
+                            <tr>
+                                <td><code>learning_rate</code></td>
+                                <td>float</td>
+                                <td>0.001</td>
+                                <td>Adam optimizer learning rate</td>
                             </tr>
                         </tbody>
                     </table>
-
-                    <h4>Returns:</h4>
-                    <ul>
-                        <li><strong>model</strong> (Model): Trained Keras model</li>
-                        <li><strong>history</strong> (History): Training history object</li>
-                    </ul>
-
-                    <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.forecasting.lstm import train_lstm
-
-model, history = train_lstm(
-    X_train, y_train, X_val, y_val,
-    lstm_units=256,
-    epochs=50
-)</code></pre>
 
                     <h3>train_gru</h3>
-                    <p>Trains a GRU model for price forecasting.</p>
-                    
-                    <h4>Key Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Valid Values</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>gru_units</td>
-                                <td>int</td>
-                                <td>Number of GRU units</td>
-                                <td>Default: 128, Range: 64-512</td>
-                            </tr>
-                            <tr>
-                                <td>dropout_rate</td>
-                                <td>float</td>
-                                <td>Dropout rate for regularization</td>
-                                <td>Default: 0.2, Range: 0.0-0.5</td>
-                            </tr>
-                            <tr>
-                                <td>epochs</td>
-                                <td>int</td>
-                                <td>Number of training epochs</td>
-                                <td>Default: 30, Range: 10-100</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p>Trains a GRU model for price forecasting. Same architecture but uses GRU cells. Keyword argument <code>gru_units</code> (default: 256) instead of <code>lstm_units</code>.</p>
 
-                    <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.forecasting.gru import train_gru
+                    <h3>train_rnn</h3>
+                    <p>Trains a SimpleRNN model for price forecasting. Keyword argument <code>rnn_units</code> (default: 256) instead of <code>lstm_units</code>.</p>
 
-model, history = train_gru(
-    X_train, y_train, X_val, y_val,
-    gru_units=256,
-    epochs=50
-)</code></pre>
+                    <h3>train_forecasting_model</h3>
+                    <p>Dispatcher function that routes to the correct forecasting model training function.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def train_forecasting_model(
+    model_name: str,             # 'lstm', 'gru', or 'rnn'
+    forecasting_model_params: dict,
+    X_train, y_train, X_val, y_val
+) -> Tuple[tf.keras.Model, tf.keras.callbacks.History]</code></pre>
+                </section>
+
+                <section id="api-forecasting-utils">
+                    <h2>Forecasting Utilities</h2>
+                    <p>Metric functions, model persistence, and prediction utilities for forecasting models.</p>
+
+                    <h3>smape</h3>
+                    <p>Computes Symmetric Mean Absolute Percentage Error. Returns a value in the range [0, 200], where 0 indicates perfect predictions.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def smape(
+    y_true: tf.Tensor,
+    y_pred: tf.Tensor
+) -> tf.Tensor  # scalar, range [0, 200]</code></pre>
+
+                    <h3>r2_score</h3>
+                    <p>Computes the Coefficient of Determination (R&sup2;). Returns 1.0 for perfect predictions, 0.0 if the model is no better than predicting the mean, and negative values if worse.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def r2_score(
+    y_true: tf.Tensor,
+    y_pred: tf.Tensor
+) -> tf.Tensor  # scalar</code></pre>
+
+                    <h3>save_forecasting_model / load_forecasting_model</h3>
+                    <p>Same interface as imputation model save/load. Saves model as <code>.h5</code> and history as JSON.</p>
+
+                    <h3>run_forecasting_prediction</h3>
+                    <p>Runs forward pass on a trained forecasting model.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def run_forecasting_prediction(
+    model: tf.keras.Model,
+    X_sequence: np.ndarray  # (n_samples, lookback)
+) -> np.ndarray  # (n_samples, horizon, 1)</code></pre>
+
+                    <h3>append_forecast_to_imputed_data</h3>
+                    <p>Concatenates forecasted values to the end of imputed price data along the time axis.</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def append_forecast_to_imputed_data(
+    df_imputed_data: np.ndarray,    # (n_samples, seq_len)
+    y_forecast_pred: np.ndarray     # (n_samples, horizon)
+) -> np.ndarray  # (n_samples, seq_len + horizon)</code></pre>
                 </section>
 
                 <section id="api-evaluation">
                     <h2>Evaluation Module</h2>
-                    
-                    <h3>evaluate_imputation</h3>
-                    <p>Evaluates imputation model performance using multiple metrics.</p>
-                    
-                    <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_imputation(
-    y_true: np.ndarray,
-    y_pred: np.ndarray,
-    mask: np.ndarray
-) -> Dict[str, float]</code></pre>
 
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Valid Values</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>y_true</td>
-                                <td>np.ndarray</td>
-                                <td>True values</td>
-                                <td>Shape: (samples, sequence_length)</td>
-                            </tr>
-                            <tr>
-                                <td>y_pred</td>
-                                <td>np.ndarray</td>
-                                <td>Predicted values</td>
-                                <td>Shape: (samples, sequence_length)</td>
-                            </tr>
-                            <tr>
-                                <td>mask</td>
-                                <td>np.ndarray</td>
-                                <td>Binary mask for evaluation positions</td>
-                                <td>Shape: (samples, sequence_length)</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <h3>evaluate_imputation_model</h3>
+                    <p>Evaluates a trained imputation model on test data using masked metrics. Only computes errors at positions where the target mask equals 1 (simulated gaps).</p>
+
+                    <h4>Function Signature:</h4>
+                    <pre><code>def evaluate_imputation_model(
+    model: tf.keras.Model,
+    X_sequence: np.ndarray,   # (n_samples, seq_len, 2)
+    X_static: np.ndarray,     # (n_samples, num_static_features)
+    y_true: np.ndarray,       # (n_samples, seq_len)
+    target_mask: np.ndarray   # (n_samples, seq_len)
+) -> dict</code></pre>
 
                     <h4>Returns:</h4>
+                    <p><code>dict</code> with keys:</p>
                     <ul>
-                        <li><strong>metrics</strong> (Dict[str, float]): Dictionary containing MAE, RMSE, MAPE</li>
+                        <li><code>"masked_mse"</code> (float): Masked Mean Squared Error</li>
+                        <li><code>"masked_mae"</code> (float): Masked Mean Absolute Error</li>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.evaluation.evaluate_imputation import evaluate_imputation
+                    <pre><code>from price_imputation_and_forecasting.evaluation.imputation_evaluation import evaluate_imputation_model
 
-metrics = evaluate_imputation(y_true, y_pred, mask)
-print(f"MAE: {metrics['mae']:.3f}")
-print(f"RMSE: {metrics['rmse']:.3f}")
-print(f"MAPE: {metrics['mape']:.3f}")</code></pre>
+metrics = evaluate_imputation_model(model, X_sequence_test, X_static_test, y_test, target_mask_test)
+print(f"Masked MSE: {metrics['masked_mse']:.4f}")
+print(f"Masked MAE: {metrics['masked_mae']:.4f}")</code></pre>
 
-                    <h3>evaluate_forecasting</h3>
-                    <p>Evaluates forecasting model performance using multiple metrics.</p>
-                    
+                    <h3>evaluate_forecasting_model</h3>
+                    <p>Evaluates a trained forecasting model on test data using standard regression metrics.</p>
+
                     <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_forecasting(
-    y_true: np.ndarray,
-    y_pred: np.ndarray
-) -> Dict[str, float]</code></pre>
-
-                    <h4>Parameters:</h4>
-                    <table class="parameter-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Valid Values</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>y_true</td>
-                                <td>np.ndarray</td>
-                                <td>True forecast values</td>
-                                <td>Shape: (samples, horizon)</td>
-                            </tr>
-                            <tr>
-                                <td>y_pred</td>
-                                <td>np.ndarray</td>
-                                <td>Predicted forecast values</td>
-                                <td>Shape: (samples, horizon)</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <pre><code>def evaluate_forecasting_model(
+    model: tf.keras.Model,
+    X_test: np.ndarray,   # (n_samples, lookback)
+    y_test: np.ndarray    # (n_samples, horizon)
+) -> dict</code></pre>
 
                     <h4>Returns:</h4>
+                    <p><code>dict</code> with keys:</p>
                     <ul>
-                        <li><strong>metrics</strong> (Dict[str, float]): Dictionary containing MAE, RMSE, MAPE</li>
+                        <li><code>"mse"</code> (float): Mean Squared Error</li>
+                        <li><code>"mae"</code> (float): Mean Absolute Error</li>
+                        <li><code>"smape"</code> (float): Symmetric Mean Absolute Percentage Error (0-200)</li>
+                        <li><code>"r2"</code> (float): Coefficient of Determination</li>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.evaluation.evaluate_forecasting import evaluate_forecasting
+                    <pre><code>from price_imputation_and_forecasting.evaluation.forecasting_evaluation import evaluate_forecasting_model
 
-metrics = evaluate_forecasting(y_true, y_pred)
-print(f"Forecasting MAE: {metrics['mae']:.3f}")
-print(f"Forecasting RMSE: {metrics['rmse']:.3f}")</code></pre>
+metrics = evaluate_forecasting_model(model, X_test, y_test)
+print(f"MSE: {metrics['mse']:.4f}")
+print(f"MAE: {metrics['mae']:.4f}")
+print(f"sMAPE: {metrics['smape']:.2f}")
+print(f"R2: {metrics['r2']:.4f}")</code></pre>
                 </section>
 
                 <section id="api-visualization">
                     <h2>Visualization Module</h2>
-                    
+
                     <h3>visualize_imputation_forecasting_results</h3>
-                    <p>Creates interactive plots showing both imputation and forecasting results in a comprehensive visualization. The function creates comprehensive time series plots for each row in the input data, displaying:</p>
-                    <ul>
-                        <li><strong>Forecasted Series:</strong> Future price predictions shown as red dashed line ("dot" style)</li>
-                        <li><strong>Imputed Series:</strong> Historical prices with missing values filled, shown as blue solid line</li>
-                        <li><strong>Original Series:</strong> Raw historical data with NaN values, shown as black circular markers</li>
-                    </ul>
+                    <p>Creates interactive Plotly time series plots showing original, imputed, and forecasted data overlaid. Generates one figure per row (store-product combination) in the input data.</p>
 
                     <h4>Function Signature:</h4>
                     <pre><code>def visualize_imputation_forecasting_results(
     df_price_input: pd.DataFrame,
     df_price_with_imputed_data: pd.DataFrame,
     df_price_with_forecasted_data: pd.DataFrame
-) -> Dict[int, plotly.graph_objects.Figure]</code></pre>
+) -> dict</code></pre>
 
                     <h4>Parameters:</h4>
                     <table class="parameter-table">
@@ -904,129 +1241,212 @@ print(f"Forecasting RMSE: {metrics['rmse']:.3f}")</code></pre>
                                 <th>Parameter</th>
                                 <th>Type</th>
                                 <th>Description</th>
-                                <th>Valid Values</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>df_price_input</td>
+                                <td><code>df_price_input</code></td>
                                 <td>pd.DataFrame</td>
-                                <td>Original price data with missing values (input data)</td>
-                                <td>DataFrame with datetime index and price columns</td>
+                                <td>Original price data with NaN values</td>
                             </tr>
                             <tr>
-                                <td>df_price_with_imputed_data</td>
+                                <td><code>df_price_with_imputed_data</code></td>
                                 <td>pd.DataFrame</td>
                                 <td>Price data after imputation (missing values filled)</td>
-                                <td>DataFrame with datetime index and price columns</td>
                             </tr>
                             <tr>
-                                <td>df_price_with_forecasted_data</td>
+                                <td><code>df_price_with_forecasted_data</code></td>
                                 <td>pd.DataFrame</td>
-                                <td>Price data with forecasted future values</td>
-                                <td>DataFrame with datetime index and price columns</td>
+                                <td>Price data with imputed values + forecasted future values</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h4>Returns:</h4>
                     <ul>
-                        <li><strong>figs</strong> (Dict[int, plotly.graph_objects.Figure]): Dictionary of interactive Plotly figures keyed by row index, showing:
+                        <li><code>figs</code> (dict): Dictionary of Plotly figures keyed by row index. Each figure shows:
                             <ul>
-                                <li>Forecasted series (future predictions) in red dashed line</li>
-                                <li>Imputed series (filled missing values) in blue solid line</li>
-                                <li>Original series (raw historical data with NaNs) in black markers</li>
+                                <li><strong>Original series</strong> (black markers): Raw data with NaN gaps</li>
+                                <li><strong>Imputed series</strong> (blue solid line): Historical prices with gaps filled</li>
+                                <li><strong>Forecasted series</strong> (red dashed line): Predicted future prices</li>
                             </ul>
                         </li>
                     </ul>
 
                     <h4>Example:</h4>
                     <pre><code>from price_imputation_and_forecasting.visualization.plot_predicted_time_series import visualize_imputation_forecasting_results
-import pandas as pd
-
-# Assume you have three DataFrames:
-# - df_original: Original price data with missing values
-# - df_imputed: Price data after imputation
-# - df_forecasted: Price data with forecasted future values
 
 figs = visualize_imputation_forecasting_results(
-    df_price_input=df_original,
-    df_price_with_imputed_data=df_imputed,
-    df_price_with_forecasted_data=df_forecasted
+    df_price_input=original_df,
+    df_price_with_imputed_data=imputed_df,
+    df_price_with_forecasted_data=forecast_df
 )
 
-# Display the first figure
+# Display a specific figure
 figs[0].show()
 
-# Or iterate through all figures
+# Iterate through all figures
 for idx, fig in figs.items():
-    print(f"Displaying figure for row {idx}")
     fig.show()</code></pre>
                 </section>
 
                 <section id="best-practices">
                     <h2>Best Practices</h2>
-                    
+
                     <h3>Data Quality</h3>
                     <ul>
-                        <li>Ensure price data covers sufficient time periods (minimum 30 days recommended)</li>
-                        <li>Handle missing values appropriately using the threshold_ratio parameter</li>
-                        <li>Verify store metadata completeness before analysis</li>
+                        <li>Ensure price data covers sufficient time periods (minimum 84 days recommended for the default lookback window)</li>
+                        <li>The default <code>nan_threshold_ratio</code> of 0.75 keeps only series with at least 75% observed values</li>
+                        <li>Verify store metadata contains all required columns: StoreID, ChainID, DistrictName, StoreType, LocationType</li>
                     </ul>
 
                     <h3>Model Selection</h3>
                     <ul>
-                        <li><strong>Bidirectional LSTM:</strong> Best for imputation with temporal context</li>
-                        <li><strong>LSTM:</strong> Best for forecasting with sequential patterns</li>
-                        <li><strong>GRU:</strong> Faster alternative to LSTM with similar performance</li>
+                        <li><strong>Bi-LSTM + LSTM</strong> (<code>bilstm_lstm_config.yaml</code>): Best accuracy, highest compute cost</li>
+                        <li><strong>Bi-GRU + RNN</strong> (<code>bigru_rnn_config.yaml</code>): Good balance of speed and accuracy</li>
+                        <li><strong>Bi-RNN + GRU</strong> (<code>birnn_gru_config.yaml</code>, default): Fastest training with reasonable accuracy</li>
                     </ul>
 
                     <h3>Pipeline Order</h3>
                     <div class="alert alert-info">
-                        <strong>Critical:</strong> Always perform imputation before forecasting. The forecasting models require complete data without missing values.
+                        <strong>Critical:</strong> Always train the imputation model before the forecasting model. The forecasting pipeline depends on a pre-trained imputation model to fill missing values before generating sliding windows.
                     </div>
-                    
+
                     <h3>Training Workflow</h3>
                     <ol>
-                        <li>Train imputation model using <code>run_imputation_train_pipeline</code></li>
-                        <li>Save the trained imputation model</li>
-                        <li>Train forecasting model using <code>run_forecasting_train_pipeline</code></li>
-                        <li>Save the trained forecasting model</li>
-                        <li>Use both models in <code>run_prediction_pipeline</code> for production predictions</li>
+                        <li>Train imputation model: <code>run_imputation_train_pipeline()</code></li>
+                        <li>Model is automatically saved to <code>model_save_dir_imputation + product_category_name</code></li>
+                        <li>Train forecasting model: <code>run_forecasting_train_pipeline()</code> (loads saved imputation model internally)</li>
+                        <li>Model is automatically saved to <code>model_save_dir_forecasting + product_category_name</code></li>
+                        <li>Use <code>run_imputation_forecasting_predict_pipeline()</code> for production predictions</li>
                     </ol>
                 </section>
 
                 <section id="troubleshooting">
                     <h2>Troubleshooting</h2>
-                    
-                    <h3>Common Issues</h3>
-                    
-                    <h4>Issue: Poor imputation quality</h4>
-                    <p><strong>Solution:</strong> Try adjusting model parameters or using more training data</p>
-                    <pre><code>config.set('seq_units', 256)
-config.set('epochs', 50)</code></pre>
 
-                    <h4>Issue: Forecasts are inaccurate</h4>
-                    <p><strong>Solution:</strong> Ensure imputation was successful and try different model architectures</p>
-                    <pre><code>config.set('lstm_units', 256)
-config.set('lookback', 60)</code></pre>
-                    
+                    <h3>Common Issues</h3>
+
+                    <h4>Issue: Poor imputation quality (high masked MSE)</h4>
+                    <p><strong>Solutions:</strong></p>
+                    <ul>
+                        <li>Increase model capacity: <code>config.set('imputation_model_params', {'seq_units': 256, 'dense_units': 256})</code></li>
+                        <li>Train for more epochs: adjust <code>epochs</code> in imputation_model_params</li>
+                        <li>Try a different model: switch from <code>bi_rnn</code> to <code>bi_lstm</code></li>
+                    </ul>
+
+                    <h4>Issue: Forecasts are inaccurate (low R&sup2;)</h4>
+                    <p><strong>Solutions:</strong></p>
+                    <ul>
+                        <li>Ensure imputation quality is good first (imputation errors propagate to forecasting)</li>
+                        <li>Adjust lookback window: <code>config.set('lookback', 60)</code></li>
+                        <li>Try different model architecture: switch from <code>gru</code> to <code>lstm</code></li>
+                    </ul>
+
                     <h4>Issue: Model training is too slow</h4>
-                    <p><strong>Solution:</strong> Reduce model complexity or use GPU acceleration</p>
-                    <pre><code>config.set('seq_units', 64)
-config.set('batch_size', 64)</code></pre>
+                    <p><strong>Solutions:</strong></p>
+                    <ul>
+                        <li>Reduce model size: lower <code>seq_units</code> and <code>dense_units</code> to 64</li>
+                        <li>Increase batch size: <code>config.set('imputation_model_params', {'batch_size': 128})</code></li>
+                        <li>Use GPU acceleration (TensorFlow automatically detects available GPUs)</li>
+                    </ul>
+
+                    <h4>Issue: FileNotFoundError when loading models</h4>
+                    <p><strong>Solutions:</strong></p>
+                    <ul>
+                        <li>Ensure <code>model_save_dir_imputation</code> and <code>model_save_dir_forecasting</code> paths in config are correct</li>
+                        <li>Verify that training pipelines were run successfully before prediction</li>
+                    </ul>
                 </section>
 
                 <section>
                     <h2>Support & Resources</h2>
                     <ul>
+                        <li><strong>Configuration Reference:</strong> <a href="configuration.html">Full parameter documentation</a></li>
                         <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Report bugs and request features</a></li>
-                        <li><strong>Documentation:</strong> Comprehensive guides and API references for each package</li>
-                        <li><strong>Examples:</strong> Jupyter notebooks with real-world use cases and tutorials</li>
+                        <li><strong>Jupyter Notebooks:</strong> See <code>notebooks/</code> directory for worked examples</li>
                     </ul>
                 </section>
             </div>
+
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <p>Competitive Price Intelligence - ML Packages Documentation</p>
+                    <p>Version 0.1.0 | Last updated: February 2026</p>
+                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                </div>
+            </footer>
         </main>
     </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">&#9776;</button>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(event.target) &&
+                !menuBtn.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Copy code button functionality
+        document.querySelectorAll('pre').forEach(function(pre) {
+            var btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.setAttribute('aria-label', 'Copy code to clipboard');
+            btn.addEventListener('click', function() {
+                var code = pre.querySelector('code');
+                var text = code ? code.textContent : pre.textContent;
+                navigator.clipboard.writeText(text).then(function() {
+                    btn.textContent = 'Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(function() {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+            pre.style.position = 'relative';
+            pre.appendChild(btn);
+        });
+    </script>
 </body>
 </html>

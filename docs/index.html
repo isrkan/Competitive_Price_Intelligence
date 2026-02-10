@@ -11,7 +11,7 @@
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h1>🎯 Competitive Price Intelligence</h1> 
+                <h1>Competitive Price Intelligence</h1>
                 <p>API Documentation</p>
             </div>
             <div class="sidebar-nav">
@@ -28,14 +28,20 @@
                     <div class="nav-section-title">Packages</div>
                     <ul class="nav-links">
                         <li><a href="competitor_identification.html">Competitor Identification</a></li>
-                        <li><a href="price_imputation_forecasting.html">Price Imputation & Forecasting</a></li>
+                        <li><a href="price_imputation_forecasting.html">Price Imputation &amp; Forecasting</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Reference</div>
+                    <ul class="nav-links">
+                        <li><a href="configuration.html">Configuration Reference</a></li>
                     </ul>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Resources</div>
                     <ul class="nav-links">
                         <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></li>
-                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Issues & Support</a></li>
+                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Issues &amp; Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -58,11 +64,11 @@
                 <section id="packages">
                     <h2>Available Packages</h2>
                     <p>Choose from our specialized ML packages, each designed to address specific aspects of competitive price intelligence:</p>
-                    
+
                     <div class="package-grid">
                         <!-- Competitor Identification Package -->
                         <div class="package-card" onclick="window.location.href='competitor_identification.html'">
-                            <h3><span class="icon">🎯</span> Competitor Identification</h3>
+                            <h3><span class="icon">&#127919;</span> Competitor Identification</h3>
                             <p>
                                 Automatically discover and analyze competing retail stores using advanced unsupervised machine learning techniques. This package processes product-level pricing data to identify competitive relationships and market segments through clustering algorithms.
                             </p>
@@ -73,12 +79,12 @@
                                 <li>Interactive visualization suite</li>
                                 <li>Configurable ML pipelines</li>
                             </ul>
-                            <a href="competitor_identification.html" class="btn">Explore Documentation →</a>
+                            <a href="competitor_identification.html" class="btn">Explore Documentation &rarr;</a>
                         </div>
 
                         <!-- Price Imputation and Forecasting Package -->
                         <div class="package-card" onclick="window.location.href='price_imputation_forecasting.html'">
-                            <h3><span class="icon">📈</span> Price Imputation & Forecasting</h3>
+                            <h3><span class="icon">&#128200;</span> Price Imputation &amp; Forecasting</h3>
                             <p>
                                 Handle missing price data and predict future pricing trends using state-of-the-art deep learning models. This package combines dual-input architectures with masked loss functions for comprehensive price analytics.
                             </p>
@@ -89,7 +95,7 @@
                                 <li>Three specialized pipelines (imputation training, forecasting training, prediction)</li>
                                 <li>Interactive Plotly visualizations</li>
                             </ul>
-                            <a href="price_imputation_forecasting.html" class="btn">Explore Documentation →</a>
+                            <a href="price_imputation_forecasting.html" class="btn">Explore Documentation &rarr;</a>
                         </div>
                     </div>
                 </section>
@@ -98,28 +104,28 @@
                     <h2>Key Features Across All Packages</h2>
                     <div class="feature-grid">
                         <div class="feature-card">
-                            <h4>🚀 Production-Ready</h4>
+                            <h4>Production-Ready</h4>
                             <p>Built for real-world deployment with comprehensive error handling, input validation, and scalable architectures.</p>
                         </div>
                         <div class="feature-card">
-                            <h4>📊 Advanced ML Algorithms</h4>
+                            <h4>Advanced ML Algorithms</h4>
                             <p>State-of-the-art unsupervised learning, deep learning, and time series forecasting techniques.</p>
                         </div>
                         <div class="feature-card">
-                            <h4>🔧 Highly Configurable</h4>
-                            <p>YAML-based configuration management with extensive parameter customization options.</p>
+                            <h4>Highly Configurable</h4>
+                            <p>YAML-based configuration management with extensive parameter customization options. See the <a href="configuration.html">Configuration Reference</a>.</p>
                         </div>
                         <div class="feature-card">
-                            <h4>📈 Comprehensive Evaluation</h4>
+                            <h4>Comprehensive Evaluation</h4>
                             <p>Multiple metrics for assessing model quality and performance across different scenarios.</p>
                         </div>
                         <div class="feature-card">
-                            <h4>🎨 Interactive Visualizations</h4>
+                            <h4>Interactive Visualizations</h4>
                             <p>Plotly-based interactive plots for exploring results and understanding patterns.</p>
                         </div>
                         <div class="feature-card">
-                            <h4>📚 Extensive Documentation</h4>
-                            <p>Comprehensive API references, tutorials, and examples for every component.</p>
+                            <h4>Extensive Documentation</h4>
+                            <p>Comprehensive API references, configuration guides, and examples for every component.</p>
                         </div>
                     </div>
                 </section>
@@ -127,53 +133,52 @@
                 <section id="data-requirements">
                     <h2>Data Requirements</h2>
                     <p>To use these ML packages effectively, you'll need the following data formats:</p>
-                    
+
                     <h3>Required Data Files</h3>
                     <div class="alert alert-info">
                         <strong>Essential Data:</strong> All packages require properly formatted pricing and store data for optimal performance.
                     </div>
-                    
+
                     <h4>1. Price Data</h4>
                     <ul>
-                        <li><strong>Format:</strong> CSV or Parquet files</li>
+                        <li><strong>Format:</strong> Parquet files (one per product category)</li>
                         <li><strong>Structure:</strong> Time series data with store identifiers, product details, and price values</li>
-                        <li><strong>Columns:</strong> StoreID, ProductDescription, Date, Price, Category</li>
+                        <li><strong>Index:</strong> (category, ProductDescription, StoreID) with date columns as price values</li>
                         <li><strong>Requirements:</strong> Minimum 30 days of data per product-store combination</li>
                     </ul>
-                    
+
                     <h4>2. Store Metadata</h4>
                     <ul>
                         <li><strong>Format:</strong> CSV file</li>
                         <li><strong>Structure:</strong> Store information and attributes</li>
-                        <li><strong>Columns:</strong> StoreID, StoreName, ChainID, ChainName, Location, StoreType</li>
+                        <li><strong>Columns:</strong> ChainID, ChainName, SubChainID, SubChainName, StoreID, StoreName, DistrictName, SubDistrictName, CityName</li>
                         <li><strong>Requirements:</strong> Complete store hierarchy information</li>
                     </ul>
-                    
-                    <h4>3. Sub-chain Data (Optional)</h4>
+
+                    <h4>3. Sub-chain Data</h4>
                     <ul>
                         <li><strong>Format:</strong> Excel (.xlsx) file</li>
-                        <li><strong>Structure:</strong> Sub-chain categorization</li>
-                        <li><strong>Columns:</strong> ChainID, SubChainName, Region</li>
-                        <li><strong>Purpose:</strong> Enhanced competitor grouping and analysis</li>
+                        <li><strong>Structure:</strong> Sub-chain name mapping</li>
+                        <li><strong>Columns:</strong> SubChainID, SubChainName, EnglishName</li>
+                        <li><strong>Purpose:</strong> Maps sub-chain identifiers to English display names</li>
                     </ul>
-                    
+
                     <h3>Data Quality Guidelines</h3>
                     <ul>
-                        <li><strong>Completeness:</strong> Aim for >75% data completeness per time series</li>
+                        <li><strong>Completeness:</strong> Aim for &gt;75% data completeness per time series</li>
                         <li><strong>Consistency:</strong> Standardized product descriptions and store identifiers</li>
                         <li><strong>Temporal Coverage:</strong> Sufficient historical data for trend analysis</li>
                         <li><strong>Geographic Scope:</strong> Clear geographic boundaries for competitor analysis</li>
                     </ul>
                 </section>
 
-
                 <section>
-                    <h2>Support & Community</h2>
+                    <h2>Support &amp; Community</h2>
                     <p>Get help and connect with other users:</p>
                     <ul>
                         <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Report bugs and request features</a></li>
                         <li><strong>Documentation:</strong> Comprehensive guides and API references for each package</li>
-                        <li><strong>Examples:</strong> Jupyter notebooks with real-world use cases and tutorials</li>
+                        <li><strong>Configuration:</strong> <a href="configuration.html">Full YAML configuration reference</a></li>
                     </ul>
 
                     <div class="alert alert-success">
@@ -181,11 +186,19 @@
                     </div>
                 </section>
             </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <p>Competitive Price Intelligence &mdash; v0.1.0</p>
+                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                </div>
+            </footer>
         </main>
     </div>
 
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
 
     <script>
         function toggleSidebar() {
@@ -197,9 +210,8 @@
         document.addEventListener('click', function(event) {
             const sidebar = document.querySelector('.sidebar');
             const menuBtn = document.querySelector('.mobile-menu-btn');
-            
-            if (window.innerWidth <= 1024 && 
-                !sidebar.contains(event.target) && 
+            if (window.innerWidth <= 1024 &&
+                !sidebar.contains(event.target) &&
                 !menuBtn.contains(event.target)) {
                 sidebar.classList.remove('open');
             }
@@ -211,10 +223,7 @@
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
@@ -223,22 +232,38 @@
         window.addEventListener('scroll', function() {
             const sections = document.querySelectorAll('section[id]');
             const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-            
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
                 if (pageYOffset >= sectionTop - 100) {
                     current = section.getAttribute('id');
                 }
             });
-
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === '#' + current) {
                     link.classList.add('active');
                 }
             });
+        });
+
+        // Copy-to-clipboard for code blocks
+        document.querySelectorAll('pre').forEach(block => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.addEventListener('click', () => {
+                const code = block.querySelector('code');
+                navigator.clipboard.writeText(code.textContent).then(() => {
+                    btn.textContent = 'Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+            block.appendChild(btn);
         });
     </script>
 </body>

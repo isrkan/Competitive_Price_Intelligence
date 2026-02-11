@@ -3,15 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete YAML configuration reference for the Competitive Price Intelligence ML packages: all parameters, presets, and customization options.">
     <title>Configuration Reference - API Documentation</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
+    <a href="#overview" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:999;">Skip to content</a>
     <div class="docs-container">
-        <nav class="sidebar">
+        <nav class="sidebar" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <h1>Configuration Reference</h1>
                 <p>YAML Config Documentation</p>
+            </div>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">&#128269;</span>
+                    <input type="text" class="search-input" placeholder="Search docs..." aria-label="Search documentation">
+                    <button class="search-clear" aria-label="Clear search">&times;</button>
+                    <kbd class="search-kbd">Ctrl+K</kbd>
+                </div>
+                <div class="search-results"></div>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -54,11 +66,12 @@
             </div>
         </nav>
 
-        <main class="main-content">
+        <main class="main-content has-toc">
             <div class="content-header">
                 <h1>Configuration Reference</h1>
                 <p>Complete YAML Configuration Documentation for All ML Packages</p>
             </div>
+            <aside class="toc" aria-label="On this page"></aside>
 
             <div class="content-body">
                 <section id="overview">
@@ -80,7 +93,7 @@
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code># In YAML config:
+                    <pre><code class="language-yaml"># In YAML config:
 price_data_dir: "&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data"
 store_file_path: "%price_data_dir%/Store_data_git.csv"
 
@@ -93,7 +106,7 @@ store_file_path: "%price_data_dir%/Store_data_git.csv"
                     <h2>Config Class API</h2>
                     <p>Both packages use the same <code>Config</code> class interface.</p>
 
-                    <pre><code>from competitor_identification.config.config import Config
+                    <pre><code class="language-python">from competitor_identification.config.config import Config
 # or
 from price_imputation_and_forecasting.config.config import Config</code></pre>
 
@@ -113,7 +126,7 @@ from price_imputation_and_forecasting.config.config import Config</code></pre>
                     <p>Set or override a configuration value at runtime.</p>
 
                     <h4>Usage Example:</h4>
-                    <pre><code>from competitor_identification import CompetitorIdentification
+                    <pre><code class="language-python">from competitor_identification import CompetitorIdentification
 
 # Load with custom config
 ci = CompetitorIdentification(custom_config_path='tsne_dbscan_config.yaml')
@@ -446,7 +459,7 @@ config.set('nan_threshold', 0.3)</code></pre>
 
                     <h3>pca_birch_config.yaml (Default)</h3>
                     <p>Fastest combination, good for large datasets.</p>
-                    <pre><code># Default configurations
+                    <pre><code class="language-yaml"># Default configurations
 price_data_dir: "&lt;USER_DIRECTORY_TOKEN&gt;/retail_pricing/competitor_recognition_data"
 store_file_path: "%price_data_dir%/Store_data_git.csv"
 subchain_file_path: "%price_data_dir%/SubChainNameEnglish.xlsx"
@@ -466,7 +479,7 @@ top_n_competitors: 5</code></pre>
 
                     <h3>tsne_dbscan_config.yaml</h3>
                     <p>Best visualization quality with density-based clustering.</p>
-                    <pre><code>dimensionality_reduction_method: 't-sne'
+                    <pre><code class="language-yaml">dimensionality_reduction_method: 't-sne'
 dimensionality_reduction_method_params:
   n_components: 2
   perplexity: 40
@@ -483,7 +496,7 @@ clustering_method_params:
 
                     <h3>umap_optics_config.yaml</h3>
                     <p>Good balance of quality and speed with hierarchical density-based clustering.</p>
-                    <pre><code>dimensionality_reduction_method: 'umap'
+                    <pre><code class="language-yaml">dimensionality_reduction_method: 'umap'
 dimensionality_reduction_method_params:
   n_neighbors: 5
   n_components: 2
@@ -839,7 +852,7 @@ clustering_method_params:
 
                     <h3>birnn_gru_config.yaml (Default)</h3>
                     <p>Bidirectional Simple RNN for imputation + GRU for forecasting.</p>
-                    <pre><code># Default configuration
+                    <pre><code class="language-yaml"># Default configuration
 imputation_model: "bi_rnn"
 imputation_model_params:
   seq_units: 128
@@ -862,7 +875,7 @@ forecasting_model_params:
 
                     <h3>bilstm_lstm_config.yaml</h3>
                     <p>Bidirectional LSTM for imputation + LSTM for forecasting. Best for capturing long-term dependencies.</p>
-                    <pre><code>imputation_model: "bi_lstm"
+                    <pre><code class="language-yaml">imputation_model: "bi_lstm"
 imputation_model_params:
   seq_units: 128
   dense_units: 128
@@ -884,7 +897,7 @@ forecasting_model_params:
 
                     <h3>bigru_rnn_config.yaml</h3>
                     <p>Bidirectional GRU for imputation + Simple RNN for forecasting. Lightweight forecasting with efficient imputation.</p>
-                    <pre><code>imputation_model: "bi_gru"
+                    <pre><code class="language-yaml">imputation_model: "bi_gru"
 imputation_model_params:
   seq_units: 128
   dense_units: 128
@@ -951,77 +964,28 @@ forecasting_model_params:
             <footer class="site-footer">
                 <div class="footer-content">
                     <p>Competitive Price Intelligence &mdash; v0.1.0</p>
-                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                    <div class="footer-links">
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank" rel="noopener">GitHub</a>
+                        <span class="footer-separator">|</span>
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Issues</a>
+                        <span class="footer-separator">|</span>
+                        <a href="competitor_identification.html">Competitor Identification</a>
+                        <span class="footer-separator">|</span>
+                        <a href="price_imputation_forecasting.html">Price Imputation</a>
+                    </div>
                 </div>
             </footer>
         </main>
     </div>
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
+    <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            if (window.innerWidth <= 1024 &&
-                !sidebar.contains(event.target) &&
-                !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Copy-to-clipboard for code blocks
-        document.querySelectorAll('pre').forEach(block => {
-            const btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = 'Copy';
-            btn.addEventListener('click', () => {
-                const code = block.querySelector('code');
-                navigator.clipboard.writeText(code.textContent).then(() => {
-                    btn.textContent = 'Copied!';
-                    btn.classList.add('copied');
-                    setTimeout(() => {
-                        btn.textContent = 'Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                });
-            });
-            block.appendChild(btn);
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

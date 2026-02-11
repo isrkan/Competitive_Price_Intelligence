@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="API documentation for the Competitive Price Intelligence ML packages: Competitor Identification and Price Imputation &amp; Forecasting.">
     <title>Competitive Price Intelligence - ML Packages Documentation</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
+    <a href="#overview" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:999;">Skip to content</a>
     <div class="docs-container">
         <!-- Sidebar Navigation -->
-        <nav class="sidebar">
+        <nav class="sidebar" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <h1>Competitive Price Intelligence</h1>
                 <p>API Documentation</p>
+            </div>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">&#128269;</span>
+                    <input type="text" class="search-input" placeholder="Search docs..." aria-label="Search documentation">
+                    <button class="search-clear" aria-label="Clear search">&times;</button>
+                    <kbd class="search-kbd">Ctrl+K</kbd>
+                </div>
+                <div class="search-results"></div>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -20,6 +32,7 @@
                     <ul class="nav-links">
                         <li><a href="#overview" class="active">Overview</a></li>
                         <li><a href="#packages">Packages</a></li>
+                        <li><a href="#architecture">Architecture</a></li>
                         <li><a href="#features">Key Features</a></li>
                         <li><a href="#data-requirements">Data Requirements</a></li>
                     </ul>
@@ -40,8 +53,8 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Resources</div>
                     <ul class="nav-links">
-                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></li>
-                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Issues &amp; Support</a></li>
+                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank" rel="noopener">GitHub Repository</a></li>
+                        <li><a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Issues &amp; Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -172,11 +185,11 @@
                     </ul>
                 </section>
 
-                <section>
+                <section id="support">
                     <h2>Support &amp; Community</h2>
                     <p>Get help and connect with other users:</p>
                     <ul>
-                        <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank">Report bugs and request features</a></li>
+                        <li><strong>GitHub Issues:</strong> <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Report bugs and request features</a></li>
                         <li><strong>Documentation:</strong> Comprehensive guides and API references for each package</li>
                         <li><strong>Configuration:</strong> <a href="configuration.html">Full YAML configuration reference</a></li>
                     </ul>
@@ -191,80 +204,27 @@
             <footer class="site-footer">
                 <div class="footer-content">
                     <p>Competitive Price Intelligence &mdash; v0.1.0</p>
-                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                    <div class="footer-links">
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank" rel="noopener">GitHub</a>
+                        <span class="footer-separator">|</span>
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Issues</a>
+                        <span class="footer-separator">|</span>
+                        <a href="configuration.html">Configuration</a>
+                    </div>
                 </div>
             </footer>
         </main>
     </div>
 
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
+    <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            if (window.innerWidth <= 1024 &&
-                !sidebar.contains(event.target) &&
-                !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Add active class to navigation links based on scroll position
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Copy-to-clipboard for code blocks
-        document.querySelectorAll('pre').forEach(block => {
-            const btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = 'Copy';
-            btn.addEventListener('click', () => {
-                const code = block.querySelector('code');
-                navigator.clipboard.writeText(code.textContent).then(() => {
-                    btn.textContent = 'Copied!';
-                    btn.classList.add('copied');
-                    setTimeout(() => {
-                        btn.textContent = 'Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                });
-            });
-            block.appendChild(btn);
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

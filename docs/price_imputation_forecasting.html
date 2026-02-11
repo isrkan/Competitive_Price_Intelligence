@@ -3,15 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="API reference for the Price Imputation and Forecasting ML package: bidirectional deep learning models for missing price data and forecasting.">
     <title>Price Imputation & Forecasting - API Documentation</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
+    <a href="#introduction" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:999;">Skip to content</a>
     <div class="docs-container">
-        <nav class="sidebar">
+        <nav class="sidebar" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <h1>Price Imputation & Forecasting</h1>
                 <p>API Documentation</p>
+            </div>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">&#128269;</span>
+                    <input type="text" class="search-input" placeholder="Search docs..." aria-label="Search documentation">
+                    <button class="search-clear" aria-label="Clear search">&times;</button>
+                    <kbd class="search-kbd">Ctrl+K</kbd>
+                </div>
+                <div class="search-results"></div>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -59,11 +71,13 @@
             </div>
         </nav>
 
-        <main class="main-content">
+        <main class="main-content has-toc">
             <div class="content-header">
                 <h1>Price Imputation & Forecasting</h1>
                 <p>Deep Learning Package for Handling Missing Price Data and Predicting Future Prices</p>
             </div>
+
+            <aside class="toc" aria-label="On this page"></aside>
 
             <div class="content-body">
                 <section id="introduction">
@@ -87,11 +101,47 @@
                         <li><strong>Forecasting Training Pipeline:</strong> Use imputed data, create sliding windows, train a forecasting model</li>
                         <li><strong>Prediction Pipeline:</strong> Load pre-trained models, impute missing values, then forecast future prices</li>
                     </ol>
+
+                    <div class="diagram-container">
+                        <div class="diagram-title">Three-Pipeline Architecture</div>
+                        <div class="mermaid">
+graph TB
+    subgraph P1["Pipeline 1: Imputation Training"]
+        A["Load Price &amp;<br/>Store Data"] --> B["Filter &amp; Clean<br/>(NaN threshold)"]
+        B --> C["Simulate Missing<br/>Gaps + Masks"]
+        C --> D["Train Bidirectional<br/>Model (Bi-LSTM/GRU/RNN)"]
+        D --> E["Evaluate with<br/>Masked MSE/MAE"]
+        E --> F["Save Imputation<br/>Model (.h5)"]
+    end
+
+    subgraph P2["Pipeline 2: Forecasting Training"]
+        G["Load Data +<br/>Impute (using P1 model)"] --> H["Create Sliding<br/>Windows"]
+        H --> I["Train Forecasting<br/>Model (LSTM/GRU/RNN)"]
+        I --> J["Evaluate with<br/>MSE/MAE/sMAPE/R2"]
+        J --> K["Save Forecasting<br/>Model (.h5)"]
+    end
+
+    subgraph P3["Pipeline 3: Prediction"]
+        L["Load Pre-trained<br/>Models"] --> M["Impute Missing<br/>Values"]
+        M --> N["Forecast Future<br/>Prices"]
+        N --> O["Inverse Scale &amp;<br/>Round Prices"]
+        O --> P["Generate<br/>Visualizations"]
+    end
+
+    F -.->|"Required"| G
+    K -.->|"Required"| L
+    F -.->|"Required"| L
+
+    style D fill:#dbeafe,stroke:#2563eb
+    style I fill:#d1fae5,stroke:#10b981
+    style P fill:#fef3c7,stroke:#f59e0b
+                        </div>
+                    </div>
                 </section>
 
                 <section id="installation">
                     <h2>Installation</h2>
-                    <pre><code>pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/price_imputation_and_forecasting</code></pre>
+                    <pre><code class="language-bash">pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/price_imputation_and_forecasting</code></pre>
 
                     <h4>Requirements</h4>
                     <ul>
@@ -103,7 +153,7 @@
 
                 <section id="quick-start">
                     <h2>Quick Start</h2>
-                    <pre><code>from price_imputation_and_forecasting import PriceImputationForecasting
+                    <pre><code class="language-python">from price_imputation_and_forecasting import PriceImputationForecasting
 from price_imputation_and_forecasting.imputation_train_pipeline import run_imputation_train_pipeline
 from price_imputation_and_forecasting.forecasting_train_pipeline import run_forecasting_train_pipeline
 from price_imputation_and_forecasting.imputation_forecasting_predict_pipeline import run_imputation_forecasting_predict_pipeline
@@ -169,7 +219,7 @@ figs[0].show()</code></pre>
                         </tbody>
                     </table>
                     <h4>Example:</h4>
-                    <pre><code># Use default config
+                    <pre><code class="language-python"># Use default config
 pif = PriceImputationForecasting()
 
 # Use custom config (overrides only specified keys)
@@ -236,7 +286,7 @@ pif = PriceImputationForecasting(custom_config_path='configs/bilstm_lstm_config.
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.imputation_train_pipeline import run_imputation_train_pipeline
+                    <pre><code class="language-python">from price_imputation_and_forecasting.imputation_train_pipeline import run_imputation_train_pipeline
 
 metrics = run_imputation_train_pipeline(
     config=config,
@@ -295,7 +345,7 @@ print(f"Imputation Masked MAE: {metrics['masked_mae']:.4f}")</code></pre>
                     </div>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.forecasting_train_pipeline import run_forecasting_train_pipeline
+                    <pre><code class="language-python">from price_imputation_and_forecasting.forecasting_train_pipeline import run_forecasting_train_pipeline
 
 metrics = run_forecasting_train_pipeline(
     config=config,
@@ -362,7 +412,7 @@ print(f"Forecasting R2: {metrics['r2']:.4f}")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.imputation_forecasting_predict_pipeline import run_imputation_forecasting_predict_pipeline
+                    <pre><code class="language-python">from price_imputation_and_forecasting.imputation_forecasting_predict_pipeline import run_imputation_forecasting_predict_pipeline
 
 original_df, imputed_df, forecast_df, figs = run_imputation_forecasting_predict_pipeline(
     config=config,
@@ -392,7 +442,7 @@ figs[0].show()</code></pre>
                     <p>Loads store metadata from a CSV file and merges with sub-chain names from an Excel file.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def load_store_data(
+                    <pre><code class="language-python">def load_store_data(
     store_file_path: str,
     subchain_file_path: str
 ) -> pd.DataFrame</code></pre>
@@ -426,7 +476,7 @@ figs[0].show()</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.data.load_data import load_store_data
+                    <pre><code class="language-python">from price_imputation_and_forecasting.data.load_data import load_store_data
 
 store_data = load_store_data(
     store_file_path='data/Store_data_git.csv',
@@ -438,7 +488,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Loads price data from a Parquet file for a specific product category.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def load_price_data(
+                    <pre><code class="language-python">def load_price_data(
     category: str,
     price_data_dir: str
 ) -> pd.DataFrame</code></pre>
@@ -475,7 +525,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Filters out rows (product-store combinations) that have too many missing values based on a threshold ratio of non-NaN values.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def filter_missing_values_from_price_data(
+                    <pre><code class="language-python">def filter_missing_values_from_price_data(
     category_df: pd.DataFrame,
     threshold_ratio: float
 ) -> pd.DataFrame</code></pre>
@@ -512,7 +562,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Aligns one-hot encoded store data with time series price data using StoreID as the key. Ensures each row of price data has the correct store dummy variables.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def align_encoded_store_data_with_price_data(
+                    <pre><code class="language-python">def align_encoded_store_data_with_price_data(
     store_data_with_dummies: pd.DataFrame,
     price_data: pd.DataFrame
 ) -> pd.DataFrame</code></pre>
@@ -549,7 +599,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Converts price and store DataFrames into NumPy arrays for model input.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def convert_to_numpy_inputs(
+                    <pre><code class="language-python">def convert_to_numpy_inputs(
     df_price_input: pd.DataFrame,
     df_store_input: pd.DataFrame
 ) -> Tuple[np.ndarray, np.ndarray]</code></pre>
@@ -564,7 +614,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Creates a binary mask of observed (non-NaN) values and replaces NaN values with a specified fill value. This is a key preprocessing step for the imputation models.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def make_mask_and_replace_nan_with_predefined_value(
+                    <pre><code class="language-python">def make_mask_and_replace_nan_with_predefined_value(
     df_price_input: np.ndarray,
     fill_nan_value: float
 ) -> Tuple[np.ndarray, np.ndarray]</code></pre>
@@ -602,7 +652,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Simulates artificial missing gaps in observed time series for supervised training of the imputation model. Randomly creates gaps in observed values so the model learns to reconstruct them.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def simulate_missing_gaps(
+                    <pre><code class="language-python">def simulate_missing_gaps(
     filled_nan_price_input_data: np.ndarray,
     masked_price_inputs: np.ndarray,
     gap_prob: float,
@@ -659,7 +709,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Splits time series arrays into training, validation, and test sets using random sampling. Stacks price values and masks into the model's expected input format.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def split_train_val_test_for_imputation(
+                    <pre><code class="language-python">def split_train_val_test_for_imputation(
     df_sim_input, df_input, matrix_sim_masked_inputs,
     df_store_input, matrix_target_mask,
     test_size, val_size, random_state
@@ -667,7 +717,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
 
                     <h4>Returns:</h4>
                     <p>A tuple of 12 arrays in this order:</p>
-                    <pre><code>(X_sequence_train, X_static_train, target_mask_train, y_train,
+                    <pre><code class="language-python">(X_sequence_train, X_static_train, target_mask_train, y_train,
  X_sequence_val,   X_static_val,   target_mask_val,   y_val,
  X_sequence_test,  X_static_test,  target_mask_test,  y_test)</code></pre>
 
@@ -675,7 +725,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Chronologically splits a matrix of time series into train, validation, and test segments. Unlike the imputation split, this preserves temporal order (no shuffling).</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def split_chronologically_train_val_test_for_forecasting(
+                    <pre><code class="language-python">def split_chronologically_train_val_test_for_forecasting(
     data: np.ndarray,
     test_size: float,
     val_size: float
@@ -692,7 +742,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Creates sliding window samples (input/target pairs) from time series data for forecasting model training.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def create_sliding_windows(
+                    <pre><code class="language-python">def create_sliding_windows(
     data: np.ndarray,
     input_lookback: int,
     horizon: int,
@@ -756,7 +806,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Prepares model inputs for imputation inference by stacking price data and observation mask.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def prepare_imputation_model_inputs_for_predictions(
+                    <pre><code class="language-python">def prepare_imputation_model_inputs_for_predictions(
     df_scaled_price_input: np.ndarray,
     matrix_masked_price_inputs: np.ndarray,
     df_store_input: np.ndarray
@@ -772,7 +822,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Extracts the most recent lookback window from each series for forecasting inference.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def prepare_forecasting_model_inputs_for_predictions(
+                    <pre><code class="language-python">def prepare_forecasting_model_inputs_for_predictions(
     df_price_with_imputed_data: np.ndarray,
     input_lookback: int
 ) -> np.ndarray</code></pre>
@@ -791,7 +841,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>One-hot encodes categorical columns in the store data. Encodes <code>ChainID</code>, <code>DistrictName</code>, <code>StoreType</code>, and <code>LocationType</code> using <code>pd.get_dummies</code> with <code>drop_first=True</code>.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def encode_store_data(
+                    <pre><code class="language-python">def encode_store_data(
     store_data: pd.DataFrame
 ) -> pd.DataFrame</code></pre>
 
@@ -822,7 +872,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Applies log1p scaling (<code>log(1 + x)</code>) to price arrays. Compresses large values and stabilizes variance for neural network training.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def scale_price_inputs(
+                    <pre><code class="language-python">def scale_price_inputs(
     df_price_input: np.ndarray,
     df_sim_price_input: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray]</code></pre>
@@ -837,7 +887,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Applies the inverse of log1p scaling (<code>expm1</code>) to recover original price values from scaled predictions.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def inverse_scale_price_inputs_with_expm1(
+                    <pre><code class="language-python">def inverse_scale_price_inputs_with_expm1(
     scaled_array: np.ndarray
 ) -> np.ndarray</code></pre>
 
@@ -845,7 +895,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Rounds each price to the nearest 0.1 (10 cents). Values below 0.1 are set to 0.1 to avoid zero prices.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def round_prices_to_nearest_10_cents(
+                    <pre><code class="language-python">def round_prices_to_nearest_10_cents(
     prices_array: np.ndarray
 ) -> np.ndarray</code></pre>
                 </section>
@@ -858,7 +908,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Trains a Bidirectional LSTM model for price imputation. The model processes sequences in both forward and backward directions to capture full temporal context around missing values.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def train_bi_lstm(
+                    <pre><code class="language-python">def train_bi_lstm(
     X_sequence_train: np.ndarray,   # (n_samples, seq_len, 2)
     X_static_train: np.ndarray,     # (n_samples, num_static_features)
     target_mask_train: np.ndarray,  # (n_samples, seq_len, 1)
@@ -944,7 +994,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Dispatcher function that routes to the correct model training function based on the model name.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def train_imputation_model(
+                    <pre><code class="language-python">def train_imputation_model(
     model_name: str,
     imputation_model_params: dict,
     X_sequence_train, X_static_train, target_mask_train, y_train,
@@ -983,7 +1033,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Computes Mean Squared Error only at positions where the mask equals 1. Used as the training loss function for imputation models, ensuring the model is only penalized for errors on simulated gaps.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def masked_mse(
+                    <pre><code class="language-python">def masked_mse(
     y_true_with_mask: tf.Tensor,  # [..., 2] -> [true_value, mask]
     y_pred: tf.Tensor
 ) -> tf.Tensor  # scalar</code></pre>
@@ -992,7 +1042,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Computes Mean Absolute Error only at masked positions. Used as an evaluation metric alongside masked_mse.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def masked_mae(
+                    <pre><code class="language-python">def masked_mae(
     y_true_with_mask: tf.Tensor,  # [..., 2] -> [true_value, mask]
     y_pred: tf.Tensor
 ) -> tf.Tensor  # scalar</code></pre>
@@ -1001,7 +1051,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Saves a trained Keras model as <code>.h5</code> and its training history as JSON to the specified directory.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def save_imputation_model(
+                    <pre><code class="language-python">def save_imputation_model(
     model: tf.keras.Model,
     history: tf.keras.callbacks.History,
     save_path: str
@@ -1011,7 +1061,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Loads a trained Keras model from a directory (expects <code>model.h5</code> inside).</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def load_imputation_model(
+                    <pre><code class="language-python">def load_imputation_model(
     save_path: str
 ) -> tf.keras.Model</code></pre>
 
@@ -1019,7 +1069,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Runs forward pass on a trained imputation model with dual inputs.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def run_model_prediction(
+                    <pre><code class="language-python">def run_model_prediction(
     model: tf.keras.Model,
     X_sequence: np.ndarray,  # (n_samples, seq_len, 2)
     X_static: np.ndarray     # (n_samples, num_static_features)
@@ -1029,7 +1079,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Replaces values equal to <code>fill_nan_value</code> in the input array with the corresponding model predictions.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def replace_missing_with_predictions(
+                    <pre><code class="language-python">def replace_missing_with_predictions(
     df_price_input: np.ndarray,   # (n_samples, seq_len)
     y_pred: np.ndarray,           # (n_samples, seq_len, 1)
     fill_nan_value: float
@@ -1044,7 +1094,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Trains an LSTM model for price forecasting.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def train_lstm(
+                    <pre><code class="language-python">def train_lstm(
     X_train: np.ndarray,  # (n_samples, lookback)
     y_train: np.ndarray,  # (n_samples, horizon)
     X_val: np.ndarray,
@@ -1112,7 +1162,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Dispatcher function that routes to the correct forecasting model training function.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def train_forecasting_model(
+                    <pre><code class="language-python">def train_forecasting_model(
     model_name: str,             # 'lstm', 'gru', or 'rnn'
     forecasting_model_params: dict,
     X_train, y_train, X_val, y_val
@@ -1127,7 +1177,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Computes Symmetric Mean Absolute Percentage Error. Returns a value in the range [0, 200], where 0 indicates perfect predictions.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def smape(
+                    <pre><code class="language-python">def smape(
     y_true: tf.Tensor,
     y_pred: tf.Tensor
 ) -> tf.Tensor  # scalar, range [0, 200]</code></pre>
@@ -1136,7 +1186,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Computes the Coefficient of Determination (R&sup2;). Returns 1.0 for perfect predictions, 0.0 if the model is no better than predicting the mean, and negative values if worse.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def r2_score(
+                    <pre><code class="language-python">def r2_score(
     y_true: tf.Tensor,
     y_pred: tf.Tensor
 ) -> tf.Tensor  # scalar</code></pre>
@@ -1148,7 +1198,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Runs forward pass on a trained forecasting model.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def run_forecasting_prediction(
+                    <pre><code class="language-python">def run_forecasting_prediction(
     model: tf.keras.Model,
     X_sequence: np.ndarray  # (n_samples, lookback)
 ) -> np.ndarray  # (n_samples, horizon, 1)</code></pre>
@@ -1157,7 +1207,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Concatenates forecasted values to the end of imputed price data along the time axis.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def append_forecast_to_imputed_data(
+                    <pre><code class="language-python">def append_forecast_to_imputed_data(
     df_imputed_data: np.ndarray,    # (n_samples, seq_len)
     y_forecast_pred: np.ndarray     # (n_samples, horizon)
 ) -> np.ndarray  # (n_samples, seq_len + horizon)</code></pre>
@@ -1170,7 +1220,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     <p>Evaluates a trained imputation model on test data using masked metrics. Only computes errors at positions where the target mask equals 1 (simulated gaps).</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_imputation_model(
+                    <pre><code class="language-python">def evaluate_imputation_model(
     model: tf.keras.Model,
     X_sequence: np.ndarray,   # (n_samples, seq_len, 2)
     X_static: np.ndarray,     # (n_samples, num_static_features)
@@ -1186,7 +1236,7 @@ print(f"Loaded {len(store_data)} stores")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.evaluation.imputation_evaluation import evaluate_imputation_model
+                    <pre><code class="language-python">from price_imputation_and_forecasting.evaluation.imputation_evaluation import evaluate_imputation_model
 
 metrics = evaluate_imputation_model(model, X_sequence_test, X_static_test, y_test, target_mask_test)
 print(f"Masked MSE: {metrics['masked_mse']:.4f}")
@@ -1196,7 +1246,7 @@ print(f"Masked MAE: {metrics['masked_mae']:.4f}")</code></pre>
                     <p>Evaluates a trained forecasting model on test data using standard regression metrics.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_forecasting_model(
+                    <pre><code class="language-python">def evaluate_forecasting_model(
     model: tf.keras.Model,
     X_test: np.ndarray,   # (n_samples, lookback)
     y_test: np.ndarray    # (n_samples, horizon)
@@ -1212,7 +1262,7 @@ print(f"Masked MAE: {metrics['masked_mae']:.4f}")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.evaluation.forecasting_evaluation import evaluate_forecasting_model
+                    <pre><code class="language-python">from price_imputation_and_forecasting.evaluation.forecasting_evaluation import evaluate_forecasting_model
 
 metrics = evaluate_forecasting_model(model, X_test, y_test)
 print(f"MSE: {metrics['mse']:.4f}")
@@ -1228,7 +1278,7 @@ print(f"R2: {metrics['r2']:.4f}")</code></pre>
                     <p>Creates interactive Plotly time series plots showing original, imputed, and forecasted data overlaid. Generates one figure per row (store-product combination) in the input data.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def visualize_imputation_forecasting_results(
+                    <pre><code class="language-python">def visualize_imputation_forecasting_results(
     df_price_input: pd.DataFrame,
     df_price_with_imputed_data: pd.DataFrame,
     df_price_with_forecasted_data: pd.DataFrame
@@ -1274,7 +1324,7 @@ print(f"R2: {metrics['r2']:.4f}")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from price_imputation_and_forecasting.visualization.plot_predicted_time_series import visualize_imputation_forecasting_results
+                    <pre><code class="language-python">from price_imputation_and_forecasting.visualization.plot_predicted_time_series import visualize_imputation_forecasting_results
 
 figs = visualize_imputation_forecasting_results(
     df_price_input=original_df,
@@ -1371,82 +1421,27 @@ for idx, fig in figs.items():
 
             <footer class="site-footer">
                 <div class="footer-content">
-                    <p>Competitive Price Intelligence - ML Packages Documentation</p>
-                    <p>Version 0.1.0 | Last updated: February 2026</p>
-                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                    <p>Competitive Price Intelligence &mdash; v0.1.0</p>
+                    <div class="footer-links">
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank" rel="noopener">GitHub</a>
+                        <span class="footer-separator">|</span>
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Issues</a>
+                        <span class="footer-separator">|</span>
+                        <a href="configuration.html">Configuration</a>
+                    </div>
                 </div>
             </footer>
         </main>
     </div>
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle navigation menu">&#9776;</button>
+    <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            if (window.innerWidth <= 1024 &&
-                !sidebar.contains(event.target) &&
-                !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Copy code button functionality
-        document.querySelectorAll('pre').forEach(function(pre) {
-            var btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = 'Copy';
-            btn.setAttribute('aria-label', 'Copy code to clipboard');
-            btn.addEventListener('click', function() {
-                var code = pre.querySelector('code');
-                var text = code ? code.textContent : pre.textContent;
-                navigator.clipboard.writeText(text).then(function() {
-                    btn.textContent = 'Copied!';
-                    btn.classList.add('copied');
-                    setTimeout(function() {
-                        btn.textContent = 'Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                });
-            });
-            pre.style.position = 'relative';
-            pre.appendChild(btn);
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

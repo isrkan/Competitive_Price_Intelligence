@@ -3,15 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="API reference for the Competitor Identification ML package: dimensionality reduction, clustering, and competitor ranking for retail pricing analysis.">
     <title>Competitor Identification - API Documentation</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
+    <a href="#introduction" class="skip-link" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:999;">Skip to content</a>
     <div class="docs-container">
-        <nav class="sidebar">
+        <nav class="sidebar" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <h1>Competitor Identification</h1>
                 <p>API Documentation</p>
+            </div>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">&#128269;</span>
+                    <input type="text" class="search-input" placeholder="Search docs..." aria-label="Search documentation">
+                    <button class="search-clear" aria-label="Clear search">&times;</button>
+                    <kbd class="search-kbd">Ctrl+K</kbd>
+                </div>
+                <div class="search-results"></div>
             </div>
             <div class="sidebar-nav">
                 <div class="nav-section">
@@ -59,11 +71,14 @@
             </div>
         </nav>
 
-        <main class="main-content">
+        <main class="main-content has-toc">
             <div class="content-header">
                 <h1>Competitor Identification</h1>
                 <p>Comprehensive ML Package for Retail Competitor Analysis Using Unsupervised Learning</p>
             </div>
+
+            <!-- Right-side Table of Contents (auto-populated by main.js) -->
+            <aside class="toc" aria-label="On this page"></aside>
 
             <div class="content-body">
                 <section id="introduction">
@@ -92,16 +107,41 @@
                         <li><strong>Competitor Identification:</strong> Find top competitors within clusters</li>
                         <li><strong>Visualization:</strong> Generate interactive plots</li>
                     </ol>
+
+                    <div class="diagram-container">
+                        <div class="diagram-title">Competitor Identification Pipeline</div>
+                        <div class="mermaid">
+graph LR
+    A["Price Data<br/>(Parquet)"] --> B["Filter NaNs<br/>(threshold)"]
+    B --> C["Impute Missing<br/>(interpolation + fill)"]
+    C --> D["Scale Data<br/>(StandardScaler)"]
+
+    D --> E["Price Movement<br/>(temporal changes)"]
+    D --> F["Price Level<br/>(absolute values)"]
+
+    E --> G["Dimensionality<br/>Reduction"]
+    F --> G
+
+    G --> H["4D Space<br/>[P_M_1, P_M_2, P_L_1, P_L_2]"]
+    H --> I["Clustering<br/>(Birch/DBSCAN/OPTICS)"]
+    I --> J["Euclidean Distance<br/>Ranking"]
+    J --> K["Top N<br/>Competitors"]
+
+    style G fill:#dbeafe,stroke:#2563eb
+    style I fill:#d1fae5,stroke:#10b981
+    style K fill:#fef3c7,stroke:#f59e0b
+                        </div>
+                    </div>
                 </section>
 
                 <section id="installation">
                     <h2>Installation</h2>
-                    <pre><code>pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/competitor_identification</code></pre>
+                    <pre><code class="language-bash">pip install git+https://github.com/isrkan/Competitive_Price_Intelligence.git#subdirectory=ml_packages/competitor_identification</code></pre>
                 </section>
 
                 <section id="quick-start">
                     <h2>Quick Start</h2>
-                    <pre><code>from competitor_identification import CompetitorIdentification
+                    <pre><code class="language-python">from competitor_identification import CompetitorIdentification
 from competitor_identification.pipeline import run_pipeline
 
 # Initialize with default config (PCA + Birch)
@@ -142,7 +182,7 @@ top_competitors, fig1, fig2, fig3 = run_pipeline(
 
                 <section id="main-class">
                     <h2>Main Class: CompetitorIdentification</h2>
-                    <pre><code>from competitor_identification import CompetitorIdentification</code></pre>
+                    <pre><code class="language-python">from competitor_identification import CompetitorIdentification</code></pre>
 
                     <h3><span class="function-name">__init__(custom_config_path=None)</span></h3>
                     <p>Initialize the CompetitorIdentification system. Loads the default <code>pca_birch_config.yaml</code> configuration. If a custom config path is provided, its values override the defaults.</p>
@@ -166,7 +206,7 @@ top_competitors, fig1, fig2, fig3 = run_pipeline(
                         </tbody>
                     </table>
                     <h4>Example:</h4>
-                    <pre><code># Default config (PCA + Birch)
+                    <pre><code class="language-python"># Default config (PCA + Birch)
 ci = CompetitorIdentification()
 
 # Custom config (e.g., UMAP + OPTICS)
@@ -182,7 +222,7 @@ ci = CompetitorIdentification(custom_config_path='umap_optics_config.yaml')</cod
 
                 <section id="pipeline">
                     <h2>Pipeline Module</h2>
-                    <pre><code>from competitor_identification.pipeline import run_pipeline</code></pre>
+                    <pre><code class="language-python">from competitor_identification.pipeline import run_pipeline</code></pre>
 
                     <h3><span class="function-name">run_pipeline(...)</span></h3>
                     <p>Main function that executes the complete competitor identification workflow. Runs all steps from data loading through visualization and returns the final results.</p>
@@ -256,13 +296,13 @@ ci = CompetitorIdentification(custom_config_path='umap_optics_config.yaml')</cod
 
                 <section id="api-data">
                     <h2>Data Loading Module</h2>
-                    <pre><code>from competitor_identification.data.load_data import load_store_data, load_price_data</code></pre>
+                    <pre><code class="language-python">from competitor_identification.data.load_data import load_store_data, load_price_data</code></pre>
 
                     <h3>load_store_data</h3>
                     <p>Loads store metadata from a CSV file and merges with sub-chain English names from an Excel file.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def load_store_data(
+                    <pre><code class="language-python">defload_store_data(
     store_file_path: str,
     subchain_file_path: str
 ) -> pd.DataFrame</code></pre>
@@ -296,7 +336,7 @@ ci = CompetitorIdentification(custom_config_path='umap_optics_config.yaml')</cod
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>store_data = load_store_data(
+                    <pre><code class="language-python">store_data = load_store_data(
     store_file_path='./data/Store_data_git.csv',
     subchain_file_path='./data/SubChainNameEnglish.xlsx'
 )
@@ -307,7 +347,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Loads price data for a specific product category from a Parquet file.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def load_price_data(
+                    <pre><code class="language-python">defload_price_data(
     category: str,
     price_data_dir: str
 ) -> pd.DataFrame</code></pre>
@@ -341,7 +381,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>price_data = load_price_data(
+                    <pre><code class="language-python">price_data = load_price_data(
     category='rice',
     price_data_dir='./data/price_data'
 )</code></pre>
@@ -349,7 +389,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
 
                 <section id="api-data-preprocessing">
                     <h2>Data Preprocessing Module</h2>
-                    <pre><code>from competitor_identification.data.preprocess_data import (
+                    <pre><code class="language-python">from competitor_identification.data.preprocess_data import (
     get_store_and_chain_ids,
     filter_nans,
     filter_by_specific_product_and_add_store_details,
@@ -361,7 +401,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Extracts rows from the store data that match the given SubChainName and StoreName. Used to identify the target store for competitor analysis.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def get_store_and_chain_ids(
+                    <pre><code class="language-python">defget_store_and_chain_ids(
     Store_data: pd.DataFrame,
     SubChainName: str,
     StoreName: str
@@ -404,7 +444,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Filters observations from the price DataFrame where the number of NaN values exceeds a given threshold.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def filter_nans(
+                    <pre><code class="language-python">deffilter_nans(
     category_df: pd.DataFrame,
     nan_threshold: float
 ) -> pd.DataFrame</code></pre>
@@ -441,7 +481,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Filters the imputed price data for a specific product description and merges with store metadata.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def filter_by_specific_product_and_add_store_details(
+                    <pre><code class="language-python">deffilter_by_specific_product_and_add_store_details(
     linear_no_cb_fill_df: pd.DataFrame,
     product_description: str,
     Store_data: pd.DataFrame
@@ -484,7 +524,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Filters product data based on geographic criteria with automatic fallback. If fewer than 10 stores exist at the City level, it falls back to County; if still fewer than 10, it falls back to District.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def filter_by_geographic_region(
+                    <pre><code class="language-python">deffilter_by_geographic_region(
     product_df: pd.DataFrame,
     chosen_store_info: pd.DataFrame,
     Geographic: str
@@ -527,7 +567,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     <p>Prepares dimensionality reduction outputs for the clustering step. Combines price movement and price level principal components, attaches store metadata, and separates the data into: the target store, same-chain stores, and other-chain stores.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def data_preparation_clustering(
+                    <pre><code class="language-python">defdata_preparation_clustering(
     price_movement_principal: pd.DataFrame,
     price_level_principal: pd.DataFrame,
     chosen_store_info: pd.DataFrame,
@@ -577,13 +617,13 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
 
                 <section id="api-data-imputation">
                     <h2>Data Imputation Module</h2>
-                    <pre><code>from competitor_identification.data.impute_data import impute_missing_data</code></pre>
+                    <pre><code class="language-python">from competitor_identification.data.impute_data import impute_missing_data</code></pre>
 
                     <h3>impute_missing_data</h3>
                     <p>Performs three-stage missing data imputation: (1) linear interpolation, (2) NOCB (Next Observation Carried Backward / backward fill), and (3) LOCB (Last Observation Carried Forward / forward fill). Applied row-wise (across time for each product-store combination).</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def impute_missing_data(
+                    <pre><code class="language-python">defimpute_missing_data(
     filtered_df: pd.DataFrame
 ) -> pd.DataFrame</code></pre>
 
@@ -611,7 +651,7 @@ print(f"Unique chains: {store_data['ChainName'].nunique()}")</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from competitor_identification.data.impute_data import impute_missing_data
+                    <pre><code class="language-python">from competitor_identification.data.impute_data import impute_missing_data
 
 # Impute after filtering NaN rows
 imputed_data = impute_missing_data(filtered_price_data)
@@ -620,7 +660,7 @@ print(f"Remaining NaNs: {imputed_data.isna().sum().sum()}")  # Should be 0</code
 
                 <section id="api-data-scaling">
                     <h2>Data Scaling Module</h2>
-                    <pre><code>from competitor_identification.data.scale_data import scale_data</code></pre>
+                    <pre><code class="language-python">from competitor_identification.data.scale_data import scale_data</code></pre>
 
                     <h3>scale_data</h3>
                     <p>Scales product price data into two separate representations using <code>StandardScaler</code>:</p>
@@ -630,7 +670,7 @@ print(f"Remaining NaNs: {imputed_data.isna().sum().sum()}")  # Should be 0</code
                     </ul>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def scale_data(
+                    <pre><code class="language-python">defscale_data(
     product_df: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]</code></pre>
 
@@ -659,7 +699,7 @@ print(f"Remaining NaNs: {imputed_data.isna().sum().sum()}")  # Should be 0</code
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>from competitor_identification.data.scale_data import scale_data
+                    <pre><code class="language-python">from competitor_identification.data.scale_data import scale_data
 
 price_movement_df, price_level_df = scale_data(product_regional_df)
 print(f"Movement shape: {price_movement_df.shape}")
@@ -668,7 +708,7 @@ print(f"Level shape: {price_level_df.shape}")</code></pre>
 
                 <section id="api-dimensionality-reduction">
                     <h2>Dimensionality Reduction Module</h2>
-                    <pre><code>from competitor_identification.dimensionality_reduction.dimensionality_reduction import (
+                    <pre><code class="language-python">from competitor_identification.dimensionality_reduction.dimensionality_reduction import (
     perform_dimensionality_reduction_on_price_movement_and_level
 )</code></pre>
 
@@ -676,7 +716,7 @@ print(f"Level shape: {price_level_df.shape}")</code></pre>
                     <p>Performs dimensionality reduction separately on price movement and price level data, then combines the results into a unified 4D space.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def perform_dimensionality_reduction_on_price_movement_and_level(
+                    <pre><code class="language-python">defperform_dimensionality_reduction_on_price_movement_and_level(
     price_movement_df: pd.DataFrame,
     price_level_df: pd.DataFrame,
     product_df: pd.DataFrame,
@@ -730,7 +770,7 @@ print(f"Level shape: {price_level_df.shape}")</code></pre>
                     </ul>
 
                     <h4>Examples:</h4>
-                    <pre><code># Using PCA (default)
+                    <pre><code class="language-python"># Using PCA (default)
 combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_movement_and_level(
     price_movement_df=scaled_movement,
     price_level_df=scaled_level,
@@ -751,13 +791,13 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
 
                 <section id="api-clustering">
                     <h2>Clustering Module</h2>
-                    <pre><code>from competitor_identification.clustering.clustering import perform_clustering, find_top_competitors</code></pre>
+                    <pre><code class="language-python">from competitor_identification.clustering.clustering import perform_clustering, find_top_competitors</code></pre>
 
                     <h3>perform_clustering</h3>
                     <p>Performs clustering on the dimensionality-reduced data using the specified algorithm. The function takes the target store info and same-chain store data to properly handle cluster assignment and competitor separation.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def perform_clustering(
+                    <pre><code class="language-python">defperform_clustering(
     dr_components_df: pd.DataFrame,
     chosen_store_info: pd.DataFrame,
     same_chain_dr_components_df: pd.DataFrame,
@@ -812,7 +852,7 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>clustered_df, labels, store_df, competitors_df = perform_clustering(
+                    <pre><code class="language-python">clustered_df, labels, store_df, competitors_df = perform_clustering(
     dr_components_df=dr_components,
     chosen_store_info=chosen_store,
     same_chain_dr_components_df=same_chain_df,
@@ -824,7 +864,7 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                     <p>Identifies top N competitors based on Euclidean distance in the 4D dimensionality reduction space.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def find_top_competitors(
+                    <pre><code class="language-python">deffind_top_competitors(
     clustered_store_dr_components_df: pd.DataFrame,
     clustered_competitors_dr_components_df: pd.DataFrame,
     top_n: int = 10
@@ -868,7 +908,7 @@ combined_df, movement_df, level_df = perform_dimensionality_reduction_on_price_m
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>top_competitors = find_top_competitors(
+                    <pre><code class="language-python">top_competitors = find_top_competitors(
     clustered_store_dr_components_df=store_df,
     clustered_competitors_dr_components_df=competitors_df,
     top_n=5
@@ -878,13 +918,13 @@ print(top_competitors[['StoreName', 'ChainName', 'distance']])</code></pre>
 
                 <section id="api-evaluation">
                     <h2>Evaluation Module</h2>
-                    <pre><code>from competitor_identification.evaluation.clustering_evaluation import evaluate_clustering</code></pre>
+                    <pre><code class="language-python">from competitor_identification.evaluation.clustering_evaluation import evaluate_clustering</code></pre>
 
                     <h3>evaluate_clustering</h3>
                     <p>Computes clustering quality metrics: Silhouette Score and Davies-Bouldin Score.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def evaluate_clustering(
+                    <pre><code class="language-python">defevaluate_clustering(
     cluster_labels: np.ndarray,
     clustered_dr_components_df: pd.DataFrame
 ) -> Tuple[float, float]</code></pre>
@@ -919,7 +959,7 @@ print(top_competitors[['StoreName', 'ChainName', 'distance']])</code></pre>
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code>silhouette, davies_bouldin = evaluate_clustering(
+                    <pre><code class="language-python">silhouette, davies_bouldin = evaluate_clustering(
     cluster_labels=labels,
     clustered_dr_components_df=clustered_df
 )
@@ -929,7 +969,7 @@ print(f"Davies-Bouldin Score: {davies_bouldin:.3f}")</code></pre>
 
                 <section id="api-visualization">
                     <h2>Visualization Module</h2>
-                    <pre><code>from competitor_identification.visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
+                    <pre><code class="language-python">from competitor_identification.visualization.plot_dimensionality_reduction import plot_dimensionality_reduction
 from competitor_identification.visualization.plot_clusters import plot_clusters
 from competitor_identification.visualization.present_competitors_table import present_competitors_table</code></pre>
 
@@ -937,7 +977,7 @@ from competitor_identification.visualization.present_competitors_table import pr
                     <p>Creates interactive scatter plots showing dimensionality reduction results for price movement and price level data, with the target store highlighted.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def plot_dimensionality_reduction(
+                    <pre><code class="language-python">defplot_dimensionality_reduction(
     combined_components_df: pd.DataFrame,
     chosen_store_info: pd.DataFrame
 ) -> plotly.graph_objects.Figure</code></pre>
@@ -974,7 +1014,7 @@ from competitor_identification.visualization.present_competitors_table import pr
                     <p>Creates interactive scatter plots showing clustering results in the dimensionality reduction space.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def plot_clusters(
+                    <pre><code class="language-python">defplot_clusters(
     dr_components_df: pd.DataFrame,
     dr_cluster_labels: np.ndarray,
     store_dr_components_df: pd.DataFrame,
@@ -1023,7 +1063,7 @@ from competitor_identification.visualization.present_competitors_table import pr
                     <p>Creates an interactive Plotly table displaying the top competitors with their information.</p>
 
                     <h4>Function Signature:</h4>
-                    <pre><code>def present_competitors_table(
+                    <pre><code class="language-python">defpresent_competitors_table(
     top_competitors: pd.DataFrame
 ) -> plotly.graph_objects.Figure</code></pre>
 
@@ -1051,7 +1091,7 @@ from competitor_identification.visualization.present_competitors_table import pr
                     </ul>
 
                     <h4>Example:</h4>
-                    <pre><code># Display all visualizations
+                    <pre><code class="language-python"># Display all visualizations
 fig1 = plot_dimensionality_reduction(combined_df, chosen_store_info)
 fig2 = plot_clusters(clustered_df, labels, store_df, 'BIRCH')
 fig3 = present_competitors_table(top_competitors)
@@ -1114,17 +1154,17 @@ fig3.show()</code></pre>
 
                     <h4>Issue: No competitors found</h4>
                     <p><strong>Solution:</strong> Try broader geographic filtering or adjust the NaN threshold to include more data:</p>
-                    <pre><code>config.set('nan_threshold', 0.5)
+                    <pre><code class="language-python">config.set('nan_threshold', 0.5)
 # Use 'District' for a broader geographic scope</code></pre>
 
                     <h4>Issue: Poor cluster quality (low Silhouette score)</h4>
                     <p><strong>Solution:</strong> Try different algorithm combinations. Load a different config:</p>
-                    <pre><code># Switch to UMAP + OPTICS
+                    <pre><code class="language-python"># Switch to UMAP + OPTICS
 ci = CompetitorIdentification(custom_config_path='path/to/umap_optics_config.yaml')</code></pre>
 
                     <h4>Issue: Store not found</h4>
                     <p><strong>Solution:</strong> Verify that the SubChainName and StoreName match exactly what's in the store data:</p>
-                    <pre><code>store_data = load_store_data(store_file_path, subchain_file_path)
+                    <pre><code class="language-python">store_data = load_store_data(store_file_path, subchain_file_path)
 print(store_data[['SubChainName', 'StoreName']].drop_duplicates())</code></pre>
                 </section>
 
@@ -1142,80 +1182,27 @@ print(store_data[['SubChainName', 'StoreName']].drop_duplicates())</code></pre>
             <footer class="site-footer">
                 <div class="footer-content">
                     <p>Competitive Price Intelligence &mdash; v0.1.0</p>
-                    <p><a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank">GitHub Repository</a></p>
+                    <div class="footer-links">
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence" target="_blank" rel="noopener">GitHub</a>
+                        <span class="footer-separator">|</span>
+                        <a href="https://github.com/isrkan/Competitive_Price_Intelligence/issues" target="_blank" rel="noopener">Issues</a>
+                        <span class="footer-separator">|</span>
+                        <a href="configuration.html">Configuration</a>
+                    </div>
                 </div>
             </footer>
         </main>
     </div>
 
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">&#9776;</button>
+    <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('open');
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            if (window.innerWidth <= 1024 &&
-                !sidebar.contains(event.target) &&
-                !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('open');
-            }
-        });
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Active nav link tracking on scroll
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Copy-to-clipboard for code blocks
-        document.querySelectorAll('pre').forEach(block => {
-            const btn = document.createElement('button');
-            btn.className = 'copy-btn';
-            btn.textContent = 'Copy';
-            btn.addEventListener('click', () => {
-                const code = block.querySelector('code');
-                navigator.clipboard.writeText(code.textContent).then(() => {
-                    btn.textContent = 'Copied!';
-                    btn.classList.add('copied');
-                    setTimeout(() => {
-                        btn.textContent = 'Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                });
-            });
-            block.appendChild(btn);
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
